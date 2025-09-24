@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Rifas de Motos{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Rifas Disponibles</h1>
+
+<div class="raffles-grid">
+  {% for raffle in raffles %}
+  <article class="raffle-card">
+    <img src="{{ raffle.image.url }}" alt="{{ raffle.title }}">
+    <div class="raffle-info">
+      <h2>{{ raffle.title }}</h2>
+      <p>{{ raffle.description|truncatewords:15 }}</p>
+      <p class="price">Valor: ${{ raffle.price }}</p>
+      <a href="{% url 'raffle_detail' raffle.slug %}" class="btn">Ver detalles</a>
+    </div>
+  </article>
+  {% empty %}
+  <p>No hay rifas disponibles en este momento.</p>
+  {% endfor %}
+</div>
+{% endblock %}

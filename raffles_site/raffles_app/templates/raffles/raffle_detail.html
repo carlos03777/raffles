@@ -1,0 +1,26 @@
+
+
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<h1>{{ raffle.motorcycle.brand }} {{ raffle.motorcycle.model }} ({{ raffle.motorcycle.year }})</h1>
+
+<p>Precio boleta: ${{ raffle.ticket_price }}</p>
+<p>Disponibles: {{ raffle.available_tickets }}</p>
+
+<div>
+  {% for img in images %}
+    <img src="{{ img.image.url }}" width="200">
+  {% endfor %}
+</div>
+
+<h2>Comprar boleta</h2>
+<form method="post" action="{% url 'buy_ticket' raffle.id %}">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Comprar</button>
+</form>
+
+{% endblock %}

@@ -24,199 +24,1293 @@
 }
 
 body {
-  font-family: var(--font-body);
+  
   background: var(--color-bg);
-  color: var(--color-text);
+  color: var(--color-primary);
+  
+}
+
+
+
+/* ===== NAVBAR BASE ===== */
+.navbar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  background: transparent; /* transparente al inicio */
+  box-shadow: none;        /* sin sombra al inicio */
+  z-index: 1000;
+  transition: background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+}   
+.navbar.scrolled {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.navbar__container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.navbar__logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* ===== MENU CONTENEDOR ===== */
+.navbar__menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+.navbar__links {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+  justify-content: center;
+}
+.navbar__links a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+.navbar__links a:hover {
+  color: #e63946;
+}
+
+/* ===== ICONOS A LA DERECHA ===== */
+.navbar__icons {
+  display: flex;
+  gap: 1rem;
+  margin-left: auto;
+}
+.navbar__icons a {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.navbar__icons a:hover {
+  color: #e63946;
+}
+
+/* ===== HAMBURGUESA ===== */
+.navbar__toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+}
+.navbar__toggle span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  transition: 0.3s ease;
+}
+
+/* Animación hamburguesa a X */
+.navbar__toggle.open span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.navbar__toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+.navbar__toggle.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  .navbar__menu {
+    position: absolute;
+    top: 100%; left: 0;
+    width: 100%;
+   
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: transparent;
+    backdrop-filter: blur(10px);
+    transform: translateY(-200%);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s ease;
+  }
+  .navbar__menu.active {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .navbar__links, .navbar__icons {
+    flex-direction: column;
+    align-items: center;
+    
+    width: 100%;
+  }
+
+  .navbar__toggle {
+    display: flex;
+  }
+}
+
+
+
+
+/* --- Hero Carousel --- */
+.hero-carousel {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Slides */
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.carousel-slide img,
+.carousel-slide video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Overlay de texto --- */
+.overlay {
+  position: absolute;
+  bottom: 20%;
+  left: 10%;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0,0,0,0.7);
+  max-width: 80%;
+}
+
+.overlay h1 {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.overlay p {
+  font-size: 1.2rem;
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.7rem 1.5rem;
+  background: crimson;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: darkred;
+}
+
+/* --- Controles del carrusel --- */
+
+.carousel-controls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  padding: 0 6rem;
+  z-index: 10;
+}
+
+.carousel-controls span {
+  background: rgba(0,0,0,0.4); /* Fondo suave */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.carousel-controls span:hover {
+  background: rgba(0,0,0,0.7); /* Un poco más fuerte al pasar el mouse */
+  transform: scale(1.1);
+}
+
+
+
+/* --- Responsivo --- */
+@media (max-width: 768px) {
+  .overlay {
+    bottom: 15%;
+    left: 5%;
+    max-width: 90%;
+  }
+
+  .overlay h1 {
+    font-size: 1.8rem;
+  }
+
+  .overlay p {
+    font-size: 1rem;
+  }
+
+  .carousel-controls span {
+    font-size: 2.2rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+
+/* ganadores */
+
+.winners {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 3rem;
+  padding: 4rem 2rem;
+}
+
+.winners-card-wrapper { justify-self: center; }
+.winners__content { max-width: 600px; }
+
+.section-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text);
+}
+
+.section-title h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.section-title .subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text);
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .winners {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .winners__content { margin-top: 2rem; }
+}
+
+/* Minimapa */
+.winners-minimap {
+  position: fixed;
+  top: 3rem;
+  left: 1rem;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--minimap-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 300;
+}
+
+/* ============================
+   TARJETA
+============================ */
+.winners-card {
+  width: 320px;
+  height: 480px;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 15px 40px var(--card-shadow);
+  perspective: 1000px;
+}
+
+.winners-card-inner {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease;
+}
+.winners-card[data-active="true"] .winners-card-inner {
+  transform: rotateY(180deg);
+}
+
+.winners-card-front,
+.winners-card-back {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+.winners-card-back { transform: rotateY(180deg); }
+
+/* Fondo */
+.winners-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: inherit;
+  filter: contrast(1.1) brightness(1.1) saturate(1.2);
+  transition: filter 0.5s ease, transform 0.5s ease;
+}
+.winners-card:hover .winners-card-bg {
+  filter: contrast(1.3) brightness(1.3) saturate(1.5);
+  transform: scale(1.02);
+}
+
+/* Luces */
+.winners-face-highlight {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);
+  z-index: 3;
+  mix-blend-mode: screen;
+}
+
+.winners-glare {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.3), transparent 60%);
+  mix-blend-mode: overlay;
+  z-index: 2;
+  transition: background 0.2s ease;
+}
+
+/* Texto frente */
+.winners-card-name {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  z-index: 4;
+  color: var(--text);
+  -webkit-text-stroke: 1px var(--card-stroke);
+  text-shadow: 1px 1px 0 #000, 2px 2px 4px var(--card-text-shadow);
+}
+
+/* Logos */
+.winners-logo-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 10px;
+  padding: 20px;
+  z-index: 0;
+  opacity: 0.2;
+}
+.winners-logo {
+  width: 35px;
+  height: 35px;
+  opacity: 0.1;
+  position: relative;
+  justify-self: center;
+  align-self: center;
+}
+.winners-logo-icon {
+  width: 100%;
+  height: 100%;
+  background: var(--icon) center/contain no-repeat;
+  filter: brightness(1.8) saturate(2);
+}
+.winners-logo.prism {
+  filter: drop-shadow(0 0 18px rgba(255,255,255,0.8));
+  opacity: 0.95;
+}
+
+/* Marca de agua */
+.winners-card-watermark {
+  position: absolute;
+  bottom: 40px;
+  right: 20px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  z-index: 4;
+}
+.winners-card-watermark span {
+  display: block;
+  text-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
+
+/* Flecha */
+.winners-arrow {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  animation: bounce 1.5s infinite;
+  z-index: 5;
+}
+@keyframes bounce {
+  0%,100% { transform: translate(-50%,0); }
+  50% { transform: translate(-50%,-10px); }
+}
+
+/* Botón flip */
+.winners-flip-btn {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--flip-bg);
+  border: 1px solid var(--flip-border);
+  color: var(--flip-text);
+  padding: 0.46rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.22s, transform 0.22s;
+  z-index: 6;
+}
+
+/* Reverso */
+.winners-card-back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+}
+.winners-card-back::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("assets/img/car.png") center/cover no-repeat;
+  filter: blur(8px) brightness(0.5) saturate(1.3);
+  opacity: 0.35;
+  z-index: 0;
+}
+
+/* Info del ganador */
+.winners-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid white;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+  margin-bottom: 15px;
+}
+.winners-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.winners-info {
+  color: white;
+  z-index: 4;
+}
+.winners-info .winners-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.winners-info .winners-number {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffcc00;
+  margin-bottom: 10px;
+}
+.winners-info .winners-ig {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+.winners-info i {
+  margin-right: 6px;
+  color: #e1306c;
+}
+
+
+ /* como funciona */
+
+ #how-it-works {
+  padding: 60px 20px;
+  text-align: center;
+  background: var(--bg-light);
+}
+
+#how-it-works .steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.step i {
+  font-size: 3rem;
+  color: crimson;
+  margin-bottom: 15px;
+}
+
+.step h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.step p {
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+
+
+/* testimonios */
+#winners {
+  padding: 70px 20px;
+  background: var(--bg-light);
+  color: var(--text-light);
+}
+
+#winners .section-title {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.winners-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.testimonials {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.testimonial {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-size: 1rem;
   line-height: 1.6;
 }
 
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: var(--transition);
-}
-a:hover { color: #e55a00; }
-
-.container { width: 90%; max-width: 1200px; margin: 0 auto; }
-
-/* =======================
-   HEADER
-======================= */
-.site-header {
-  background: var(--color-secondary);
-  padding: 1rem 0;
-  box-shadow: var(--shadow);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+.testimonial h4 {
+  margin-top: 10px;
+  font-weight: bold;
+  color: var(--accent);
 }
 
-.nav-container {
+.ig-embed iframe {
+  width: 100%;
+  border-radius: 12px;
+  min-height: 500px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .winners-content {
+    grid-template-columns: 1fr;
+  }
+
+  .ig-embed iframe {
+    min-height: 400px;
+  }
+}
+
+
+/* contact */
+
+
+
+/* contacto */
+
+.contact-hero {
+  position: relative;
+  height: 40vh;
+  background: url("https://picsum.photos/1600/600?random=40") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.contact-hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+.contact-hero .hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+.contact-hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.contact-hero p {
+  font-size: 1.1rem;
+}
+
+/* Contact Section */
+.contact-section {
+  padding: 4rem 2rem;
+}
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* Formulario */
+.contact-form {
+  background: #111;
+  color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+.contact-form h2 {
+  margin-bottom: 1.5rem;
+  color: #e55050;
+}
+.form-group {
+  margin-bottom: 1rem;
+}
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  background: #222;
+  color: #fff;
+}
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: #aaa;
+}
+.btn-main {
+  background: #e55050;
+  color: #fff;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.btn-main:hover {
+  background: #c73838;
+}
+
+/* Info */
+.contact-info {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+.contact-info h2 {
+  margin-bottom: 1rem;
+  color: #e55050;
+}
+.contact-info ul {
+  list-style: none;
+  margin-bottom: 1.5rem;
+}
+.contact-info li {
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+}
+.map iframe {
+  border-radius: 10px;
+}
+
+/* Footer */
+.contact-footer {
+  background: #111;
+  color: #fff;
+  text-align: center;
+  padding: 2rem;
+  margin-top: 3rem;
+  border-top: 3px solid #e55050;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* about */
+/* nosotros */
+/* Hero */
+.about-hero {
+  position: relative;
+  height: 60vh;
+  background: url("https://picsum.photos/1600/800?random=19") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+}
+.about-hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+.about-hero .hero-content {
+  position: relative;
+  z-index: 1;
+}
+.about-hero h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.about-hero p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Historia */
+.about-history {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 4rem 2rem;
+  align-items: center;
+}
+.about-history h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #e55050;
+}
+.about-history img {
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* Misión y Visión */
+.about-mission {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 4rem 2rem;
+  flex-wrap: wrap;
+}
+.about-mission .card {
+  flex: 1;
+  min-width: 280px;
+  background: #111;
+  color: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  text-align: center;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.about-mission .card:hover {
+  transform: translateY(-8px);
+  background: #e55050;
+}
+.about-mission h3 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+}
+
+/* Equipo */
+.about-team {
+  padding: 4rem 2rem;
+  text-align: center;
+}
+.about-team h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #e55050;
+}
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+}
+.member {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+}
+.member:hover {
+  transform: translateY(-6px);
+}
+.member img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid #e55050;
+}
+.member h4 {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #111;
+}
+.member p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+
+
+
+/* cart */
+
+/* =============================
+   🛒 Carrito de tickets
+============================= */
+.cart {
+  max-width: 800px;
+  margin: 100px auto 40px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--bg-light, #fff);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.cart__title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--text, #222);
+}
+
+/* Lista */
+.cart__list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+/* Ticket */
+
+.cart-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  position: relative;
-  flex-wrap: wrap;
+  padding: 15px 18px;
+  border-radius: 12px;
+  background: var(--bg-card, #f9f9f9);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Logo */
-.logo a {
-  font-family: var(--font-heading);
-  font-size: 1.6rem;
-  color: var(--color-primary);
+.cart-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.cart-item__info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text, #333);
+  margin: 0 0 5px;
+}
+
+.cart-item__ticket {
+  font-size: 0.9rem;
+  color: #777;
+  margin: 0;
+}
+
+.cart-item__price {
+  font-size: 1rem;
   font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+  color: var(--accent, #e55050);
+  margin: 5px 0 0;
 }
-.logo img { width: 40px; height: 40px; }
 
-/* Menú */
-.nav-menu {
-  display: flex;
-  flex: 1;
-  justify-content: center;
-  align-items: center;
+/* Botón eliminar */
+.cart-item__remove {
+  border: none;
+  background: transparent;
+  color: #999;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 2rem;
-  align-items: center;
-}
-.nav-links a {
-  font-weight: 500;
-  padding: 0.25rem 0;
-  position: relative;
-}
-.nav-links a::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left:0;
-  width:0;
-  height:2px;
-  background: var(--color-primary);
-  transition: 0.3s;
-}
-.nav-links a:hover::after { width: 100%; }
 
-/* Iconos derecha */
-.nav-icons {
+.cart-item__remove:hover {
+  color: var(--accent, #e55050);
+  transform: scale(1.2);
+}
+
+/* Resumen carrito */
+.cart__summary {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  justify-content: flex-end;
 }
-.nav-icons a {
-  color: var(--color-text);
-  font-size: 1.6rem;
-  transition: transform 0.3s, color 0.3s;
+
+.cart__summary p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
 }
-.nav-icons a:hover {
-  color: var(--color-primary);
+
+.pay-btn {
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent, #e55050);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.pay-btn:hover {
+  background: #c23c3c;
   transform: translateY(-2px);
 }
 
-/* Carrito badge */
-.cart-icon {
-  position: relative;
-}
-.cart-count {
-  position: absolute;
-  top: -8px;
-  right: -10px;
-  background: var(--color-primary);
-  color:#fff;
-  font-size:0.7rem;
-  font-weight:bold;
-  padding:2px 5px;
-  border-radius:50%;
+/* tiket */
+
+
+/* ==============================
+   🎟️ COMPRA DE TICKETS
+============================== */
+.ticket-purchase {
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  max-width: 1100px;
+  margin: 2rem auto;
 }
 
-/* =======================
-   HAMBURGUESA
-======================= */
-.hamburger {
-  display: none;
+.ticket-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #222;
+}
+
+/* ====================
+   GRID: columnas
+==================== */
+.ticket-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ====================
+   Columna izquierda (Formulario)
+==================== */
+.ticket-form {
+  display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  width: 24px;
-  height: 18px;
+  gap: 1.5rem;
+}
+
+.ticket-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ticket-form label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+}
+
+/* Casillas tipo código */
+.ticket-code {
+  display: flex;
+  justify-content: center;
+  gap: 0.7rem;
+}
+
+.ticket-code input {
+  width: 3.2rem;
+  height: 3.2rem;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ticket-code input:focus {
+  border-color: #000;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+/* ====================
+   Botones del form
+==================== */
+.ticket-actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.ticket-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
-.hamburger span {
+
+/* Botón principal */
+.ticket-btn-main {
+  background: #111;
+  color: #fff;
+}
+.ticket-btn-main:hover {
+  background: #333;
+}
+
+/* Botón secundario */
+.ticket-btn-secondary {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #222;
+}
+.ticket-btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+/* Botón alterno (aleatorio) */
+.ticket-btn-alt {
+  background: #666;
+  color: #fff;
+}
+.ticket-btn-alt:hover {
+  background: #444;
+}
+
+/* ====================
+   Columna derecha (Card)
+==================== */
+.ticket-summary-card {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.ticket-summary-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 2px solid #ccc;
+}
+
+.ticket-summary-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #111;
+}
+
+.ticket-summary-info {
+  margin: 0.3rem 0;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+/* Botón "Ir al carrito" */
+.ticket-btn-cart {
   display: block;
-  height: 3px;
   width: 100%;
-  background: var(--color-text);
-  border-radius: 2px;
+  margin-top: 1.5rem;
+  background: #e55050;
+  color: #fff;
+  padding: 0.9rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.ticket-btn-cart:hover {
+  background: #c23c3c;
 }
 
+/* ====================
+   Responsive
+==================== */
 @media (max-width: 768px) {
-
-  /* Esconde los íconos originales fuera del menú */
-  .nav-icons {
-    display: none;
+  .ticket-grid {
+    grid-template-columns: 1fr;
   }
 
-  /* Menú colapsable */
-  .nav-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: var(--color-secondary);
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 0.4s ease;
-    z-index: 99;
-    padding: 1rem 0;
+  .ticket-summary-card {
+    margin-top: 1.5rem;
   }
 
-  /* Abrir menú al marcar checkbox */
-  #menu-toggle:checked + .hamburger + .nav-menu {
-    max-height: 500px; /* suficiente para todos los links + iconos */
+  .ticket-code input {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 1.2rem;
   }
+}
 
-  /* Links del menú */
-  .nav-links {
-    flex-direction: column;
+
+
+
+
+
+
+/* footer */
+/* ====== Footer ====== */
+.site-footer {
+  background: var(--bg-dark, #0d0d0d);
+  color: var(--text-light, #fff);
+  padding: 3rem 1rem 1rem;
+  margin-top: 4rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 2rem;
+  align-items: center;
+  text-align: center;
+}
+
+.footer-brand .brand-link {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent, #e55050);
+  text-decoration: none;
+}
+
+.footer-brand .slogan {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-top: 0.5rem;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-nav a {
+  color: #ccc;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-nav a:hover {
+  color: var(--accent, #e55050);
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-social a {
+  color: #ccc;
+  font-size: 1.2rem;
+  transition: 0.3s;
+}
+
+.footer-social a:hover {
+  color: var(--accent, #e55050);
+}
+
+.footer-copy {
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  color: #888;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 1rem;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr;
     gap: 1.5rem;
-    width: 100%;
-    text-align: center;
-    margin: 0;
-  }
-
-  /* Iconos de login y carrito dentro del menú */
-  #menu-toggle:checked + .hamburger + .nav-menu + .nav-icons {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-    justify-content: center;
-    text-align: center;
-    margin: 0;
-  }
-
-  /* Cada icono se comporta como link del menú */
-  .nav-icons a {
-    font-size: 1.4rem;
-    color: var(--color-text);
-    display: inline-block;
-    transition: transform 0.3s, color 0.3s;
-  }
-
-  .nav-icons a:hover {
-    color: var(--color-primary);
-    transform: translateY(0); /* quitar el efecto de “flotar” */
-  }
-
-  /* Muestra la hamburguesa */
-  .hamburger {
-    display: flex;
   }
 }

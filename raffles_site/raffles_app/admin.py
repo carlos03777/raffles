@@ -47,3 +47,29 @@ class TicketAdmin(admin.ModelAdmin):
     list_filter = ("payment_status", "raffle__status")
     search_fields = ("user__username", "raffle__motorcycle__brand", "raffle__motorcycle__model")
     readonly_fields = ("code", "created_at")
+
+
+
+# slider
+
+# ---------------- CarouselSlide ---------------- #
+from .models import CarouselSlide
+
+
+@admin.register(CarouselSlide)
+class CarouselSlideAdmin(admin.ModelAdmin):
+    list_display = ("title", "subtitle", "order", "is_active", "created_at")
+    list_editable = ("order", "is_active")
+    search_fields = ("title", "subtitle")
+    list_filter = ("is_active", "created_at")
+    ordering = ("order",)
+    readonly_fields = ("created_at",)
+
+    fieldsets = (
+        ("Contenido", {
+            "fields": ("title", "subtitle", "image", "link")
+        }),
+        ("Configuración", {
+            "fields": ("order", "is_active", "created_at")
+        }),
+    )

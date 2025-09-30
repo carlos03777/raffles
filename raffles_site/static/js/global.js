@@ -1,58 +1,193 @@
-// ===============================
-//  GLOBAL JS - MotoRaffles
-// ===============================
-
-// Espera a que cargue el DOM
 document.addEventListener("DOMContentLoaded", () => {
-  // -------------------------------
-  // Animación del header al cargar
-  // -------------------------------
+  /* =========================
+     NAVBAR: toggle + scroll
+     ========================= */
+  (function initNavbar() {
+    const toggleMenu = document.querySelector(".navbar__toggle");
+    const menu = document.getElementById("navbarMenu");
+    const navbar = document.querySelector(".navbar");
 
-  // Logo
-  gsap.from(".logo", {
-    x: -60,
-    opacity: 0,
-    duration: 0.8,
-    ease: "power3.out"
-  });
+    if (toggleMenu && menu) {
+      const closeMenuOnResize = () => {
+        if (window.innerWidth > 768) {
+          menu.classList.remove("active");
+          toggleMenu.classList.remove("open");
+          toggleMenu.setAttribute("aria-expanded", "false");
+        }
+      };
 
-  // Menú (cada li entra uno por uno)
-  gsap.from(".nav-links li", {
-    y: -30,
-    opacity: 0,
-    duration: 0.6,
-    ease: "back.out(1.7)",
-    stagger: 0.15
-  });
+      toggleMenu.addEventListener("click", () => {
+        const isActive = menu.classList.toggle("active");
+        toggleMenu.classList.toggle("open");
+        toggleMenu.setAttribute("aria-expanded", String(isActive));
+      });
 
-  // Iconos de login/carrito
-  gsap.from(".nav-icons a", {
-    x: 50,
-    opacity: 0,
-    duration: 0.6,
-    ease: "power3.out",
-    stagger: 0.2
-  });
+      window.addEventListener("resize", closeMenuOnResize);
+    }
 
-  // -------------------------------
-  // Hover animado en los links
-  // -------------------------------
-  document.querySelectorAll(".nav-links a").forEach(link => {
-    let scaleUp = gsap.quickTo(link, "scale", { duration: 0.3, ease: "power2.out" });
-    let scaleDown = gsap.quickTo(link, "scale", { duration: 0.3, ease: "power2.in" });
+    if (navbar) {
+      // scroll listener independiente — no depende de toggleMenu/menu
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 50) navbar.classList.add("scrolled");
+        else navbar.classList.remove("scrolled");
+      });
+    }
+  })();
 
-    link.addEventListener("mouseenter", () => scaleUp(1.15)); // crece un poco
-    link.addEventListener("mouseleave", () => scaleDown(1));  // vuelve al normal
-  });
+  /* =========================
+     HERO: carousel / slides
+     ========================= */
+  (function initHeroCarousel() {
+    const slides = Array.from(document.querySelectorAll(".carousel-slide"));
+    if (!slides.length) return;
 
-  // -------------------------------
-  // Hover animado en los iconos
-  // -------------------------------
-  document.querySelectorAll(".nav-icons a").forEach(icon => {
-    let bounce = gsap.timeline({ paused: true });
-    bounce.to(icon, { scale: 1.2, duration: 0.2, ease: "power1.out" })
-          .to(icon, { scale: 1, duration: 0.2, ease: "bounce.out" });
+    const nextBtn = document.querySelector(".next");
+    const prevBtn = document.querySelector(".prev");
+    let current = 0;
+    let autoplayTimer = null;
 
-    icon.addEventListener("mouseenter", () => bounce.play(0));
-  });
-});
+    function showSlide(index) {
+      slides.forEach((s, i) => s.classList.toggle("active", i === index));
+    }
+
+    if (nextBtn) nextBtn.addEventListener("click", () => {
+      current = (current + 1) % slides.length;
+      showSlide(current);
+    });
+
+    if (prevBtn) prevBtn.addEventListener("click", () => {
+      current = (current - 1 + slides.length) % slides.length;
+      showSlide(current);
+    });
+
+    // Keyboard arrows
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") {
+        current = (current + 1) % slides.length;
+        showSlide(current);
+      } else if (e.key === "ArrowLeft") {
+        current = (current - 1 + slides.length) % slides.length;
+        showSlide(current);
+      }
+    });
+
+    // Autoplay if more than one slide
+    if (slides.length > 1) {
+      const startAutoplay = () => {
+        if (autoplayTimer) clearInterval(autoplayTimer);
+        autoplayTimer = setInterval(() => {
+          current = (current + 1) % slides.length;
+          showSlide(current);
+        }, 5000);
+      };
+      startAutoplay();
+
+      // Pause autoplay on hover/focus
+      const carouselWrap = document.querySelector(".carousel") || slides[0].parentElement;
+      if (carouselWrap) {
+        carouselWrap.addEventListener("mouseenter", () => clearInterval(autoplayTimer));
+        carouselWrap.addEventListener("mouseleave", startAutoplay);
+        carouselWrap.addEventListener("focusin", () => clearInterval(autoplayTimer));
+        carouselWrap.addEventListener("focusout", startAutoplay);
+      }
+    }
+
+    // init first
+    showSlide(current);
+  })();
+
+ 
+  /* =========================
+   WINNERS CARD: holográfica
+   ========================= */
+(function initWinnersCard3D() {
+  const card = document.querySelector("#winners .winners-card3d");
+  if (!card) return;
+
+  const glare = card.querySelector(".winners-card-glare");
+  const flipBtn = card.querySelector(".winners-card-flip-btn");
+  const minimap = document.querySelector("#winners .winners-card-minimap");
+  const spans = minimap ? minimap.querySelectorAll("span") : [];
+  const logos = card.querySelectorAll(".winners-card-logo");
+
+  let isFlipped = false;
+  let bounds = card.getBoundingClientRect();
+
+  function updateMinimap(x, y) {
+    if (!spans.length) return;
+    spans[0].textContent = `x: ${x}`;
+    spans[1].textContent = `y: ${y}`;
+  }
+
+  function handleMove(e) {
+    const { clientX, clientY } = e;
+    bounds = bounds || card.getBoundingClientRect();
+    const x = clientX - bounds.left;
+    const y = clientY - bounds.top;
+    const centerX = bounds.width / 2;
+    const centerY = bounds.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * 15;
+    const rotateY = ((x - centerX) / centerX) * 15;
+
+    card.style.transform = `rotateY(${rotateY}deg) rotateX(${-rotateX}deg)`;
+    updateMinimap(Math.round(rotateX), Math.round(rotateY));
+
+    if (glare) {
+      glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.4), transparent 60%)`;
+    }
+
+    logos.forEach((logo) => {
+      const rect = logo.getBoundingClientRect();
+      const logoX = rect.left + rect.width / 2;
+      const logoY = rect.top + rect.height / 2;
+      const dx = clientX - logoX;
+      const dy = clientY - logoY;
+      const hue = ((Math.atan2(dy, dx) + Math.PI) / (2 * Math.PI)) * 360;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const intensity = Math.max(0.6, 1.2 - distance / 250);
+      const rotation = (Date.now() / 10) % 360;
+
+      logo.style.setProperty("--hue", `${hue}deg`);
+      logo.style.setProperty("--angle", `${rotation}deg`);
+      logo.style.opacity = intensity;
+      logo.classList.add("winners-card-prism");
+
+      const icon = logo.querySelector(".winners-card-logo-icon");
+      if (icon) {
+        icon.style.filter = `hue-rotate(${hue}deg) brightness(${1.6 + intensity}) saturate(2)`;
+      }
+    });
+  }
+
+  function handleLeave() {
+    card.style.transform = "rotateY(0deg) rotateX(0deg)";
+    if (glare)
+      glare.style.background = `radial-gradient(circle, rgba(255,255,255,0.2), transparent 60%)`;
+
+    logos.forEach((logo) => {
+      logo.style.setProperty("--hue", "0deg");
+      logo.style.setProperty("--angle", "0deg");
+      logo.style.opacity = 0.15;
+      logo.classList.remove("winners-card-prism");
+      const icon = logo.querySelector(".winners-card-logo-icon");
+      if (icon) icon.style.filter = "brightness(1.2)";
+    });
+  }
+
+  if (flipBtn) {
+    flipBtn.addEventListener("click", () => {
+      isFlipped = !isFlipped;
+      card.setAttribute("data-active", isFlipped);
+      flipBtn.setAttribute("aria-pressed", isFlipped);
+      card.style.transform = isFlipped ? "rotateY(180deg)" : "rotateY(0deg)";
+    });
+  }
+
+  card.addEventListener("mousemove", handleMove);
+  card.addEventListener("mouseleave", handleLeave);
+  window.addEventListener("resize", () => (bounds = card.getBoundingClientRect()));
+})();
+
+
+}); // end DOMContentLoaded

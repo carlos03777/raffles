@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+  <!-- =============================
+        🎟️ SECCIÓN COMPRAR TICKETS
+  ============================== -->
+  <section class="ticket-purchase">
+  <h2 class="ticket-title">Compra tu ticket</h2>
+
+  <div class="ticket-grid">
+    <!-- Columna izquierda: formulario -->
+    <div class="ticket-form">
+      <div class="ticket-form-group">
+        <label for="ticketCode">Ingresa tu número</label>
+        <div class="ticket-code">
+          <input type="text" maxlength="1" inputmode="numeric" aria-label="Dígito 1">
+          <input type="text" maxlength="1" inputmode="numeric" aria-label="Dígito 2">
+          <input type="text" maxlength="1" inputmode="numeric" aria-label="Dígito 3">
+          <input type="text" maxlength="1" inputmode="numeric" aria-label="Dígito 4">
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="ticket-actions">
+        <button type="button" class="ticket-btn ticket-btn-alt">Aleatorio</button>
+        <button type="button" class="ticket-btn ticket-btn-secondary">Vaciar</button>
+        <button type="button" class="ticket-btn ticket-btn-main">Agregar</button>
+      </div>
+    </div>
+
+    <!-- Columna derecha: card resumen -->
+    <div class="ticket-summary-card">
+      <img src="https://via.placeholder.com/80" alt="Usuario" class="ticket-summary-avatar">
+      <h3 class="ticket-summary-name">Usuario</h3>
+      <p class="ticket-summary-info">Tickets: 2</p>
+      <p class="ticket-summary-info">Sorteo: #1234</p>
+      <p class="ticket-summary-info">Fecha: 20/10/2025</p>
+
+      <button class="ticket-btn-cart">Ir al carrito</button>
+    </div>
+  </div>
+</section>
+{% endblock %}

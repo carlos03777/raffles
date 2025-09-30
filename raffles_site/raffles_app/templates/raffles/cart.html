@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- =============================
+      🛒 CARRITO
+============================== -->
+<section class="cart">
+  <h1 class="cart__title">Carrito de Tickets</h1>
+
+  <!-- Lista de tickets -->
+  <div class="cart__list" id="cartList">
+    <div class="cart-item">
+      <div class="cart-item__info">
+        <h3>Yamaha MT-09</h3>
+        <p class="cart-item__ticket">Ticket #125</p>
+        <p class="cart-item__price">$50</p>
+      </div>
+      <div class="cart-item__actions">
+        <button class="cart-item__edit" aria-label="Editar ticket">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="cart-item__add" aria-label="Agregar ticket">
+          <i class="fas fa-plus"></i>
+        </button>
+        <button class="cart-item__remove" aria-label="Eliminar ticket">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="cart-item">
+      <div class="cart-item__info">
+        <h3>Honda Africa Twin</h3>
+        <p class="cart-item__ticket">Ticket #77</p>
+        <p class="cart-item__price">$50</p>
+      </div>
+      <div class="cart-item__actions">
+        <button class="cart-item__edit" aria-label="Editar ticket">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="cart-item__add" aria-label="Agregar ticket">
+          <i class="fas fa-plus"></i>
+        </button>
+        <button class="cart-item__remove" aria-label="Eliminar ticket">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen -->
+  <div class="cart__summary">
+    <p>Total: <span id="cartTotal">$100</span></p>
+    <button class="pay-btn">Proceder al Pago</button>
+  </div>
+</section>
+
+{% endblock %}

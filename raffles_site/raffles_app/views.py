@@ -1,8 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Raffle, Ticket, MotorcycleImage
+from .models import Raffle, Ticket, CarouselSlide, MotorcycleImage
 from .forms import TicketPurchaseForm
+
+
+from .models import Raffle, CarouselSlide
+
+def home(request):
+    slides = CarouselSlide.objects.filter(is_active=True).order_by('order')
+    raffles = Raffle.objects.filter(status="open")
+    last_winner = Raffle.objects.filter(status="finished", winner_ticket__isnull=False).order_by("-ends_at").first()
+    return render(request, "raffles/index.html", {
+        "slides": slides,
+        "raffles": raffles,
+        "raffle": last_winner,  # 👈 este lo usa la sección de Ganador
+    })
+
 
 
 def raffle_list(request):
@@ -21,6 +35,24 @@ def raffle_detail(request, raffle_id):
         "raffles/raffle_detail.html",
         {"raffle": raffle, "images": images, "form": form},
     )
+
+def about(request):
+    """Página 'Quiénes Somos'"""
+    return render(request, "raffles/about.html")
+
+
+def cart(request):
+    """Página del carrito de tickets"""
+    return render(request, "raffles/cart.html")
+
+def contact(request):
+    """Página de contacto"""
+    return render(request, "raffles/contact.html")
+
+
+def ticket(request):
+    """Página para compra de tickets (versión estática/visual)."""
+    return render(request, "raffles/ticket.html")
 
 
 @login_required

@@ -231,3 +231,21 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"Boleta {self.number} - {self.user.username} en {self.raffle}"
+
+
+class CarouselSlide(models.Model):
+    """Slide para el carrusel del home."""
+    title = models.CharField(max_length=100, blank=True, help_text="Título opcional del slide")
+    subtitle = models.CharField(max_length=200, blank=True, help_text="Subtítulo o descripción")
+    image = models.ImageField(upload_to="carousel/", help_text="Imagen principal del slide")
+    link = models.URLField(blank=True, help_text="Link opcional al que redirige el slide")
+    order = models.PositiveIntegerField(default=0, help_text="Orden de aparición en el carrusel")
+    is_active = models.BooleanField(default=True, help_text="Mostrar este slide en el carrusel")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.title or f"Slide #{self.id}"

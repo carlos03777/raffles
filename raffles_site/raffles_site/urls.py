@@ -23,6 +23,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("raffles_app.urls")),  # 👈 incluye las rutas de rifas
+
 ]
 
 if settings.DEBUG:

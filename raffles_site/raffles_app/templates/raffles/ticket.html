@@ -2,44 +2,60 @@
 {% load static %}
 
 {% block content %}
-
-
-  <!-- =============================
-        🎟️ SECCIÓN COMPRAR TICKETS
-  ============================== -->
-  <section class="ticket-purchase">
+<section class="ticket-purchase">
   <h2 class="ticket-title">Compra tu ticket</h2>
 
   <div class="ticket-grid">
     <!-- Columna izquierda: formulario -->
     <div class="ticket-form">
-      <div class="ticket-form-group">
-        <label for="ticketCode">Ingresa tu número</label>
+      <form id="ticketForm"
+        method="post"
+        action="{% if is_edit %}{% url 'edit_ticket' ticket.id %}{% else %}{% url 'buy_ticket' raffle.id %}{% endif %}">
+        {% csrf_token %}
+        
         <div class="ticket-code">
-          <input type="text" maxlength="1" inputmode="numeric" aria-label="Dígito 1">
-          <input type="text" maxlength="1" inputmode="numeric" aria-label="Dígito 2">
-          <input type="text" maxlength="1" inputmode="numeric" aria-label="Dígito 3">
-          <input type="text" maxlength="1" inputmode="numeric" aria-label="Dígito 4">
+          <input type="text" name="digit1" maxlength="1" inputmode="numeric">
+          <input type="text" name="digit2" maxlength="1" inputmode="numeric">
+          <input type="text" name="digit3" maxlength="1" inputmode="numeric">
+          <input type="text" name="digit4" maxlength="1" inputmode="numeric">
         </div>
-      </div>
 
-      <!-- Botones -->
-      <div class="ticket-actions">
-        <button type="button" class="ticket-btn ticket-btn-alt">Aleatorio</button>
-        <button type="button" class="ticket-btn ticket-btn-secondary">Vaciar</button>
-        <button type="button" class="ticket-btn ticket-btn-main">Agregar</button>
-      </div>
+        <!-- Aquí pasamos el número completo si es edición -->
+        <input type="hidden" name="number" id="ticketNumber"
+               value="{% if is_edit %}{{ ticket.number }}{% endif %}">
+
+        <div class="ticket-actions">
+          {% if is_edit %}
+            <button type="submit" class="ticket-btn ticket-btn-main">Guardar cambios</button>
+            <a href="{% url 'cart' %}" class="ticket-btn ticket-btn-secondary">Cancelar</a>
+          {% else %}
+            <button type="button" id="randomBtn" class="ticket-btn ticket-btn-alt">Aleatorio</button>
+            <button type="button" id="clearBtn" class="ticket-btn ticket-btn-secondary">Vaciar</button>
+            <button type="submit" class="ticket-btn ticket-btn-main">Agregar</button>
+          {% endif %}
+        </div>
+      </form>
     </div>
 
     <!-- Columna derecha: card resumen -->
     <div class="ticket-summary-card">
-      <img src="https://via.placeholder.com/80" alt="Usuario" class="ticket-summary-avatar">
-      <h3 class="ticket-summary-name">Usuario</h3>
-      <p class="ticket-summary-info">Tickets: 2</p>
-      <p class="ticket-summary-info">Sorteo: #1234</p>
-      <p class="ticket-summary-info">Fecha: 20/10/2025</p>
+      {% if user.is_authenticated %}
+        <img src="{% static 'img/avatar.png' %}" alt="{{ user.username }}" class="ticket-summary-avatar">
+        <h3 class="ticket-summary-name">{{ user.username }}</h3>
+        <p class="ticket-summary-info">Tickets: {{ user.tickets.count }}</p>
+      {% else %}
+        <img src="{% static 'img/avatar.png' %}" alt="Invitado" class="ticket-summary-avatar">
+        <h3 class="ticket-summary-name">Invitado</h3>
+        <p class="ticket-summary-info">Inicia sesión para comprar</p>
+      {% endif %}
 
-      <button class="ticket-btn-cart">Ir al carrito</button>
+      <p class="ticket-summary-info">Sorteo: {{ raffle.id }}</p>
+      <p class="ticket-summary-info">Moto: {{ raffle.motorcycle.brand }} {{ raffle.motorcycle.model }}</p>
+      <p class="ticket-summary-info">Precio: ${{ raffle.ticket_price }}</p>
+      <p class="ticket-summary-info">Fecha: {{ raffle.ends_at|date:"d/m/Y H:i" }}</p>
+
+      <p class="ticket-summary-info ticket-summary-number">Ticket: --</p>
+      <a href="{% url 'cart' %}" class="ticket-btn-cart">Ir al carrito</a>
     </div>
   </div>
 </section>

@@ -56,7 +56,7 @@ body {
   margin: 0 auto;
 }
 .navbar__logo {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: bold;
   color: var(--color-primary);
   text-decoration: none;
@@ -91,7 +91,23 @@ body {
   gap: 1rem;
   margin-left: auto;
 }
-.navbar__icons a {
+
+
+.logout-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit; /* mismo color que el ícono */
+  font-size: 1rem;
+}
+
+.logout-btn i {
+  font-size: 1.2rem;
+}
+
+
+.navbar__icons a  {
   display: flex;
   align-items: center;
   gap: 0.3rem;
@@ -297,12 +313,19 @@ body {
 
 /* ganadores */
 
+.winners-section {
+  margin: 0;
+  padding: 0;
+}
+
 .winners {
+  width: 100%;
+  height: 80vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 3rem;
-  padding: 4rem 2rem;
+  
 }
 
 .winners-card-wrapper { justify-self: center; }
@@ -310,7 +333,10 @@ body {
 
 .section-title {
   text-align: center;
+  
+  margin-top: 4rem;
   margin-bottom: 2rem;
+  padding:2rem;
   color: var(--text);
 }
 
@@ -575,7 +601,7 @@ body {
  /* como funciona */
 
  #how-it-works {
-  padding: 60px 20px;
+  padding: 20px 20px;
   text-align: center;
   background: var(--bg-light);
 }
@@ -587,10 +613,16 @@ body {
   margin-top: 40px;
 }
 
+.steps {
+ margin-top: 2rem;
+ margin-bottom: 2rem;
+
+}
+
 .step i {
   font-size: 3rem;
   color: crimson;
-  margin-bottom: 15px;
+ 
 }
 
 .step h3 {
@@ -671,7 +703,7 @@ body {
 
 .contact-hero {
   position: relative;
-  height: 40vh;
+  height: 60vh;
   background: url("https://picsum.photos/1600/600?random=40") center/cover no-repeat;
   display: flex;
   align-items: center;
@@ -682,6 +714,7 @@ body {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.6);
+  min-width: 100%;
 }
 .contact-hero .hero-content {
   position: relative;
@@ -771,6 +804,261 @@ body {
   border-radius: 10px;
 }
 
+
+/* raffle */
+
+/* ====== Raffle List ====== */
+.raffle-list {
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.raffle-list-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2.5rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.raffle-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+}
+
+.raffle-list-card {
+  background: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.raffle-list-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.raffle-list-card-img img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.raffle-list-card-body {
+  padding: 1rem;
+  text-align: center;
+}
+
+.raffle-list-card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #111;
+}
+
+.raffle-list-card-info {
+  font-size: 0.95rem;
+  margin: 0.25rem 0;
+  color: #444;
+}
+
+.raffle-list-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  background: #007bff;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.raffle-list-btn:hover {
+  background: #0056b3;
+}
+
+.raffle-list-empty {
+  text-align: center;
+  grid-column: 1 / -1;
+  color: #777;
+}
+
+/* raffle detail */
+
+/* =========================
+   RAFFLE DETAIL PAGE
+   ========================= */
+.raffle-detail {
+  margin: 3rem auto;
+  padding: 0 1rem;
+  max-width: 1200px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* --- Título --- */
+.raffle-detail-title {
+  text-align: center;
+  font-size: 2.4rem;
+  margin-bottom: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* --- Layout principal --- */
+.raffle-detail-layout {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* =========================
+   CAROUSEL
+   ========================= */
+.raffle-carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  background: #000;
+}
+
+.raffle-carousel-track {
+  display: flex;
+  transition: transform 0.45s ease-in-out;
+  will-change: transform;
+}
+
+.raffle-carousel-slide {
+  min-width: 100%;
+  user-select: none;
+}
+
+.raffle-carousel-slide img {
+  width: 100%;
+  display: block;
+  border-radius: 1rem;
+  object-fit: cover;
+  max-height: 480px;
+}
+
+/* --- Botones --- */
+.raffle-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  border: none;
+  font-size: 2rem;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.25s, transform 0.2s;
+  z-index: 20;
+  line-height: 1;
+}
+
+.raffle-carousel-btn:hover {
+  background: rgba(0,0,0,0.85);
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* ubicación específica */
+.raffle-carousel-btn.prev {
+  left: 16px;
+}
+.raffle-carousel-btn.next {
+  right: 16px;
+}
+
+/* =========================
+   INFO BOX
+   ========================= */
+.raffle-info {
+  background: rgba(255,255,255,0.06);
+  padding: 2rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+}
+
+.raffle-info-item {
+  margin-bottom: 1.2rem;
+  font-size: 1.1rem;
+  color: #e0e0e0;
+}
+.raffle-info-item span {
+  font-weight: 700;
+  color: #ff6600;
+}
+
+/* --- Descripción --- */
+.raffle-description {
+  margin: 1.8rem 0;
+  color: #ccc;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+/* --- Botón Comprar --- */
+.raffle-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #ff6600, #ff3300);
+  color: #fff;
+  padding: 1rem 2.2rem;
+  border-radius: 0.85rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  transition: transform 0.2s, background 0.35s;
+}
+.raffle-btn:hover {
+  transform: scale(1.06);
+  background: linear-gradient(135deg, #ff3300, #cc0000);
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 1024px) {
+  .raffle-detail-layout {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .raffle-detail-layout {
+    grid-template-columns: 1fr;
+  }
+  .raffle-carousel-slide img {
+    max-height: 380px;
+  }
+}
+
+@media (max-width: 600px) {
+  .raffle-detail {
+    padding: 0 0.5rem;
+  }
+  .raffle-detail-title {
+    font-size: 1.9rem;
+  }
+  .raffle-info {
+    padding: 1.5rem;
+  }
+  .raffle-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+
 /* Footer */
 .contact-footer {
   background: #111;
@@ -790,7 +1078,6 @@ body {
 
 
 /* about */
-/* nosotros */
 /* Hero */
 .about-hero {
   position: relative;
@@ -806,6 +1093,7 @@ body {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.6);
+  min-width: 100%;;
 }
 .about-hero .hero-content {
   position: relative;
@@ -915,92 +1203,100 @@ body {
 
 
 /* cart */
-
 /* =============================
-   🛒 Carrito de tickets
+   🛒 Carrito de tickets (Dark Theme)
 ============================= */
 .cart {
   max-width: 800px;
-  margin: 100px auto 40px;
-  padding: 20px;
-  border-radius: 16px;
-  background: var(--bg-light, #fff);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  margin: 6rem auto 2rem; /* margen superior por navbar */
+  padding: 2rem;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--shadow);
+  color: var(--color-text);
 }
 
 .cart__title {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
   text-align: center;
-  color: var(--text, #222);
+  color: var(--color-primary);
+  font-family: var(--font-heading);
 }
 
-/* Lista */
+/* =========================
+   Lista
+========================= */
 .cart__list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-bottom: 25px;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-/* Ticket */
-
+/* =========================
+   Item del carrito
+========================= */
 .cart-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 18px;
-  border-radius: 12px;
-  background: var(--bg-card, #f9f9f9);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 1rem 1.2rem;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
 }
 
 .cart-item:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .cart-item__info h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text, #333);
-  margin: 0 0 5px;
+  color: var(--color-text);
+  margin: 0 0 0.3rem;
 }
 
 .cart-item__ticket {
   font-size: 0.9rem;
-  color: #777;
+  color: var(--color-muted);
   margin: 0;
 }
 
 .cart-item__price {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--accent, #e55050);
-  margin: 5px 0 0;
+  color: var(--color-primary);
+  margin-top: 0.3rem;
 }
 
 /* Botón eliminar */
 .cart-item__remove {
   border: none;
   background: transparent;
-  color: #999;
+  color: var(--color-muted);
   font-size: 1.2rem;
   cursor: pointer;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: var(--transition);
 }
 
 .cart-item__remove:hover {
-  color: var(--accent, #e55050);
+  color: var(--color-primary);
   transform: scale(1.2);
 }
 
-/* Resumen carrito */
+/* =========================
+   Resumen carrito
+========================= */
 .cart__summary {
-  border-top: 1px solid #eee;
-  padding-top: 15px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1010,46 +1306,73 @@ body {
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
+  color: var(--color-text);
 }
 
+/* =========================
+   Botón pagar
+========================= */
 .pay-btn {
-  padding: 12px 20px;
+  padding: 0.9rem 1.5rem;
   font-size: 1rem;
   font-weight: 600;
   border: none;
-  border-radius: 10px;
-  background: var(--accent, #e55050);
+  border-radius: var(--radius);
+  background: var(--color-primary);
   color: #fff;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: var(--transition);
 }
 
 .pay-btn:hover {
-  background: #c23c3c;
+  background: #e63900;
   transform: translateY(-2px);
 }
 
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 600px) {
+  .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .cart__summary {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .pay-btn {
+    width: 100%;
+  }
+}
+
+
 /* tiket */
 
-
 /* ==============================
-   🎟️ COMPRA DE TICKETS
+   🎟️ COMPRA DE TICKETS (Adaptado)
 ============================== */
 .ticket-purchase {
   padding: 2rem;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.05); /* semi-transparente sobre fondo oscuro */
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   max-width: 1100px;
-  margin: 2rem auto;
+  margin: 6rem auto 2rem; /* margen superior extra por navbar fija */
+  color: var(--color-text);
 }
 
 .ticket-title {
   text-align: center;
-  font-size: 1.8rem;
-  font-weight: 600;
+  font-size: 2rem;
+  font-weight: 700;
   margin-bottom: 2rem;
-  color: #222;
+  color: var(--color-primary);
+  font-family: var(--font-heading);
 }
 
 /* ====================
@@ -1078,9 +1401,9 @@ body {
 }
 
 .ticket-form label {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 500;
-  color: #333;
+  color: var(--color-text);
   text-align: center;
 }
 
@@ -1092,20 +1415,22 @@ body {
 }
 
 .ticket-code input {
-  width: 3.2rem;
-  height: 3.2rem;
+  width: 3rem;
+  height: 3rem;
   text-align: center;
   font-size: 1.4rem;
   font-weight: 600;
-  border: 2px solid #ccc;
-  border-radius: 8px;
+  border: 2px solid var(--color-muted);
+  border-radius: var(--radius);
+  background: #000;
+  color: var(--color-text);
   outline: none;
-  transition: border 0.2s ease, box-shadow 0.2s ease;
+  transition: var(--transition);
 }
 
 .ticket-code input:focus {
-  border-color: #000;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 6px var(--color-primary);
 }
 
 /* ====================
@@ -1120,53 +1445,53 @@ body {
 }
 
 .ticket-btn {
-  padding: 0.75rem 1.5rem;
+  padding: 0.8rem 1.6rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: var(--transition);
 }
 
 /* Botón principal */
 .ticket-btn-main {
-  background: #111;
+  background: var(--color-primary);
   color: #fff;
 }
 .ticket-btn-main:hover {
-  background: #333;
+  background: #e63900;
 }
 
 /* Botón secundario */
 .ticket-btn-secondary {
-  background: #f5f5f5;
-  border: 1px solid #ccc;
-  color: #222;
+  background: transparent;
+  border: 1px solid var(--color-muted);
+  color: var(--color-text);
 }
 .ticket-btn-secondary:hover {
-  background: #e0e0e0;
+  background: rgba(255,255,255,0.08);
 }
 
 /* Botón alterno (aleatorio) */
 .ticket-btn-alt {
-  background: #666;
+  background: #333;
   color: #fff;
 }
 .ticket-btn-alt:hover {
-  background: #444;
+  background: #555;
 }
 
 /* ====================
    Columna derecha (Card)
 ==================== */
 .ticket-summary-card {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius);
   padding: 1.5rem;
   text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow);
 }
 
 .ticket-summary-avatar {
@@ -1175,20 +1500,21 @@ body {
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1rem;
-  border: 2px solid #ccc;
+  border: 2px solid var(--color-muted);
 }
 
 .ticket-summary-name {
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #111;
+  color: var(--color-primary);
 }
 
 .ticket-summary-info {
   margin: 0.3rem 0;
-  color: #444;
+  color: var(--color-text);
   font-size: 0.95rem;
+  opacity: 0.85;
 }
 
 /* Botón "Ir al carrito" */
@@ -1196,18 +1522,18 @@ body {
   display: block;
   width: 100%;
   margin-top: 1.5rem;
-  background: #e55050;
+  background: var(--color-primary);
   color: #fff;
   padding: 0.9rem 1.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: var(--transition);
 }
 .ticket-btn-cart:hover {
-  background: #c23c3c;
+  background: #e63900;
 }
 
 /* ====================
@@ -1223,17 +1549,144 @@ body {
   }
 
   .ticket-code input {
-    width: 2.8rem;
-    height: 2.8rem;
+    width: 2.6rem;
+    height: 2.6rem;
     font-size: 1.2rem;
   }
 }
 
 
+/* login */
 
 
+/* =========================
+   AUTH PAGES (login / signup) - COMPACTO
+   ========================= */
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* cambia a flex-start para que respete el padding */
+  min-height: calc(100vh - 120px);
+  background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
+  padding: 1.5rem;
+  padding-top: 6rem; /* 👈 este empuja hacia abajo el formulario */
+}
 
 
+.auth-box {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1.6rem 1.4rem;
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  width: 100%;
+  max-width: 320px;   /* más reducido */
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.auth-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* Párrafos que Django mete (as_p) */
+.auth-form p {
+  margin: 0 0 0.4rem 0;
+  padding: 0;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #e0e0e0;
+}
+
+/* Labels */
+.auth-form label {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #ff6600;
+}
+
+/* Inputs */
+.auth-form input {
+  width: 100%;
+  padding: 0.5rem 0.7rem; /* más compacto */
+  border-radius: 0.35rem;
+  border: none;
+  outline: none;
+  font-size: 0.8rem;
+  margin-bottom: 0.35rem;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  transition: all 0.25s;
+}
+
+.auth-form input:focus {
+  background: rgba(255,255,255,0.2);
+  box-shadow: 0 0 0 2px #ff6600;
+}
+
+/* Texto de ayuda */
+.auth-form .helptext {
+  font-size: 0.65rem;
+  color: #aaa;
+  margin-top: 0.1rem;
+  display: block;
+  line-height: 1.2;
+}
+
+/* Listas (validación de password) */
+.auth-form ul {
+  font-size: 0.65rem;
+  color: #aaa;
+  margin: 0.2rem 0 0.4rem 0;
+  padding-left: 1rem;
+  line-height: 1.2;
+}
+
+/* Botón */
+.btn-main {
+  display: inline-block;
+  background: linear-gradient(135deg, #ff6600, #ff3300);
+  color: #fff;
+  padding: 0.6rem 1rem;   /* más pequeño */
+  border-radius: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+  margin-top: 0.3rem;
+}
+
+.btn-main:hover {
+  transform: scale(1.02);
+  background: linear-gradient(135deg, #ff3300, #cc0000);
+}
+
+/* Footer */
+.auth-footer {
+  margin-top: 1rem;
+  color: #ccc;
+  font-size: 0.8rem;
+}
+
+.auth-footer a {
+  color: #ff6600;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.auth-footer a:hover {
+  color: #ff3300;
+}
 
 /* footer */
 /* ====== Footer ====== */

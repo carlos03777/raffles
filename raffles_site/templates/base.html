@@ -37,22 +37,27 @@
         <a href="{% url 'home' %}">Inicio</a>
         <a href="{% url 'about' %}">Nosotros</a>
         <a href="{% url 'contact' %}">Contacto</a>
+        <a href="{% url 'raffle_list' %}">Rifas</a>
+
         <a href="">Ganadores</a>
       </div>
 
       <!-- Iconos -->
       <div class="navbar__icons">
-        <a href="" class="cart-icon" title="Carrito">
+        <a href="{% url 'cart' %}" class="cart-icon" title="Carrito">
           <i class="bi bi-cart3"></i>
           <span class="cart-count">0</span>
         </a>
 
         {% if user.is_authenticated %}
-          <a href="" title="Cerrar sesión">
-            <i class="bi bi-box-arrow-right"></i>
-          </a>
+          <form action="{% url 'logout' %}" method="post" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" title="Cerrar sesión" class="logout-btn">
+      <i class="bi bi-box-arrow-right"></i>
+    </button>
+  </form>
         {% else %}
-          <a href="" title="Ingresar">
+          <a href="{% url 'login' %}" title="Ingresar">
             <i class="bi bi-box-arrow-in-right"></i>
           </a>
         {% endif %}

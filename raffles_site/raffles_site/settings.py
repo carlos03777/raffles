@@ -136,3 +136,19 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  # para producción (collectstatic)
 # Archivos de medios (uploads de usuarios, imágenes de motos, etc.)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+LOGIN_URL = "login"            # si no está logueado, lo manda aquí
+LOGIN_REDIRECT_URL = "home"    # después de login va aquí
+LOGOUT_REDIRECT_URL = "home"   # después de logout va aquí
+
+
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "carlosforero2025777@gmail.com"
+EMAIL_HOST_PASSWORD = "iozo bdoo gugr fff d"  # Usa contraseña de aplicación, no la normal
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

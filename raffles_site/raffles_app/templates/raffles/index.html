@@ -9,7 +9,7 @@
 
 
 <!-- 🎯 HERO + CARRUSEL -->
-<section class="hero-carousel" style="height: 500px;">
+<section class="hero-carousel">
   {% if slides %}
     {% for slide in slides %}
       <div class="carousel-slide {% if forloop.first %}active{% endif %}">
@@ -52,7 +52,7 @@
 <!-- =============================
       🔹 Ganador de la rifa
   ============================== -->
-<section id="winners">
+<section id="winners-section">
   <div class="section-title">
     <h2>Último Ganador</h2>
     <p class="subtitle">Transparencia en nuestras rifas</p>
@@ -142,7 +142,7 @@
 
 <!-- como funciona -->
 
-<section id="how-it-works">
+<section id="how-it-works" class="how-it-works">
   <div class="section-title">
     <h2>Cómo funciona</h2>
     <p class="subtitle">Transparencia en cada paso</p>

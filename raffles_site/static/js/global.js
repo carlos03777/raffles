@@ -189,5 +189,151 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", () => (bounds = card.getBoundingClientRect()));
 })();
 
+  /* =========================
+   RAFFLE-CAROUSEL (scoped)
+   Pegar dentro de tu DOMContentLoaded
+   ========================= */
+(function initRaffleCarousel() {
+  const carousel = document.querySelector('.raffle-carousel');
+  if (!carousel) return;
+
+  const track = carousel.querySelector('.raffle-carousel-track');
+  const slides = Array.from(carousel.querySelectorAll('.raffle-carousel-slide'));
+  const prevBtn = carousel.querySelector('.raffle-carousel-prev');
+  const nextBtn = carousel.querySelector('.raffle-carousel-next');
+
+  if (!track || slides.length === 0) return;
+
+  let index = 0;
+  let autoplayTimer = null;
+
+  function update() {
+    // mover el track
+    track.style.transform = `translateX(-${index * 100}%)`;
+
+    // accesibilidad: marcar aria-hidden para las slides inactivas
+    slides.forEach((s, i) => s.setAttribute('aria-hidden', i !== index ? 'true' : 'false'));
+  }
+
+  function next() {
+    index = (index + 1) % slides.length;
+    update();
+  }
+
+  function prev() {
+    index = (index - 1 + slides.length) % slides.length;
+    update();
+  }
+
+  // listeners controles
+  if (nextBtn) nextBtn.addEventListener('click', next);
+  if (prevBtn) prevBtn.addEventListener('click', prev);
+
+  // keyboard (cuando el carousel tiene foco)
+  carousel.setAttribute('tabindex', '0'); // hace focusable
+  carousel.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') next();
+    if (e.key === 'ArrowLeft') prev();
+  });
+
+  // autoplay (opcional) y pausa al hover/focus
+  if (slides.length > 1) {
+    const startAutoplay = () => {
+      clearInterval(autoplayTimer);
+      autoplayTimer = setInterval(next, 5000);
+    };
+    const stopAutoplay = () => clearInterval(autoplayTimer);
+
+    startAutoplay();
+    carousel.addEventListener('mouseenter', stopAutoplay);
+    carousel.addEventListener('mouseleave', startAutoplay);
+    carousel.addEventListener('focusin', stopAutoplay);
+    carousel.addEventListener('focusout', startAutoplay);
+  }
+
+  // init
+  update();
+
+  // DEBUG helpers (descomenta si necesitas ver en consola)
+  // console.log('raffle carousel inited, slides:', slides.length);
+})();
+(function() {
+  const section = document.querySelector(".ticket-purchase");
+  if (!section) return;
+
+  const inputs = section.querySelectorAll(".ticket-code input");
+  const btnAleatorio = section.querySelector(".ticket-btn-alt");
+  const btnVaciar = section.querySelector(".ticket-btn-secondary");
+  const form = section.querySelector("#ticketForm");
+  const hiddenInput = section.querySelector("#ticketNumber");
+
+  // Elementos del card resumen
+  const summaryCard = section.querySelector(".ticket-summary-card");
+  const summaryNumber = summaryCard?.querySelector(".ticket-summary-number");
+
+  if (!inputs.length) return;
+
+  // Helpers
+  const getTicketCode = () => Array.from(inputs).map((i) => i.value).join("");
+  const setTicketCode = (code) => {
+    inputs.forEach((i, idx) => (i.value = code[idx] || ""));
+  };
+  const focusFirstEmpty = () => {
+    const firstEmpty = Array.from(inputs).find((i) => !i.value);
+    (firstEmpty || inputs[0]).focus();
+  };
+
+  // 👉 Rellenar casillas si hiddenInput tiene valor (caso EDITAR)
+  if (hiddenInput && hiddenInput.value) {
+    const code = hiddenInput.value.toString().padStart(inputs.length, "0");
+    setTicketCode(code);
+  }
+
+  // Navegación entre inputs
+  inputs.forEach((input, index) => {
+    input.addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\D/g, "");
+      if (e.target.value && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    });
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Backspace" && !input.value && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
+  });
+
+  // Aleatorio
+  btnAleatorio?.addEventListener("click", () => {
+    const randomCode = Array.from({ length: inputs.length }, () =>
+      Math.floor(Math.random() * 10)
+    ).join("");
+    setTicketCode(randomCode);
+    inputs[inputs.length - 1].focus();
+  });
+
+  // Vaciar
+  btnVaciar?.addEventListener("click", () => {
+    setTicketCode("");
+    inputs[0].focus();
+  });
+
+  // Submit
+  form?.addEventListener("submit", (e) => {
+    const code = getTicketCode();
+    if (code.length !== inputs.length) {
+      e.preventDefault();
+      alert("Debes ingresar un número de ticket completo.");
+      return;
+    }
+    hiddenInput.value = parseInt(code, 10); // guardamos como número
+    if (summaryNumber) {
+      summaryNumber.textContent = `Ticket #${code}`;
+    }
+  });
+})();
+
+
 
 }); // end DOMContentLoaded

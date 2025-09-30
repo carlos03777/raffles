@@ -1,26 +1,36 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-4">
-    <h1>Rifas de Motos</h1>
-    <div class="row">
+<section class="raffle-list container">
+    <h1 class="raffle-list-title">🎟️ Rifas de Motos</h1>
+
+    <div class="raffle-list-grid">
         {% for raffle in raffles %}
-            <div class="col-md-4">
-                <div class="card mb-3">
-                    {% if raffle.motorcycle.images.first %}
-                        <img src="{{ raffle.motorcycle.images.first.image.url }}" class="card-img-top" alt="Moto">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ raffle.motorcycle.brand }} {{ raffle.motorcycle.model }}</h5>
-                        <p>Precio boleta: ${{ raffle.ticket_price }}</p>
-                        <p>Disponibles: {{ raffle.available_tickets }}</p>
-                        <a href="{% url 'raffle_detail' raffle.id %}" class="btn btn-primary">Ver rifa</a>
+            <div class="raffle-list-card">
+                {% if raffle.motorcycle.images.first %}
+                    <div class="raffle-list-card-img">
+                        <img src="{{ raffle.motorcycle.images.first.image.url }}" alt="Moto">
                     </div>
+                {% endif %}
+                <div class="raffle-list-card-body">
+                    <h5 class="raffle-list-card-title">
+                        {{ raffle.motorcycle.brand }} {{ raffle.motorcycle.model }}
+                    </h5>
+                    <p class="raffle-list-card-info">
+                        💰 <strong>${{ raffle.ticket_price }}</strong>
+                    </p>
+                    <p class="raffle-list-card-info">
+                        🎫 {{ raffle.available_tickets }} disponibles
+                    </p>
+                    <a href="{% url 'raffle_detail' raffle.id %}" class="raffle-list-btn">
+                        Ver rifa
+                    </a>
                 </div>
             </div>
         {% empty %}
-            <p>No hay rifas disponibles en este momento.</p>
+            <p class="raffle-list-empty">No hay rifas disponibles en este momento.</p>
         {% endfor %}
     </div>
-</div>
+</section>
 {% endblock %}

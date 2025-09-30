@@ -41,23 +41,96 @@ def about(request):
     return render(request, "raffles/about.html")
 
 
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib import messages
+from .forms import SignUpForm
+
+
+def signup(request):
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # inicia sesión automáticamente
+            messages.success(request, "🎉 Tu cuenta fue creada con éxito")
+            return redirect("raffle_list")  # ajusta al nombre de tu home
+    else:
+        form = SignUpForm()
+    return render(request, "raffles/signup.html", {"form": form})
+
+
+
+from django.db.models import Sum
+
+@login_required
 def cart(request):
-    """Página del carrito de tickets"""
-    return render(request, "raffles/cart.html")
+    """Página del carrito de tickets del usuario autenticado"""
+    tickets = Ticket.objects.filter(user=request.user, payment_status="pending").select_related("raffle")
+
+    total = tickets.aggregate(
+        total=Sum("raffle__ticket_price")
+    )["total"] or 0
+
+    return render(request, "raffles/cart.html", {
+        "tickets": tickets,
+        "total": total,
+    })
+
+
+@login_required
+def edit_ticket(request, ticket_id):
+    ticket = get_object_or_404(
+        Ticket, id=ticket_id, user=request.user, payment_status="pending"
+    )
+    raffle = ticket.raffle
+
+    if request.method == "POST":
+        number = request.POST.get("number")
+        if number and number.isdigit() and len(number) == 4:
+            try:
+                ticket.number = int(number)  # 👈 aseguramos que sea int
+                ticket.save()  # validación: rango y duplicados
+                messages.success(request, f"Ticket #{ticket.number} actualizado.")
+                return redirect("cart")
+            except ValueError as e:
+                messages.error(request, str(e))
+        else:
+            messages.error(request, "Número inválido. Debe ser de 4 dígitos.")
+
+    return render(
+        request,
+        "raffles/ticket.html",
+        {
+            "raffle": raffle,
+            "ticket": ticket,
+            "is_edit": True,  # 👈 indicador para el template
+        },
+    )
+
+
+
+
+@login_required
+def remove_ticket(request, ticket_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user, payment_status="pending")
+    if request.method == "POST":
+        ticket.delete()
+        messages.success(request, f"El ticket #{ticket.number} fue eliminado de tu carrito.")
+    return redirect("cart")
+
 
 def contact(request):
     """Página de contacto"""
     return render(request, "raffles/contact.html")
 
 
-def ticket(request):
-    """Página para compra de tickets (versión estática/visual)."""
-    return render(request, "raffles/ticket.html")
-
+def ticket(request, raffle_id):
+    raffle = get_object_or_404(Raffle, id=raffle_id)
+    return render(request, "raffles/ticket.html", {"raffle": raffle})
 
 @login_required
 def buy_ticket(request, raffle_id):
-    """Compra de boleta (manual o aleatoria)."""
     raffle = get_object_or_404(Raffle, id=raffle_id)
 
     if request.method == "POST":
@@ -70,18 +143,21 @@ def buy_ticket(request, raffle_id):
                     user=request.user,
                     number=number
                 )
-                messages.success(request, f"¡Boleta {ticket.number} comprada con éxito!")
-                return redirect("ticket_detail", ticket_id=ticket.id)
+                messages.success(request, f"¡Boleta #{ticket.number} agregada al carrito!")
+                return redirect("cart")
             except ValueError as e:
                 messages.error(request, str(e))
+        else:
+            messages.error(request, "Número inválido. Debe ser de 4 dígitos.")
     else:
         form = TicketPurchaseForm()
 
-    return render(
-        request,
-        "raffles/buy_ticket.html",
-        {"raffle": raffle, "form": form},
-    )
+    # 👇 reusar el mismo template de compra de tickets
+    return render(request, "raffles/ticket.html", {
+        "raffle": raffle,
+        "form": form,
+    })
+
 
 
 @login_required

@@ -1,26 +1,47 @@
-
-
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
+<section class="raffle-detail container">
+  <h1 class="raffle-detail-title">
+    {{ raffle.motorcycle.brand }} {{ raffle.motorcycle.model }} ({{ raffle.motorcycle.year }})
+  </h1>
 
+  <div class="raffle-detail-layout">
+    <!-- Carousel -->
+   <div class="raffle-carousel" aria-roledescription="carousel">
+  <div class="raffle-carousel-track">
+    {% for img in images %}
+      <div class="raffle-carousel-slide">
+        <img src="{{ img.image.url }}" alt="Imagen {{ forloop.counter }}">
+      </div>
+    {% endfor %}
+  </div>
 
-<h1>{{ raffle.motorcycle.brand }} {{ raffle.motorcycle.model }} ({{ raffle.motorcycle.year }})</h1>
+  {# sólo mostramos controles si hay más de 1 imagen #}
+  {% if images|length > 1 %}
+   <button type="button" class="raffle-carousel-prev raffle-carousel-btn prev" aria-label="Anterior">‹</button>
+<button type="button" class="raffle-carousel-next raffle-carousel-btn next" aria-label="Siguiente">›</button>
 
-<p>Precio boleta: ${{ raffle.ticket_price }}</p>
-<p>Disponibles: {{ raffle.available_tickets }}</p>
-
-<div>
-  {% for img in images %}
-    <img src="{{ img.image.url }}" width="200">
-  {% endfor %}
+  {% endif %}
 </div>
 
-<h2>Comprar boleta</h2>
-<form method="post" action="{% url 'buy_ticket' raffle.id %}">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Comprar</button>
-</form>
 
+    <!-- Info -->
+    <div class="raffle-info">
+      <p class="raffle-info-item"><span>💰 Precio boleta:</span> ${{ raffle.ticket_price }}</p>
+      <p class="raffle-info-item"><span>🎫 Disponibles:</span> {{ raffle.available_tickets }}</p>
+      <p class="raffle-info-item"><span>🛞 Kilometraje:</span> {{ raffle.motorcycle.mileage|default:"0 km" }}</p>
+      <p class="raffle-info-item"><span>⚡ Estado:</span> {{ raffle.motorcycle.condition|default:"Nuevo" }}</p>
+      <p class="raffle-info-item"><span>📅 Inicio:</span> {{ raffle.start_date|date:"d M Y" }}</p>
+      <p class="raffle-info-item"><span>🏆 Sorteo:</span> {{ raffle.draw_date|date:"d M Y" }}</p>
+
+      {% if raffle.description %}
+      <p class="raffle-description">{{ raffle.description }}</p>
+      {% endif %}
+<a href="{% url 'ticket' raffle.id %}" class="raffle-btn">🎟️ Comprar Ticket</a>
+
+    </div>
+  </div>
+</section>
 {% endblock %}

@@ -101,6 +101,10 @@ def activate(request, uidb64, token):
     else:
         return render(request, "raffles/account_activation_invalid.html")
 
+def winners_view(request):
+    # Suponiendo que quieres mostrar el último ganador
+    raffle = Raffle.objects.filter(winner_ticket__isnull=False).order_by('-created_at').first()
+    return render(request, "raffles/winners.html", {"raffle": raffle})
 
 
 

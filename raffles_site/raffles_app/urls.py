@@ -12,6 +12,9 @@ urlpatterns = [
     
     path("raffle/<int:raffle_id>/ticket/", views.ticket, name="ticket"),
 
+    path("winners/", views.winners_view, name="winners"),
+
+
     path("signup/", views.signup, name="signup"),
     path("activate/<uidb64>/<token>/", views.activate, name="activate"),
 
@@ -28,7 +31,6 @@ urlpatterns = [
     path("cart/", views.cart, name="cart"),  # ✅ nueva ruta
     path("cart/remove/<int:ticket_id>/", views.remove_ticket, name="remove_ticket"),
     path("cart/edit/<int:ticket_id>/", views.edit_ticket, name="edit_ticket"),
-    path("raffle/<int:raffle_id>/buy/", views.buy_ticket, name="buy_ticket"),
 
     path("contact/", views.contact, name="contact"),  # ✅ nueva ruta
     path("ticket/", views.ticket, name="ticket"),  # ✅ nueva ruta

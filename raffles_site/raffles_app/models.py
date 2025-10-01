@@ -135,10 +135,32 @@ class Raffle(models.Model):
             return False
         return hashlib.sha256(self.seed_reveal.encode()).hexdigest() == self.seed_commitment
 
+    # def pick_winner_commit_reveal(self):
+    #     """Selecciona un ganador de manera transparente."""
+    #     tickets = list(self.tickets.all())
+    #     if not tickets:
+    #         return None
+
+    #     if not self.verify_commit():
+    #         raise ValueError("Seed reveal no coincide con el commitment.")
+
+    #     digest = hashlib.sha256((self.seed_reveal + str(len(tickets))).encode()).hexdigest()
+    #     idx = int(digest, 16) % len(tickets)
+    #     winner = tickets[idx]
+    #     self.winner_ticket = winner
+    #     self.status = "finished"
+    #     self.save()
+    #     return winner
+
+
+
     def pick_winner_commit_reveal(self):
         """Selecciona un ganador de manera transparente."""
         tickets = list(self.tickets.all())
         if not tickets:
+            # No hay participantes -> cerramos sin ganador
+            self.status = "closed"
+            self.save()
             return None
 
         if not self.verify_commit():
@@ -151,6 +173,8 @@ class Raffle(models.Model):
         self.status = "finished"
         self.save()
         return winner
+
+    
 
     def available_tickets(self):
         """Cuántos tickets quedan disponibles."""

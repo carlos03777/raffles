@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block content %}
-<section class="ticket-purchase">
+<!-- Sección compra de ticket -->
+<section class="ticket-purchase" data-max-tickets="{{ raffle.max_tickets }}">
   <h2 class="ticket-title">Compra tu ticket</h2>
 
   <div class="ticket-grid">
@@ -23,6 +24,11 @@
         <!-- Aquí pasamos el número completo si es edición -->
         <input type="hidden" name="number" id="ticketNumber"
                value="{% if is_edit %}{{ ticket.number }}{% endif %}">
+
+        <!-- Mensaje de rango -->
+        <p class="ticket-hint">
+          Ingresa un número entre <strong>1</strong> y <strong>{{ raffle.max_tickets }}</strong>
+        </p>
 
         <div class="ticket-actions">
           {% if is_edit %}

@@ -12,81 +12,97 @@
 
   <div class="winners">
     {% if raffle %}
-    <!-- Columna izquierda: Card -->
-    <div class="winners-card-wrapper">
-      <div class="winners-minimap">
-        <span>x: 0</span>
-        <span>y: 0</span>
-      </div>
+      {% if raffle.winner_ticket %}
+      <!-- ============================
+            📌 Caso con ganador
+      ============================= -->
+      <div class="winners-card-wrapper">
+        <div class="winners-minimap">
+          <span>x: 0</span>
+          <span>y: 0</span>
+        </div>
 
-      <!-- Tarjeta holográfica -->
-      <div class="winners-card" role="region" aria-label="Tarjeta holográfica" data-active="false">
-        <div class="winners-card-inner">
-          
-          <!-- Frente -->
-          <div class="winners-card-front">
-            <h3 class="winners-card-name">{{ raffle.motorcycle.brand }}</h3>
+        <!-- Tarjeta holográfica -->
+        <div class="winners-card" role="region" aria-label="Tarjeta holográfica" data-active="false">
+          <div class="winners-card-inner">
+            
+            <!-- Frente -->
+            <div class="winners-card-front">
+              <h3 class="winners-card-name">{{ raffle.motorcycle.brand }}</h3>
 
-            <div class="winners-card-bg" 
-                 style="background-image: url('{% static 'img/pngwing.png' %}');">
-              <div class="winners-face-highlight"></div>
-            </div>
-            <div class="winners-glare"></div>
-
-            <!-- Logos -->
-            <section class="winners-logo-grid" aria-label="Marcas">
-              {% for img in raffle.motorcycle.images.all %}
-              <div class="winners-logo" style="--icon: url('{{ img.image.url }}')">
-                <div class="winners-logo-icon"></div>
+              <div class="winners-card-bg" 
+                   style="background-image: url('{% static 'img/pngwing.png' %}');">
+                <div class="winners-face-highlight"></div>
               </div>
-              {% endfor %}
-            </section>
+              <div class="winners-glare"></div>
 
-            <!-- Marca de agua -->
-            <div class="winners-card-watermark">
-              <span class="modelo">{{ raffle.motorcycle.model }}</span>
-              <span class="anio">{{ raffle.motorcycle.year }}</span>
-              <span class="estado">
-                {% if raffle.motorcycle.is_new %}Nueva{% else %}Usada{% endif %}
-              </span>
+              <!-- Logos -->
+              <section class="winners-logo-grid" aria-label="Marcas">
+                {% for img in raffle.motorcycle.images.all %}
+                <div class="winners-logo" style="--icon: url('{{ img.image.url }}')">
+                  <div class="winners-logo-icon"></div>
+                </div>
+                {% endfor %}
+              </section>
+
+              <!-- Marca de agua -->
+              <div class="winners-card-watermark">
+                <span class="modelo">{{ raffle.motorcycle.model }}</span>
+                <span class="anio">{{ raffle.motorcycle.year }}</span>
+                <span class="estado">
+                  {% if raffle.motorcycle.is_new %}Nueva{% else %}Usada{% endif %}
+                </span>
+              </div>
+
+              <!-- Flecha -->
+              <div class="winners-arrow">↓</div>
+
+              <!-- Botón flip -->
+              <button class="winners-flip-btn" aria-pressed="false">
+                <span>Voltear</span>
+              </button>
             </div>
 
-            <!-- Flecha -->
-            <div class="winners-arrow">↓</div>
+            <!-- Reverso -->
+            <div class="winners-card-back">
+              <div class="winners-card-bg" 
+                   style="background: url('{% static 'img/back-pattern.png' %}') center/cover no-repeat;">
+              </div>
+              <div class="winners-glare"></div>
 
-            <!-- Botón flip -->
-            <button class="winners-flip-btn" aria-pressed="false">
-              <span>Voltear</span>
-            </button>
-          </div>
+              <!-- Foto -->
+              <div class="winners-photo">
+                <img src="{% static 'img/persona.jpg' %}" alt="Foto del ganador">
+              </div>
 
-          <!-- Reverso -->
-          <div class="winners-card-back">
-            <div class="winners-card-bg" 
-                 style="background: url('{% static 'img/back-pattern.png' %}') center/cover no-repeat;">
-            </div>
-            <div class="winners-glare"></div>
-
-            <!-- Foto -->
-            <div class="winners-photo">
-              <img src="{% static 'img/persona.jpg' %}" alt="Foto del ganador">
-            </div>
-
-            <!-- Info -->
-            <div class="winners-info">
-              <h3 class="winners-name">
-                {{ raffle.winner_ticket.user.get_full_name|default:raffle.winner_ticket.user.username }}
-              </h3>
-              <p class="winners-number">Ticket #{{ raffle.winner_ticket.number }}</p>
-              <p class="winners-ig">
-                <i class="fab fa-instagram"></i> @{{ raffle.winner_ticket.user.username }}
-              </p>
+              <!-- Info -->
+              <div class="winners-info">
+                <h3 class="winners-name">
+                  {{ raffle.winner_ticket.user.get_full_name|default:raffle.winner_ticket.user.username }}
+                </h3>
+                <p class="winners-number">Ticket #{{ raffle.winner_ticket.number }}</p>
+                <p class="winners-ig">
+                  <i class="fab fa-instagram"></i> @{{ raffle.winner_ticket.user.username }}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      
+      {% else %}
+      <!-- ============================
+            🚫 Caso sin participantes
+      ============================= -->
+      <div class="winners-empty text-center">
+        <img src="{% static 'img/empty.png' %}" alt="Sin participantes" class="winners-empty-img">
+        <p class="subtitle">🚫 La rifa terminó sin participantes.</p>
+      </div>
+      {% endif %}
     {% else %}
+    <!-- ============================
+          ℹ️ Caso sin rifas cerradas
+    ============================= -->
     <p class="text-center">Aún no hay ganadores registrados.</p>
     {% endif %}
   </div>

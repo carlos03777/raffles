@@ -1532,6 +1532,23 @@ body {
   gap: 0.7rem;
 }
 
+
+/* Estilos para la pista (ticket-hint) */
+.ticket-hint {
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #bbb; /* gris suave */
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.ticket-hint strong {
+  color: #ff6600; /* mismo naranja de tu botón "Agregar" */
+  font-weight: 600;
+}
+
+
 .ticket-code input {
   width: 3rem;
   height: 3rem;

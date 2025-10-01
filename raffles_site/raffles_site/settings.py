@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #mis apps
     'raffles_app',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -153,3 +154,10 @@ EMAIL_HOST_USER = "carlosforero2025777@gmail.com"
 EMAIL_HOST_PASSWORD = "iozo bdoo gugr fff d"  # Usa contraseña de aplicación, no la normal
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+
+
+
+
+CRONJOBS = [
+    ('*/10 * * * *', 'django.core.management.call_command', ['close_raffles']),
+]

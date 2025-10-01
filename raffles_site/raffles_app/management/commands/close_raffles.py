@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from raffles.models import Raffle
+
+from raffles_app.models import Raffle
+
 
 class Command(BaseCommand):
     help = "Cierra rifas vencidas y asigna ganador automáticamente"

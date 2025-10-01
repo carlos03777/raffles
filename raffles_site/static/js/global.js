@@ -304,6 +304,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const summaryCard = section.querySelector(".ticket-summary-card");
   const summaryNumber = summaryCard?.querySelector(".ticket-summary-number");
 
+  // 👉 Aquí leemos el máximo permitido desde el atributo data
+  const maxTickets = parseInt(section.dataset.maxTickets, 10) || 9999;
+
   if (!inputs.length) return;
 
   // Helpers
@@ -339,17 +342,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Aleatorio
   btnAleatorio?.addEventListener("click", () => {
-    const randomCode = Array.from({ length: inputs.length }, () =>
-      Math.floor(Math.random() * 10)
-    ).join("");
-    setTicketCode(randomCode);
+    // número aleatorio entre 1 y maxTickets
+    const randomNum = Math.floor(Math.random() * maxTickets) + 1;
+
+    // Convertimos a string con ceros a la izquierda según inputs
+    const code = randomNum.toString().padStart(inputs.length, "0");
+
+    setTicketCode(code);
+    hiddenInput.value = randomNum; // guardamos el número como entero
     inputs[inputs.length - 1].focus();
+
+    if (summaryNumber) {
+      summaryNumber.textContent = `Ticket #${code}`;
+    }
   });
 
   // Vaciar
   btnVaciar?.addEventListener("click", () => {
     setTicketCode("");
+    hiddenInput.value = "";
     inputs[0].focus();
+    if (summaryNumber) {
+      summaryNumber.textContent = "Ticket: --";
+    }
   });
 
   // Submit
@@ -366,6 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 })();
+
 
 
 

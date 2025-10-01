@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Raffle, Ticket, CarouselSlide, MotorcycleImage
-from .forms import TicketPurchaseForm
+from .forms import TicketPurchaseForm, ProfileForm
 
 
 from .models import Raffle, CarouselSlide
@@ -172,3 +172,19 @@ def user_profile(request):
     """Perfil con todas las rifas del usuario."""
     tickets = Ticket.objects.filter(user=request.user).select_related("raffle")
     return render(request, "raffles/user_profile.html", {"tickets": tickets})
+
+
+
+
+@login_required
+def profile_view(request):
+    profile = request.user.profile  # el perfil del usuario logueado
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect("profile")  # redirige a la misma página
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, "profile.html", {"form": form, "profile": profile})

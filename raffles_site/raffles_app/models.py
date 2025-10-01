@@ -4,7 +4,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 import secrets, hashlib, random, uuid
 
-
 class Profile(models.Model):
     """
     Perfil extendido para cada usuario.
@@ -12,23 +11,21 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     phone = models.CharField(max_length=20, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
-    document_id = models.CharField(max_length=50, blank=True, null=True)  # Ej: cédula
+    document_id = models.CharField(max_length=50, blank=True, null=True)
+    photo = models.ImageField(upload_to="profiles/", blank=True, null=True)  # Nueva foto
 
     def __str__(self):
         return self.user.username
 
     def raffles_participated(self):
-        """Retorna las rifas en las que este usuario ha comprado tickets."""
         return Raffle.objects.filter(tickets__user=self.user).distinct()
 
 
-# Señal para crear Profile automático al registrar usuario
 @receiver(post_save, sender=User)
-def create_or_update_profile(sender, instance, created, **kwargs):
+def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-    else:
-        instance.profile.save()
+
 
 
 class Motorcycle(models.Model):

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="profile-container">
+  <div class="profile-box">
+    <h2>Mi Perfil</h2>
+
+    <div class="profile-info">
+      {% if profile.photo %}
+        <img src="{{ profile.photo.url }}" alt="Foto de perfil" class="profile-photo">
+      {% else %}
+        <img src="{% static 'img/default-avatar.png' %}" alt="Sin foto" class="profile-photo">
+      {% endif %}
+      <p><strong>Usuario:</strong> {{ profile.user.username }}</p>
+      <p><strong>Email:</strong> {{ profile.user.email }}</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="profile-form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn-main">Guardar cambios</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

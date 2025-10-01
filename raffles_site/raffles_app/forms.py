@@ -5,6 +5,12 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+
+
+
+
+
+
 class TicketPurchaseForm(forms.Form):
     number = forms.IntegerField(
         required=False,
@@ -38,3 +44,10 @@ class SignUpForm(UserCreationForm):
                 document_id=self.cleaned_data.get("document_id"),
             )
         return user
+
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ["phone", "city", "document_id", "photo"]

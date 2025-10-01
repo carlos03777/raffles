@@ -86,7 +86,7 @@ body {
 }
 
 /* ===== ICONOS A LA DERECHA ===== */
-.navbar__icons {
+/* .navbar__icons {
   display: flex;
   gap: 1rem;
   margin-left: auto;
@@ -98,7 +98,7 @@ body {
   border: none;
   padding: 0;
   cursor: pointer;
-  color: inherit; /* mismo color que el ícono */
+  color: inherit; 
   font-size: 1rem;
 }
 
@@ -117,7 +117,86 @@ body {
 }
 .navbar__icons a:hover {
   color: #e63946;
+} */
+
+/* ===== DROPDOWN PERFIL ===== */
+/* Estilo general de iconos */
+.navbar__icons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
 }
+
+.navbar__icons a,
+.user-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: color 0.3s;
+}
+
+.navbar__icons a:hover,
+.user-icon:hover {
+  color: #e63946;
+}
+
+/* --- Dropdown personalizado --- */
+.user-menu {
+  position: relative;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  display: none; /* oculto por defecto */
+  min-width: 160px;
+  z-index: 1000;
+}
+
+.user-dropdown li {
+  padding: 0;
+}
+
+.user-dropdown a,
+.user-dropdown button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.user-dropdown a:hover,
+.user-dropdown button:hover {
+  background: #f5f5f5;
+}
+
+/* logout btn coherente */
+.logout-btn {
+  width: 100%;
+  text-align: left;
+}
+
+
 
 /* ===== HAMBURGUESA ===== */
 .navbar__toggle {
@@ -150,6 +229,45 @@ body {
 }
 
 /* ===== MOBILE ===== */
+
+@media (max-width: 768px) {
+ 
+
+  
+  .user-icon {
+    margin: 0 auto; /* asegura que quede en el centro */
+  }
+}
+
+
+@media (max-width: 768px) {
+  /* Dropdown se vuelve estático */
+  .user-dropdown {
+    position: static;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    display: none; /* sigue oculto al inicio */
+    width: 100%;
+    padding-left: auto;
+    padding-right: auto;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .user-dropdown li a,
+  .user-dropdown li button {
+    color: var(--color-primary);
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    text-align: center;   /* centrado del texto */
+
+  }
+
+ 
+}
+
 @media (max-width: 768px) {
   .navbar__menu {
     position: absolute;

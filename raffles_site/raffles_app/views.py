@@ -1,8 +1,20 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from .models import Raffle, Ticket, CarouselSlide, MotorcycleImage
 from .forms import TicketPurchaseForm, ProfileForm
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib import messages
+from .forms import SignUpForm
+from django.db.models import Sum
+
+
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from .tokens import account_activation_token
 
 
 from .models import Raffle, CarouselSlide
@@ -41,27 +53,56 @@ def about(request):
     return render(request, "raffles/about.html")
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib import messages
-from .forms import SignUpForm
 
 
 def signup(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)  # inicia sesión automáticamente
-            messages.success(request, "🎉 Tu cuenta fue creada con éxito")
-            return redirect("raffle_list")  # ajusta al nombre de tu home
+            user = form.save(commit=False)
+            user.is_active = False  # 👈 inactivo hasta confirmar
+            user.save()
+
+            current_site = get_current_site(request)
+            mail_subject = "Activa tu cuenta"
+            message = render_to_string("raffles/account_activation_email.html", {
+                "user": user,
+                "domain": current_site.domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": account_activation_token.make_token(user),
+            })
+            email = EmailMessage(mail_subject, message, to=[form.cleaned_data.get("email")])
+            email.send()
+
+            return render(request, "raffles/account_activation_sent.html")
     else:
         form = SignUpForm()
     return render(request, "raffles/signup.html", {"form": form})
 
 
 
-from django.db.models import Sum
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)  # opcional, lo loguea directo
+        return render(request, "raffles/account_activation_success.html")
+    else:
+        return render(request, "raffles/account_activation_invalid.html")
+
+
+
 
 @login_required
 def cart(request):
@@ -171,7 +212,7 @@ def ticket_detail(request, ticket_id):
 def user_profile(request):
     """Perfil con todas las rifas del usuario."""
     tickets = Ticket.objects.filter(user=request.user).select_related("raffle")
-    return render(request, "raffles/user_profile.html", {"tickets": tickets})
+    return render(request, "raffles/profile.html", {"tickets": tickets})
 
 
 
@@ -188,3 +229,30 @@ def profile_view(request):
         form = ProfileForm(instance=profile)
 
     return render(request, "profile.html", {"form": form, "profile": profile})
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import UserEditForm, ProfileEditForm
+
+@login_required
+def profile_edit(request):
+    user = request.user
+    profile = user.profile
+
+    if request.method == "POST":
+        user_form = UserEditForm(request.POST, instance=user)
+        profile_form = ProfileEditForm(request.POST, request.FILES, instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect("user_profile")
+    else:
+        user_form = UserEditForm(instance=user)
+        profile_form = ProfileEditForm(instance=profile)
+
+    return render(request, "raffles/profile_edit.html", {
+        "user_form": user_form,
+        "profile_form": profile_form,
+    })

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-box">
+    <h2 class="auth-title">Editar Perfil</h2>
+    <form method="post" enctype="multipart/form-data" class="auth-form">
+      {% csrf_token %}
+      {{ user_form.as_p }}
+      {{ profile_form.as_p }}
+      <button type="submit" class="btn-main">Guardar cambios</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

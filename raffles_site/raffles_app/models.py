@@ -9,6 +9,7 @@ class Profile(models.Model):
     Perfil extendido para cada usuario.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    photo = models.ImageField(upload_to="profiles/", blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     document_id = models.CharField(max_length=50, blank=True, null=True)

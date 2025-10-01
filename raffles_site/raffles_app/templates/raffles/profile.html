@@ -1,25 +1,32 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<section class="profile-container">
-  <div class="profile-box">
-    <h2>Mi Perfil</h2>
+<section class="auth-container">
+  <div class="auth-box">
+    <h2 class="auth-title">Mi Perfil</h2>
 
-    <div class="profile-info">
-      {% if profile.photo %}
-        <img src="{{ profile.photo.url }}" alt="Foto de perfil" class="profile-photo">
+    <!-- Foto de perfil -->
+    <div class="profile-photo">
+      {% if user.profile.photo %}
+        <img src="{{ user.profile.photo.url }}" alt="Foto de perfil">
       {% else %}
-        <img src="{% static 'img/default-avatar.png' %}" alt="Sin foto" class="profile-photo">
+        <img src="{% static 'images/default-avatar.png' %}" alt="Avatar por defecto">
       {% endif %}
-      <p><strong>Usuario:</strong> {{ profile.user.username }}</p>
-      <p><strong>Email:</strong> {{ profile.user.email }}</p>
     </div>
 
-    <form method="post" enctype="multipart/form-data" class="profile-form">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn-main">Guardar cambios</button>
-    </form>
+    <!-- Datos del usuario -->
+    <ul class="profile-data">
+      <li><strong>Usuario:</strong> {{ user.username }}</li>
+      <li><strong>Email:</strong> {{ user.email }}</li>
+      <li><strong>Teléfono:</strong> {{ user.profile.phone|default:"-" }}</li>
+      <li><strong>Ciudad:</strong> {{ user.profile.city|default:"-" }}</li>
+      <li><strong>Documento:</strong> {{ user.profile.document_id|default:"-" }}</li>
+    </ul>
+
+    <!-- Acciones -->
+    <div class="profile-actions">
+      <a href="{% url 'profile_edit' %}" class="btn-main">Editar perfil</a>
+    </div>
   </div>
 </section>
 {% endblock %}

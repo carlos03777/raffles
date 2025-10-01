@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-box">
+    <h1 class="auth-title">Enlace inválido ❌</h1>
+    <p style="color:#ddd; font-size:0.9rem;">
+      El enlace de activación ya no es válido o ha expirado.  
+      Si todavía no has activado tu cuenta, puedes solicitar un nuevo correo de activación.
+    </p>
+    <a href="{% url 'signup' %}" class="btn-main">Registrarse de nuevo</a>
+    <div class="auth-footer">
+      <a href="{% url 'login' %}">Ir al inicio de sesión</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

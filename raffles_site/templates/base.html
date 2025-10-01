@@ -43,7 +43,7 @@
       </div>
 
       <!-- Iconos -->
-      <div class="navbar__icons">
+      <!-- <div class="navbar__icons">
         <a href="{% url 'cart' %}" class="cart-icon" title="Carrito">
           <i class="bi bi-cart3"></i>
           <span class="cart-count">0</span>
@@ -61,7 +61,39 @@
             <i class="bi bi-box-arrow-in-right"></i>
           </a>
         {% endif %}
-      </div>
+      </div> -->
+
+      <!-- Iconos -->
+<div class="navbar__icons">
+  <!-- Carrito -->
+  <a href="{% url 'cart' %}" class="cart-icon" title="Carrito">
+    <i class="bi bi-cart3"></i>
+    <span class="cart-count">0</span>
+  </a>
+
+  <!-- Menú usuario -->
+  <div class="user-menu">
+    <button class="user-icon" id="userMenuBtn">
+      <i class="bi bi-person-circle"></i>
+    </button>
+    <ul class="user-dropdown" id="userDropdown">
+      {% if user.is_authenticated %}
+<li><a href="{% url 'user_profile' %}">Perfil</a></li>
+        <li>
+          <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Cerrar sesión</button>
+          </form>
+        </li>
+      {% else %}
+        <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
+        <li><a href="{% url 'signup' %}">Registrarse</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+
+
     </div>
 
     <!-- Botón hamburguesa -->

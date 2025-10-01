@@ -33,6 +33,39 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   })();
+  
+
+  /* =========================
+     NAVBAR: user dropdown
+     ========================= */
+  (function initUserDropdown() {
+    const btn = document.getElementById("userMenuBtn");
+    const menu = document.getElementById("userDropdown");
+    if (!btn || !menu) return;
+
+    // Toggle dropdown
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    });
+
+    // Click fuera → cerrar
+    document.addEventListener("click", (e) => {
+      if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.style.display = "none";
+      }
+    });
+
+    // Escape → cerrar
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        menu.style.display = "none";
+      }
+    });
+  })();
+
+
+
 
   /* =========================
      HERO: carousel / slides

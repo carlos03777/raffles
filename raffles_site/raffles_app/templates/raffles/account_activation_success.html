@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-box">
+    <h1 class="auth-title">¡Cuenta activada! 🎉</h1>
+    <p style="color:#ddd; font-size:0.9rem;">
+      Tu cuenta ha sido activada exitosamente.  
+      Ahora puedes iniciar sesión y participar en nuestras rifas.
+    </p>
+    <a href="{% url 'login' %}" class="btn-main">Iniciar sesión</a>
+  </div>
+</div>
+{% endblock %}

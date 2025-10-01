@@ -11,13 +11,19 @@ urlpatterns = [
     path("raffle/<int:raffle_id>/buy/", views.buy_ticket, name="buy_ticket"),  # Comprar ticket
     
     path("raffle/<int:raffle_id>/ticket/", views.ticket, name="ticket"),
+
     path("signup/", views.signup, name="signup"),
+    path("activate/<uidb64>/<token>/", views.activate, name="activate"),
+
        # login y logout
     # path("login/", auth_views.LoginView.as_view(template_name="templates/raffles/login.html"), name="login"),
     path("accounts/logout/", auth_views.LogoutView.as_view(next_page="home"), name="logout"),
     path("accounts/login/", auth_views.LoginView.as_view(template_name="raffles/login.html"), name="login"),
 
     path("profile/", views.user_profile, name="user_profile"),  # Perfil
+    path("profile/edit/", views.profile_edit, name="profile_edit"),
+
+
     path("about/", views.about, name="about"),  # ✅ nueva ruta
     path("cart/", views.cart, name="cart"),  # ✅ nueva ruta
     path("cart/remove/<int:ticket_id>/", views.remove_ticket, name="remove_ticket"),

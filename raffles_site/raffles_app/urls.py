@@ -43,5 +43,8 @@ urlpatterns = [
 
     path("reset/done/", auth_views.PasswordResetCompleteView.as_view(template_name="raffles/password_reset_complete.html"), name="password_reset_complete"),
 
+    path("checkout/", views.checkout, name="checkout"),
+    path("payment/success/", views.payment_success, name="payment_success"),
+
 
 ]

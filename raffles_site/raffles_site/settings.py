@@ -167,3 +167,11 @@ TIME_ZONE = 'America/Bogota'
 CRONJOBS = [
     ('*/10 * * * *', 'django.core.management.call_command', ['close_raffles']),
 ]
+
+# pagos
+
+# Wompi
+WOMPI_PUBLIC_KEY = "pub_test_KGAaw9rhVA3qwVhmZZNzWPVYjgRYOOUx"
+WOMPI_PRIVATE_KEY = "prv_test_wFisBFHGu1zksKJfxeL4yozBgENpcS5A"
+WOMPI_EVENTS_SECRET = "test_events_3wbcKjBhc3OBqsB19ItbndJGathPDgUY"
+WOMPI_BASE_URL = "https://sandbox.wompi.co/v1"  # 👈 solo hasta /v1

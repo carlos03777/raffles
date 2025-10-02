@@ -171,7 +171,7 @@ class Raffle(models.Model):
 
     def pick_winner_commit_reveal(self):
         """Selecciona un ganador de manera transparente."""
-        tickets = list(self.tickets.all())
+        tickets = list(self.tickets.filter(payment_status="paid"))  # 👈 solo pagados
         if not tickets:
             # No hay participantes -> cerramos sin ganador
             self.status = "closed"
@@ -193,7 +193,7 @@ class Raffle(models.Model):
 
     def available_tickets(self):
         """Cuántos tickets quedan disponibles."""
-        ocupados = self.tickets.count()
+        ocupados = self.tickets.filter(payment_status="paid").count()
         return self.max_tickets - ocupados
 
     def is_active(self):
@@ -254,6 +254,12 @@ class Ticket(models.Model):
         default="pending",
         db_index=True
     )
+    payment_reference = models.CharField(
+    max_length=100,
+    blank=True,
+    null=True,
+    db_index=True
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -284,9 +290,8 @@ class Ticket(models.Model):
         """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
         if self.number is None:
             posibles = set(range(1, self.raffle.max_tickets + 1))
-            ocupados = set(
-                Ticket.objects.filter(raffle=self.raffle).values_list("number", flat=True)
-            )
+            ocupados = set(Ticket.objects.filter(raffle=self.raffle,payment_status="paid").values_list("number", flat=True))
+
             libres = list(posibles - ocupados)
             if not libres:
                 raise ValueError("No quedan boletas disponibles en esta rifa.")
@@ -296,7 +301,9 @@ class Ticket(models.Model):
                 raise ValueError("El número elegido está fuera del rango permitido.")
             if Ticket.objects.filter(
                 raffle=self.raffle,
-                number=self.number
+                number=self.number,
+                payment_status="paid"   # 👈 aquí está el cambio
+
             ).exclude(pk=self.pk).exists():
                 raise ValueError(f"La boleta {self.number} ya está ocupada en esta rifa.")
 

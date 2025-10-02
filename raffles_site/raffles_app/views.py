@@ -108,10 +108,28 @@ def winners_view(request):
 
 
 
+# @login_required
+# def cart(request):
+#     """Página del carrito de tickets del usuario autenticado"""
+#     tickets = Ticket.objects.filter(user=request.user, payment_status="pending").select_related("raffle")
+
+#     total = tickets.aggregate(
+#         total=Sum("raffle__ticket_price")
+#     )["total"] or 0
+
+#     return render(request, "raffles/cart.html", {
+#         "tickets": tickets,
+#         "total": total,
+#     })
+
 @login_required
 def cart(request):
     """Página del carrito de tickets del usuario autenticado"""
-    tickets = Ticket.objects.filter(user=request.user, payment_status="pending").select_related("raffle")
+    tickets = Ticket.objects.filter(
+        user=request.user,
+        payment_status="pending",
+        raffle__status="open"   # 👈 filtro agregado
+    ).select_related("raffle")
 
     total = tickets.aggregate(
         total=Sum("raffle__ticket_price")
@@ -261,6 +279,7 @@ def profile_edit(request):
         "profile_form": profile_form,
     })
 
+import hashlib
 import requests, uuid
 from django.conf import settings
 from django.shortcuts import redirect, render
@@ -269,37 +288,46 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Ticket
 
-import uuid
-from django.conf import settings
-from django.shortcuts import redirect
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from .models import Ticket
-
 
 @login_required
 def checkout(request):
+    # ✅ Tickets pendientes del usuario
     tickets = Ticket.objects.filter(user=request.user, payment_status="pending")
+
+    # ❌ Excluir rifas cerradas o vencidas
+    tickets = [t for t in tickets if t.raffle.status != "closed"]
+
+    if not tickets:
+        return HttpResponse("No tienes tickets válidos en el carrito.", status=400)
+
     total = sum([float(t.raffle.ticket_price) for t in tickets])
 
-    if total <= 0:
-        return HttpResponse("No tienes tickets en el carrito.", status=400)
-
+    # ✅ Generar referencia única
     reference = f"order-{request.user.id}-{uuid.uuid4()}"
+    amount_in_cents = int(total * 100)
+    currency = "COP"
 
-    # 🚀 Redirección al Checkout de Wompi (no se hace POST desde el servidor)
+    # ✅ Generar firma de integridad
+    integrity_secret = settings.WOMPI_INTEGRITY_SECRET.strip()
+    raw_signature = f"{reference}{amount_in_cents}{currency}{integrity_secret}"
+    signature = hashlib.sha256(raw_signature.encode("utf-8")).hexdigest()
+
+    # ✅ Guardar la referencia en los tickets válidos
+    Ticket.objects.filter(id__in=[t.id for t in tickets]).update(payment_reference=reference)
+
+    # ✅ URL de checkout Wompi
     checkout_url = (
         f"https://checkout.wompi.co/p/?"
         f"public-key={settings.WOMPI_PUBLIC_KEY}"
-        f"&currency=COP"
-        f"&amount-in-cents={int(total * 100)}"
+        f"&currency={currency}"
+        f"&amount-in-cents={amount_in_cents}"
         f"&reference={reference}"
-        f"&redirect-url=http://127.0.0.1:8000/payment/return/"
+        f"&redirect-url=http://localhost:8000/payment/return/"
         f"&customer-email={request.user.email}"
+        f"&signature:integrity={signature}"
     )
 
     return redirect(checkout_url)
-
 
 
 @login_required
@@ -309,53 +337,57 @@ def payment_return(request):
         messages.error(request, "No se recibió el ID de transacción.")
         return redirect("cart")
 
-    url = f"https://sandbox.wompi.co/v1/transactions/{transaction_id}"
-    headers = {
-        # 🔑 Aquí sí usas la PRIVATE KEY
-        "Authorization": f"Bearer {settings.WOMPI_PRIVATE_KEY}"
-    }
+    # ✅ Consultar transacción en Wompi
+    url = f"{settings.WOMPI_BASE_URL}/transactions/{transaction_id}"
+    headers = {"Authorization": f"Bearer {settings.WOMPI_PRIVATE_KEY}"}
 
-    response = requests.get(url, headers=headers)
-    wompi_response = response.json()
+    try:
+        response = requests.get(url, headers=headers)
+        data = response.json()
+    except Exception as e:
+        messages.error(request, f"Error al consultar Wompi: {e}")
+        return redirect("cart")
 
-    status = wompi_response["data"]["status"]
+    status = data.get("data", {}).get("status", "UNKNOWN")
+    reference = data.get("data", {}).get("reference")
 
-    if status == "APPROVED":
-        Ticket.objects.filter(user=request.user, payment_status="pending").update(payment_status="paid")
-        messages.success(request, "✅ Pago exitoso, tus tickets están activos.")
-    else:
-        Ticket.objects.filter(user=request.user, payment_status="pending").update(payment_status="failed")
-        messages.error(request, f"El pago no fue aprobado. Estado: {status}")
+    # ✅ Tickets asociados
+    tickets = Ticket.objects.filter(payment_reference=reference, payment_status="pending")
 
-    return redirect("user_profile")
+    for ticket in tickets:
+        if ticket.raffle.status == "closed":
+            # 🚫 No permitir pagos de rifas cerradas
+            ticket.payment_status = "failed"
+        else:
+            if status == "APPROVED":
+                ticket.payment_status = "paid"
+            elif status == "DECLINED":
+                ticket.payment_status = "failed"
+            else:
+                ticket.payment_status = "pending"
+        ticket.save()
+
+    # Redirigir a success
+    return redirect(f"/payment/success/?id={transaction_id}&status={status}")
 
 
 @login_required
 def payment_success(request):
+    status = request.GET.get("status")
     transaction_id = request.GET.get("id")
 
-    if not transaction_id:
+    if not transaction_id or not status:
         messages.error(request, "No se pudo verificar el pago.")
         return redirect("cart")
 
-    url = f"{settings.WOMPI_BASE_URL}/transactions/{transaction_id}"
-    headers = {"Authorization": f"Bearer {settings.WOMPI_PUBLIC_KEY}"}
-
-    try:
-        response = requests.get(url, headers=headers)
-        wompi_response = response.json()
-    except Exception:
-        messages.error(request, "Error al procesar la respuesta de Wompi.")
-        return redirect("cart")
-
-    status = wompi_response.get("data", {}).get("status")
-
+    # ✅ Mensajes según estado
     if status == "APPROVED":
-        Ticket.objects.filter(user=request.user, payment_status="pending").update(payment_status="paid")
-        messages.success(request, "¡Pago exitoso! Tus tickets ya están activos.")
+        messages.success(request, "✅ ¡Pago exitoso! Tus tickets ya están activos.")
+    elif status == "DECLINED":
+        messages.error(request, "❌ El pago fue rechazado.")
+    elif status == "PENDING":
+        messages.warning(request, "⏳ Tu pago está en proceso, te notificaremos cuando se confirme.")
     else:
-        Ticket.objects.filter(user=request.user, payment_status="pending").update(payment_status="failed")
-        messages.error(request, "El pago no fue aprobado. Intenta de nuevo.")
+        messages.warning(request, f"⚠️ Estado desconocido: {status}.")
 
     return redirect("user_profile")
-

@@ -109,11 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
 
-USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -174,4 +170,6 @@ CRONJOBS = [
 WOMPI_PUBLIC_KEY = "pub_test_KGAaw9rhVA3qwVhmZZNzWPVYjgRYOOUx"
 WOMPI_PRIVATE_KEY = "prv_test_wFisBFHGu1zksKJfxeL4yozBgENpcS5A"
 WOMPI_EVENTS_SECRET = "test_events_3wbcKjBhc3OBqsB19ItbndJGathPDgUY"
+WOMPI_INTEGRITY_SECRET = "test_integrity_oZGoUHob1gD0AFhhDDzuu5EOxXObIVuj"
+
 WOMPI_BASE_URL = "https://sandbox.wompi.co/v1"  # 👈 solo hasta /v1

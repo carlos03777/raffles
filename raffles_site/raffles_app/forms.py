@@ -22,6 +22,30 @@ class TicketPurchaseForm(forms.Form):
 
 
 
+# class SignUpForm(UserCreationForm):
+#     phone = forms.CharField(max_length=20, required=False, label="Teléfono")
+#     city = forms.CharField(max_length=100, required=False, label="Ciudad")
+#     document_id = forms.CharField(max_length=50, required=False, label="Documento de identidad")
+
+#     class Meta:
+#         model = User
+#         fields = ("username", "email", "password1", "password2", "phone", "city", "document_id")
+
+#     def save(self, commit=True):
+#         user = super().save(commit=False)
+#         user.is_staff = False       # 🔒 no admin
+#         user.is_superuser = False   # 🔒 no superusuario
+#         if commit:
+#             user.save()
+#             # La señal ya crea el Profile, solo actualizamos
+#             Profile.objects.filter(user=user).update(
+#                 phone=self.cleaned_data.get("phone"),
+#                 city=self.cleaned_data.get("city"),
+#                 document_id=self.cleaned_data.get("document_id"),
+#             )
+#         return user
+
+
 class SignUpForm(UserCreationForm):
     phone = forms.CharField(max_length=20, required=False, label="Teléfono")
     city = forms.CharField(max_length=100, required=False, label="Ciudad")
@@ -31,19 +55,25 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ("username", "email", "password1", "password2", "phone", "city", "document_id")
 
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Este email ya está en uso.")
+        return email
+
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.is_staff = False       # 🔒 no admin
-        user.is_superuser = False   # 🔒 no superusuario
+        user.is_staff = False
+        user.is_superuser = False
         if commit:
             user.save()
-            # La señal ya crea el Profile, solo actualizamos
             Profile.objects.filter(user=user).update(
                 phone=self.cleaned_data.get("phone"),
                 city=self.cleaned_data.get("city"),
                 document_id=self.cleaned_data.get("document_id"),
             )
         return user
+
 
 
 

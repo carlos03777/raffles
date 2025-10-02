@@ -1,32 +1,66 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<section class="auth-container">
-  <div class="auth-box">
-    <h2 class="auth-title">Mi Perfil</h2>
+<section class="profile-section">
+  <div class="profile-container">
 
-    <!-- Foto de perfil -->
-    <div class="profile-photo">
-      {% if user.profile.photo %}
-        <img src="{{ user.profile.photo.url }}" alt="Foto de perfil">
+    <!-- Card de perfil -->
+    <div class="profile-card">
+      <h2 class="auth-title">Mi Perfil</h2>
+
+      <div class="profile-photo">
+        {% if user.profile.photo %}
+          <img src="{{ user.profile.photo.url }}" alt="Foto de perfil">
+        {% else %}
+          <img src="{% static 'images/default-avatar.png' %}" alt="Avatar por defecto">
+        {% endif %}
+      </div>
+
+      <ul class="profile-data">
+        <li><strong>Usuario:</strong> {{ user.username }}</li>
+        <li><strong>Email:</strong> {{ user.email }}</li>
+        <li><strong>Teléfono:</strong> {{ user.profile.phone|default:"-" }}</li>
+        <li><strong>Ciudad:</strong> {{ user.profile.city|default:"-" }}</li>
+        <li><strong>Documento:</strong> {{ user.profile.document_id|default:"-" }}</li>
+      </ul>
+
+      <div class="profile-actions">
+        <a href="{% url 'profile_edit' %}" class="btn-main">Editar perfil</a>
+      </div>
+    </div>
+
+    <!-- Tabla de tickets -->
+    <div class="profile-tickets-container">
+      <h3 class="profile-history-title">Mis Tickets</h3>
+      {% if tickets %}
+      <div class="profile-tickets-table-container">
+        <table class="profile-tickets-table">
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Rifa</th>
+              <th>Fecha de compra</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ticket in tickets %}
+            <tr>
+              <td>#{{ ticket.number }}</td>
+              <td>{{ ticket.raffle }}</td>
+              <td>{{ ticket.created_at|date:"d M Y H:i" }}</td>
+              <td>{{ ticket.raffle.status }}</td>
+              <td class="profile-ticket-status {{ ticket.status|lower }}">{{ ticket.status }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       {% else %}
-        <img src="{% static 'images/default-avatar.png' %}" alt="Avatar por defecto">
+        <p class="profile-no-tickets">No tienes tickets comprados aún.</p>
       {% endif %}
     </div>
 
-    <!-- Datos del usuario -->
-    <ul class="profile-data">
-      <li><strong>Usuario:</strong> {{ user.username }}</li>
-      <li><strong>Email:</strong> {{ user.email }}</li>
-      <li><strong>Teléfono:</strong> {{ user.profile.phone|default:"-" }}</li>
-      <li><strong>Ciudad:</strong> {{ user.profile.city|default:"-" }}</li>
-      <li><strong>Documento:</strong> {{ user.profile.document_id|default:"-" }}</li>
-    </ul>
-
-    <!-- Acciones -->
-    <div class="profile-actions">
-      <a href="{% url 'profile_edit' %}" class="btn-main">Editar perfil</a>
-    </div>
   </div>
 </section>
 {% endblock %}

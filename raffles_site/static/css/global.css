@@ -1737,6 +1737,9 @@ body {
   color: #e0e0e0;
 }
 
+
+
+
 /* Labels */
 .auth-form label {
   display: block;
@@ -1822,6 +1825,140 @@ body {
 .auth-footer a:hover {
   color: #ff3300;
 }
+
+
+
+
+
+/* profile */
+
+.profile-section {
+
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.profile-container {
+    margin-top: 4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+/* Card de perfil */
+.profile-card {
+    flex: 1 1 250px;
+    background-color: #2c2c2c;
+    color: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    min-width: 250px;
+}
+
+.profile-photo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+.profile-data li {
+    margin: 0.5rem 0;
+}
+
+.profile-actions {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.profile-actions .btn-main {
+    background-color: #ff6600;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+/* Tabla de tickets mejorada */
+.profile-tickets-container {
+    flex: 3 1 700px;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+.profile-history-title {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.profile-tickets-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Espaciado entre filas */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.profile-tickets-table th {
+    background-color: #ff6600;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.profile-tickets-table td {
+    background-color: #fdfdfd;
+    padding: 0.75rem 1rem;
+    border-bottom: none;
+    color: #2c3e50;
+}
+
+.profile-tickets-table tr {
+    transition: all 0.3s ease;
+}
+
+.profile-tickets-table tr:hover td {
+    background-color: #ffece0;
+    transform: translateY(-2px);
+}
+
+.profile-ticket-status {
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.profile-ticket-status.paid {
+    color: #27ae60;
+    background-color: #eafaf1;
+}
+
+.profile-ticket-status.pending {
+    color: #f39c12;
+    background-color: #fff7e6;
+}
+
+.profile-ticket-status.canceled {
+    color: #c0392b;
+    background-color: #fdecea;
+}
+
+.profile-no-tickets {
+    text-align: center;
+    color: #888;
+    padding: 1rem 0;
+}
+
 
 /* footer */
 /* ====== Footer ====== */

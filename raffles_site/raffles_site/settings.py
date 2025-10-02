@@ -156,6 +156,12 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 
+# Habilita el soporte de zonas horarias
+USE_TZ = True
+
+# Configura la zona horaria a Colombia
+TIME_ZONE = 'America/Bogota'
+
 
 
 CRONJOBS = [

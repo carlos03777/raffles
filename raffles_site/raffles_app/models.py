@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 import secrets, hashlib, random, uuid
+from django.core.exceptions import ValidationError
+
 
 class Profile(models.Model):
     """
@@ -12,7 +14,8 @@ class Profile(models.Model):
     photo = models.ImageField(upload_to="profiles/", blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
-    document_id = models.CharField(max_length=50, blank=True, null=True)
+    document_id = models.CharField(max_length=50, unique=True, blank=True, null=True)  # ✅ único
+
 
     def __str__(self):
         return self.user.username
@@ -25,6 +28,18 @@ class Profile(models.Model):
 def create_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+@receiver(pre_save, sender=User)
+def validate_email_constraints(sender, instance, **kwargs):
+    # Unicidad
+    if User.objects.filter(email=instance.email).exclude(pk=instance.pk).exists():
+        raise ValidationError(f"El email {instance.email} ya está en uso.")
+
+    # Inmutabilidad
+    if instance.pk:  # usuario ya existe
+        old_email = User.objects.filter(pk=instance.pk).values_list("email", flat=True).first()
+        if old_email and old_email != instance.email:
+            raise ValidationError("El email no puede modificarse una vez registrado.")
 
 
 
@@ -193,6 +208,21 @@ class Raffle(models.Model):
     def user_has_ticket(self, user):
         """Retorna True si un usuario ya tiene un ticket en esta rifa."""
         return self.tickets.filter(user=user).exists()
+    
+    def close_if_expired(self):
+        """Cierra la rifa si ya pasó la fecha de finalización."""
+        from django.utils import timezone
+        now = timezone.now()
+        if self.status == "open" and self.ends_at <= now:
+        # Si no hay participantes, se cierra sin ganador
+            if not self.tickets.exists():
+                self.status = "closed"
+                self.save()
+                return None
+            # Si hay participantes, se asigna ganador
+            return self.pick_winner_commit_reveal()
+        return None
+
 
 
 class Ticket(models.Model):
@@ -231,6 +261,25 @@ class Ticket(models.Model):
         unique_together = ('raffle', 'number')
         ordering = ['number']
 
+    # def save(self, *args, **kwargs):
+    #     """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
+    #     if self.number is None:
+    #         posibles = set(range(1, self.raffle.max_tickets + 1))
+    #         ocupados = set(
+    #             Ticket.objects.filter(raffle=self.raffle).values_list("number", flat=True)
+    #         )
+    #         libres = list(posibles - ocupados)
+    #         if not libres:
+    #             raise ValueError("No quedan boletas disponibles en esta rifa.")
+    #         self.number = random.choice(libres)
+    #     else:
+    #         if self.number < 1 or self.number > self.raffle.max_tickets:
+    #             raise ValueError("El número elegido está fuera del rango permitido.")
+    #         if Ticket.objects.filter(raffle=self.raffle, number=self.number).exists():
+    #             raise ValueError(f"La boleta {self.number} ya está ocupada en esta rifa.")
+
+    #     super().save(*args, **kwargs)
+
     def save(self, *args, **kwargs):
         """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
         if self.number is None:
@@ -245,10 +294,19 @@ class Ticket(models.Model):
         else:
             if self.number < 1 or self.number > self.raffle.max_tickets:
                 raise ValueError("El número elegido está fuera del rango permitido.")
-            if Ticket.objects.filter(raffle=self.raffle, number=self.number).exists():
+            if Ticket.objects.filter(
+                raffle=self.raffle,
+                number=self.number
+            ).exclude(pk=self.pk).exists():
                 raise ValueError(f"La boleta {self.number} ya está ocupada en esta rifa.")
 
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.payment_status == "paid":
+            raise ValueError("No se pueden eliminar tickets que ya fueron pagados.")
+        super().delete(*args, **kwargs)
+
 
     def __str__(self):
         return f"Boleta {self.number} - {self.user.username} en {self.raffle}"

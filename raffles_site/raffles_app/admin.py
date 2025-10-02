@@ -39,14 +39,51 @@ class RaffleAdmin(admin.ModelAdmin):
     inlines = [TicketInline]
     readonly_fields = ("seed_commitment", "seed_reveal", "winner_ticket")
 
+    def get_readonly_fields(self, request, obj=None):
+        """
+        Si la rifa ya no está 'open', todos los campos quedan solo de lectura.
+        """
+        if obj and obj.status != "open":
+            return [f.name for f in self.model._meta.fields]
+        return super().get_readonly_fields(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        """
+        Bloquear eliminar rifas cerradas o terminadas.
+        """
+        if obj and obj.status != "open":
+            return False
+        return super().has_delete_permission(request, obj)
+
+
+
+
+
 
 # ---------------- Ticket ---------------- #
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ("raffle", "number", "user", "payment_status", "created_at")
+    list_display = ("raffle", "number", "user", "payment_status", "raffle_status", "created_at")
     list_filter = ("payment_status", "raffle__status")
     search_fields = ("user__username", "raffle__motorcycle__brand", "raffle__motorcycle__model")
-    readonly_fields = ("code", "created_at")
+    readonly_fields = ("code", "created_at", "number", "user", "raffle")
+
+    def raffle_status(self, obj):
+        return obj.raffle.status
+    raffle_status.short_description = "Estado de la rifa"
+
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.payment_status == "paid":
+            return False
+        return super().has_delete_permission(request, obj)
+    
+    def get_readonly_fields(self, request, obj=None):
+        if obj and obj.payment_status == "paid":
+            return [f.name for f in self.model._meta.fields]  # todos readonly
+        return super().get_readonly_fields(request, obj)
+
+
+
 
 
 

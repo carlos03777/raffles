@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="ticket-history-container">
+  <h2 class="history-title">Historial de Tickets</h2>
+
+  {% if tickets %}
+    <div class="tickets-grid">
+      {% for ticket in tickets %}
+        <div class="ticket-card">
+          <div class="ticket-header">
+            <span class="ticket-number">#{{ ticket.number }}</span>
+            <span class="ticket-status {{ ticket.status|lower }}">{{ ticket.status }}</span>
+          </div>
+          <div class="ticket-body">
+            <p><strong>Evento:</strong> {{ ticket.event.name }}</p>
+            <p><strong>Fecha de compra:</strong> {{ ticket.created_at|date:"d M Y H:i" }}</p>
+            <p><strong>Asiento:</strong> {{ ticket.seat|default:"Asignación aleatoria" }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="no-tickets">No tienes tickets comprados aún.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -5,7 +5,7 @@
   <div class="profile-container">
 
     <!-- Card de perfil -->
-    <div class="profile-card">
+    <!-- <div class="profile-card">
       <h2 class="auth-title">Mi Perfil</h2>
 
       <div class="profile-photo">
@@ -27,7 +27,47 @@
       <div class="profile-actions">
         <a href="{% url 'profile_edit' %}" class="btn-main">Editar perfil</a>
       </div>
+    </div> -->
+
+    <div class="profile-card">
+  <h2 class="profile-auth-title">Mi Perfil</h2>
+
+  <div class="profile-photo">
+    {% if user.profile.photo %}
+      <img src="{{ user.profile.photo.url }}" alt="Foto de perfil">
+    {% else %}
+      <img src="{% static 'images/default-avatar.png' %}" alt="Avatar por defecto">
+    {% endif %}
+  </div>
+
+  <div class="profile-data">
+    <div class="profile-row">
+      <span class="label">Usuario:</span>
+      <span class="value">{{ user.username }}</span>
     </div>
+    <div class="profile-row">
+      <span class="label">Email:</span>
+      <span class="value">{{ user.email }}</span>
+    </div>
+    <div class="profile-row">
+      <span class="label">Teléfono:</span>
+      <span class="value">{{ user.profile.phone|default:"-" }}</span>
+    </div>
+    <div class="profile-row">
+      <span class="label">Ciudad:</span>
+      <span class="value">{{ user.profile.city|default:"-" }}</span>
+    </div>
+    <div class="profile-row">
+      <span class="label">Documento:</span>
+      <span class="value">{{ user.profile.document_id|default:"-" }}</span>
+    </div>
+  </div>
+
+  <div class="profile-actions">
+    <a href="{% url 'profile_edit' %}" class="btn-main">Editar perfil</a>
+  </div>
+</div>
+
 
     <!-- Tabla de tickets -->
     <div class="profile-tickets-container">

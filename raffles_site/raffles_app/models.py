@@ -40,6 +40,8 @@ def validate_email_constraints(sender, instance, **kwargs):
         old_email = User.objects.filter(pk=instance.pk).values_list("email", flat=True).first()
         if old_email and old_email != instance.email:
             raise ValidationError("El email no puede modificarse una vez registrado.")
+        
+
 
 
 

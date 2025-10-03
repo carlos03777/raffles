@@ -1,65 +1,65 @@
-{% extends 'base.html' %}
-{% load static %}
+  {% extends 'base.html' %}
+  {% load static %}
 
-{% block content %}
-<!-- =============================
-      🛒 CARRITO
-============================== -->
-<section class="cart">
-  <h1 class="cart__title">Carrito de Tickets</h1>
+  {% block content %}
+  <!-- =============================
+        🛒 CARRITO
+  ============================== -->
+  <section class="cart">
+    <h1 class="cart__title">Carrito de Tickets</h1>
 
-  <!-- Lista de tickets -->
-  <div class="cart__list" id="cartList">
-    {% if tickets %}
-      {% for ticket in tickets %}
-        <div class="cart-item">
-          <div class="cart-item__info">
-            <h3>{{ ticket.raffle.motorcycle.brand }} {{ ticket.raffle.motorcycle.model }}</h3>
-            <p class="cart-item__ticket">Ticket #{{ ticket.number }}</p>
-            <p class="cart-item__price">${{ ticket.raffle.ticket_price }}</p>
+    <!-- Lista de tickets -->
+    <div class="cart__list" id="cartList">
+      {% if tickets %}
+        {% for ticket in tickets %}
+          <div class="cart-item">
+            <div class="cart-item__info">
+              <h3>{{ ticket.raffle.motorcycle.brand }} {{ ticket.raffle.motorcycle.model }}</h3>
+              <p class="cart-item__ticket">Ticket #{{ ticket.number }}</p>
+              <p class="cart-item__price">${{ ticket.raffle.ticket_price }}</p>
+            </div>
+          <div class="cart-item__actions">
+    <!-- Editar -->
+    <a href="{% url 'edit_ticket' ticket.id %}" class="cart-item__edit" aria-label="Editar ticket">
+      <i class="fas fa-edit"></i>
+    </a>
+
+    <!-- Agregar otro -->
+    <a href="{% url 'buy_ticket' ticket.raffle.id %}" class="cart-item__add" aria-label="Agregar ticket">
+      <i class="fas fa-plus"></i>
+    </a>
+
+    <!-- Eliminar -->
+    <form action="{% url 'remove_ticket' ticket.id %}" method="post" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" class="cart-item__remove" aria-label="Eliminar ticket">
+        <i class="fas fa-trash"></i>
+      </button>
+    </form>
+  </div>
+
           </div>
-         <div class="cart-item__actions">
-  <!-- Editar -->
-  <a href="{% url 'edit_ticket' ticket.id %}" class="cart-item__edit" aria-label="Editar ticket">
-    <i class="fas fa-edit"></i>
-  </a>
+        {% endfor %}
+      {% else %}
+        <p style="text-align:center; color:var(--color-muted);">
+          Tu carrito está vacío 🛒
+        </p>
+      {% endif %}
+    </div>
 
-  <!-- Agregar otro -->
-  <a href="{% url 'buy_ticket' ticket.raffle.id %}" class="cart-item__add" aria-label="Agregar ticket">
-    <i class="fas fa-plus"></i>
-  </a>
-
-  <!-- Eliminar -->
-  <form action="{% url 'remove_ticket' ticket.id %}" method="post" style="display:inline;">
+    <!-- Resumen -->
+    {% if tickets %}
+    <div class="cart__summary">
+      <p>Total: <span id="cartTotal">
+        ${{ total }}
+      </span></p>
+      <!-- <button class="pay-btn">Proceder al Pago</button> -->
+      <form action="{% url 'checkout' %}" method="post">
     {% csrf_token %}
-    <button type="submit" class="cart-item__remove" aria-label="Eliminar ticket">
-      <i class="fas fa-trash"></i>
-    </button>
+    <button type="submit" class="pay-btn">Proceder al Pago</button>
   </form>
-</div>
 
-        </div>
-      {% endfor %}
-    {% else %}
-      <p style="text-align:center; color:var(--color-muted);">
-        Tu carrito está vacío 🛒
-      </p>
+    </div>
     {% endif %}
-  </div>
-
-  <!-- Resumen -->
-  {% if tickets %}
-  <div class="cart__summary">
-    <p>Total: <span id="cartTotal">
-      ${{ total }}
-    </span></p>
-    <!-- <button class="pay-btn">Proceder al Pago</button> -->
-     <form action="{% url 'checkout' %}" method="post">
-  {% csrf_token %}
-  <button type="submit" class="pay-btn">Proceder al Pago</button>
-</form>
-
-  </div>
-  {% endif %}
-</section>
-{% endblock %}
+  </section>
+  {% endblock %}

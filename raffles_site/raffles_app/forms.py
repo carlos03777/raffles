@@ -79,7 +79,6 @@ class SignUpForm(UserCreationForm):
     city = forms.CharField(max_length=100, required=False)
     document_id = forms.CharField(max_length=50, required=False)
 
-    
 
     class Meta:
         model = User

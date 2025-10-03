@@ -129,19 +129,18 @@ document.addEventListener("DOMContentLoaded", () => {
     showSlide(current);
   })();
 
- 
-  /* =========================
+ /* =========================
    WINNERS CARD: holográfica
    ========================= */
-(function initWinnersCard3D() {
-  const card = document.querySelector("#winners .winners-card3d");
+(function initWinnersCard() {
+  const card = document.querySelector("#winners .winners-card");
   if (!card) return;
 
-  const glare = card.querySelector(".winners-card-glare");
-  const flipBtn = card.querySelector(".winners-card-flip-btn");
-  const minimap = document.querySelector("#winners .winners-card-minimap");
+  const glare = card.querySelector(".winners-glare");
+  const flipBtn = card.querySelector(".winners-flip-btn");
+  const minimap = document.querySelector("#winners .winners-minimap");
   const spans = minimap ? minimap.querySelectorAll("span") : [];
-  const logos = card.querySelectorAll(".winners-card-logo");
+  const logos = card.querySelectorAll(".winners-logo");
 
   let isFlipped = false;
   let bounds = card.getBoundingClientRect();
@@ -154,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function handleMove(e) {
     const { clientX, clientY } = e;
-    bounds = bounds || card.getBoundingClientRect();
+    bounds = card.getBoundingClientRect();
     const x = clientX - bounds.left;
     const y = clientY - bounds.top;
     const centerX = bounds.width / 2;
@@ -184,12 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
       logo.style.setProperty("--hue", `${hue}deg`);
       logo.style.setProperty("--angle", `${rotation}deg`);
       logo.style.opacity = intensity;
-      logo.classList.add("winners-card-prism");
-
-      const icon = logo.querySelector(".winners-card-logo-icon");
-      if (icon) {
-        icon.style.filter = `hue-rotate(${hue}deg) brightness(${1.6 + intensity}) saturate(2)`;
-      }
+      logo.classList.add("prism");
     });
   }
 
@@ -199,12 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
       glare.style.background = `radial-gradient(circle, rgba(255,255,255,0.2), transparent 60%)`;
 
     logos.forEach((logo) => {
-      logo.style.setProperty("--hue", "0deg");
-      logo.style.setProperty("--angle", "0deg");
       logo.style.opacity = 0.15;
-      logo.classList.remove("winners-card-prism");
-      const icon = logo.querySelector(".winners-card-logo-icon");
-      if (icon) icon.style.filter = "brightness(1.2)";
+      logo.classList.remove("prism");
     });
   }
 
@@ -221,6 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
   card.addEventListener("mouseleave", handleLeave);
   window.addEventListener("resize", () => (bounds = card.getBoundingClientRect()));
 })();
+
 
   /* =========================
    RAFFLE-CAROUSEL (scoped)

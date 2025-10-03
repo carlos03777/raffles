@@ -15,6 +15,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=20, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     document_id = models.CharField(max_length=50, unique=True, blank=True, null=True)  # ✅ único
+    
 
 
     def __str__(self):
@@ -42,7 +43,8 @@ def validate_email_constraints(sender, instance, **kwargs):
             raise ValidationError("El email no puede modificarse una vez registrado.")
         
 
-
+from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Motorcycle(models.Model):
@@ -77,10 +79,19 @@ class Motorcycle(models.Model):
         estado = "Nueva" if self.is_new else f"Usada - {self.mileage or 0} km"
         return f"{self.brand} {self.model} ({self.year}) - {estado}"
 
+    @property
+    def hologram_image(self):
+        """
+        Devuelve la primera imagen marcada como holograma.
+        Si no existe, retorna None.
+        """
+        return self.images.filter(is_hologram=True).first()
+
 
 class MotorcycleImage(models.Model):
     """
     Permite asociar múltiples imágenes a una misma moto.
+    Una de ellas puede marcarse como holograma.
     """
     motorcycle = models.ForeignKey(
         Motorcycle,
@@ -88,9 +99,33 @@ class MotorcycleImage(models.Model):
         related_name="images"
     )
     image = models.ImageField(upload_to="motos/")
+    is_hologram = models.BooleanField(
+        default=False,
+        help_text="Marcar si esta imagen será usada en el card holográfico."
+    )
+
+    def clean(self):
+        """
+        Valida que solo exista una imagen holograma por moto.
+        """
+        if self.is_hologram:
+            qs = MotorcycleImage.objects.filter(
+                motorcycle=self.motorcycle,
+                is_hologram=True
+            )
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            if qs.exists():
+                raise ValidationError("Ya existe una imagen holográfica para esta moto.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # Llama a clean() antes de guardar
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Imagen de {self.motorcycle.brand} {self.motorcycle.model}"
+        tipo = " (Holograma)" if self.is_hologram else ""
+        return f"Imagen de {self.motorcycle.brand} {self.motorcycle.model}{tipo}"
+
 
 
 class Raffle(models.Model):

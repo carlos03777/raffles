@@ -428,55 +428,34 @@
   }
 }
 
-
-/* ganadores */
-
-.winners-section {
-  margin: 0;
-  padding: 0;
-}
-
-.winners {
-  width: 100%;
-  height: 80vh;
+/* ============================
+   SECCIÓN GANADORES
+============================ */
+/* Winners */
+.winners-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 3rem;
-  
+  grid-template-columns: 1fr;
+  justify-items: center;
+  padding: 4rem 2rem;
 }
 
-.winners-card-wrapper { justify-self: center; }
-.winners__content { max-width: 600px; }
-
-.section-title {
+.winners-title {
   text-align: center;
-  
-  margin-top: 4rem;
   margin-bottom: 2rem;
-  padding:2rem;
   color: var(--text);
 }
 
-.section-title h2 {
+.winners-title h2 {
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
 }
 
-.section-title .subtitle {
+.winners-title .subtitle {
   font-size: 1rem;
   font-weight: 400;
   color: var(--text);
   margin-top: 0.5rem;
-}
-
-@media (max-width: 900px) {
-  .winners {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  .winners__content { margin-top: 2rem; }
 }
 
 /* Minimapa */
@@ -493,9 +472,7 @@
   z-index: 300;
 }
 
-/* ============================
-   TARJETA
-============================ */
+/* Tarjeta */
 .winners-card {
   width: 320px;
   height: 480px;
@@ -511,22 +488,37 @@
 .winners-card-inner {
   width: 100%;
   height: 100%;
+  position: relative;
   transform-style: preserve-3d;
   transition: transform 0.8s ease;
 }
+
 .winners-card[data-active="true"] .winners-card-inner {
   transform: rotateY(180deg);
 }
 
+/* Frente / Reverso */
 .winners-card-front,
 .winners-card-back {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   border-radius: inherit;
   backface-visibility: hidden;
   overflow: hidden;
 }
-.winners-card-back { transform: rotateY(180deg); }
+
+.winners-card-back {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+}
 
 /* Fondo */
 .winners-card-bg {
@@ -536,38 +528,10 @@
   background-position: center;
   background-repeat: no-repeat;
   border-radius: inherit;
-  filter: contrast(1.1) brightness(1.1) saturate(1.2);
-  transition: filter 0.5s ease, transform 0.5s ease;
-}
-.winners-card:hover .winners-card-bg {
-  filter: contrast(1.3) brightness(1.3) saturate(1.5);
-  transform: scale(1.02);
+  z-index: 1;
 }
 
-/* Luces */
-.winners-face-highlight {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -30%);
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);
-  z-index: 3;
-  mix-blend-mode: screen;
-}
-
-.winners-glare {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.3), transparent 60%);
-  mix-blend-mode: overlay;
-  z-index: 2;
-  transition: background 0.2s ease;
-}
-
-/* Texto frente */
+/* Nombre */
 .winners-card-name {
   position: absolute;
   top: 18px;
@@ -578,8 +542,6 @@
   text-transform: uppercase;
   z-index: 4;
   color: var(--text);
-  -webkit-text-stroke: 1px var(--card-stroke);
-  text-shadow: 1px 1px 0 #000, 2px 2px 4px var(--card-text-shadow);
 }
 
 /* Logos */
@@ -594,23 +556,20 @@
   z-index: 0;
   opacity: 0.2;
 }
+
 .winners-logo {
   width: 35px;
   height: 35px;
   opacity: 0.1;
-  position: relative;
   justify-self: center;
   align-self: center;
+  position: relative;
 }
+
 .winners-logo-icon {
   width: 100%;
   height: 100%;
   background: var(--icon) center/contain no-repeat;
-  filter: brightness(1.8) saturate(2);
-}
-.winners-logo.prism {
-  filter: drop-shadow(0 0 18px rgba(255,255,255,0.8));
-  opacity: 0.95;
 }
 
 /* Marca de agua */
@@ -618,29 +577,15 @@
   position: absolute;
   bottom: 40px;
   right: 20px;
+  text-align: right;
   font-size: 1.2rem;
   font-weight: 700;
-  text-transform: uppercase;
   z-index: 4;
 }
+
 .winners-card-watermark span {
   display: block;
   text-shadow: 0 0 6px rgba(0,0,0,0.6);
-}
-
-/* Flecha */
-.winners-arrow {
-  position: absolute;
-  bottom: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.5rem;
-  animation: bounce 1.5s infinite;
-  z-index: 5;
-}
-@keyframes bounce {
-  0%,100% { transform: translate(-50%,0); }
-  50% { transform: translate(-50%,-10px); }
 }
 
 /* Botón flip */
@@ -655,61 +600,48 @@
   padding: 0.46rem 0.9rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.22s, transform 0.22s;
   z-index: 6;
 }
 
 /* Reverso */
-.winners-card-back {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  text-align: center;
-  background: rgba(0,0,0,0.6);
-}
-.winners-card-back::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("assets/img/car.png") center/cover no-repeat;
-  filter: blur(8px) brightness(0.5) saturate(1.3);
-  opacity: 0.35;
-  z-index: 0;
-}
-
-/* Info del ganador */
 .winners-photo {
   width: 120px;
   height: 120px;
   border-radius: 50%;
   overflow: hidden;
   border: 3px solid white;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
   margin-bottom: 15px;
 }
-.winners-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.winners-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 .winners-info {
   color: white;
   z-index: 4;
 }
+
 .winners-info .winners-name {
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 5px;
 }
+
 .winners-info .winners-number {
   font-size: 1.1rem;
   font-weight: 600;
   color: #ffcc00;
   margin-bottom: 10px;
 }
+
 .winners-info .winners-ig {
   font-size: 1rem;
   opacity: 0.9;
 }
+
 .winners-info i {
   margin-right: 6px;
   color: #e1306c;

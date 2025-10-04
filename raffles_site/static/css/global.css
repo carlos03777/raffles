@@ -432,6 +432,11 @@
    SECCIÓN GANADORES
 ============================ */
 /* Winners */
+
+.winners-section{
+background: var(--bg-light);
+}
+
 .winners-container {
   display: grid;
   grid-template-columns: 1fr;
@@ -583,7 +588,7 @@
   z-index: 4;
 }
 
-.winners-card-watermark span {
+.winners-card-watermark-span {
   display: block;
   text-shadow: 0 0 6px rgba(0,0,0,0.6);
 }
@@ -591,6 +596,8 @@
 /* Botón flip */
 .winners-flip-btn {
   position: absolute;
+  backface-visibility: visible;
+  color: white;
   bottom: 16px;
   left: 50%;
   transform: translateX(-50%);

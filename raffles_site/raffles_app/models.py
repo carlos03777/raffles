@@ -125,7 +125,7 @@ class MotorcycleImage(models.Model):
     def __str__(self):
         tipo = " (Holograma)" if self.is_hologram else ""
         return f"Imagen de {self.motorcycle.brand} {self.motorcycle.model}{tipo}"
-
+    
 
 
 class Raffle(models.Model):

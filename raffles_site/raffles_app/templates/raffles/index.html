@@ -12,13 +12,10 @@
 <section class="hero-carousel">
   {% if slides %}
     {% for slide in slides %}
-      <div class="carousel-slide {% if forloop.first %}active{% endif %}">
-        
+      <div class="carousel-slide {% if forloop.first %}active{% endif %}">   
         {% if slide.image %}
-          <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Slide' }}">
-     
+          <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Slide' }}">   
         {% endif %}
-
         <div class="overlay">
           {% if slide.title %}
             <h1>{{ slide.title }}</h1>

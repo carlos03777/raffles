@@ -1,0 +1,12 @@
+<h1>Rifas disponibles</h1>
+<ul>
+  {% for raffle in raffles %}
+    <li>
+      <a href="{% url 'raffle_detail' raffle.id %}">
+        {{ raffle.motorcycle.brand }} {{ raffle.motorcycle.model }} ({{ raffle.motorcycle.year }})
+      </a>
+    </li>
+  {% empty %}
+    <li>No hay rifas activas</li>
+  {% endfor %}
+</ul>

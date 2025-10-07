@@ -709,17 +709,16 @@
   .winners-flip-btn {
     position: absolute;
     backface-visibility: visible;
-    color: white;
+    color: var(--color-text);
     bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--flip-bg);
-    border: 1px solid var(--flip-border);
-    color: var(--flip-text);
+    background: var(--color-primary);
+    border: 1px solid var(--color-primary);
     padding: 0.46rem 0.9rem;
     border-radius: 8px;
     cursor: pointer;
-    z-index: 6;
+    z-index: 6; 
   }
 
   /* Reverso */

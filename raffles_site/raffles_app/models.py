@@ -134,9 +134,9 @@ class Raffle(models.Model):
     Maneja la lógica de transparencia con commit-reveal.
     """
     STATUS_CHOICES = [
+        ("upcoming", "Proxima"),
         ("open", "Abierta"),
         ("closed", "Cerrada"),
-        ("finished", "Finalizada con ganador"),
     ]
 
     motorcycle = models.ForeignKey(
@@ -262,6 +262,100 @@ class Raffle(models.Model):
 
 
 
+# class Ticket(models.Model):
+#     """
+#     Representa la boleta comprada por un usuario en una rifa de motos.
+#     Puede elegirse manualmente o asignarse de forma aleatoria.
+#     """
+#     PAYMENT_STATUS = [
+#         ("pending", "Pendiente"),
+#         ("paid", "Pagado"),
+#         ("failed", "Fallido"),
+#     ]
+
+#     raffle = models.ForeignKey(
+#         Raffle,
+#         on_delete=models.CASCADE,
+#         related_name="tickets"
+#     )
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#         related_name="tickets"
+#     )
+#     number = models.PositiveIntegerField(blank=True, null=True, db_index=True)
+#     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)  # Código único
+#     payment_status = models.CharField(
+#         max_length=20,
+#         choices=PAYMENT_STATUS,
+#         default="pending",
+#         db_index=True
+#     )
+#     payment_reference = models.CharField(
+#     max_length=100,
+#     blank=True,
+#     null=True,
+#     db_index=True
+#     )
+
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     class Meta:
+#         ordering = ['number']
+
+#     # def save(self, *args, **kwargs):
+#     #     """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
+#     #     if self.number is None:
+#     #         posibles = set(range(1, self.raffle.max_tickets + 1))
+#     #         ocupados = set(
+#     #             Ticket.objects.filter(raffle=self.raffle).values_list("number", flat=True)
+#     #         )
+#     #         libres = list(posibles - ocupados)
+#     #         if not libres:
+#     #             raise ValueError("No quedan boletas disponibles en esta rifa.")
+#     #         self.number = random.choice(libres)
+#     #     else:
+#     #         if self.number < 1 or self.number > self.raffle.max_tickets:
+#     #             raise ValueError("El número elegido está fuera del rango permitido.")
+#     #         if Ticket.objects.filter(raffle=self.raffle, number=self.number).exists():
+#     #             raise ValueError(f"La boleta {self.number} ya está ocupada en esta rifa.")
+
+#     #     super().save(*args, **kwargs)
+
+#     def save(self, *args, **kwargs):
+#         """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
+#         if self.number is None:
+#             posibles = set(range(1, self.raffle.max_tickets + 1))
+#             ocupados = set(Ticket.objects.filter(raffle=self.raffle,payment_status="paid").values_list("number", flat=True))
+
+#             libres = list(posibles - ocupados)
+#             if not libres:
+#                 raise ValueError("No quedan boletas disponibles en esta rifa.")
+#             self.number = random.choice(libres)
+#         else:
+#             if self.number < 1 or self.number > self.raffle.max_tickets:
+#                 raise ValueError("El número elegido está fuera del rango permitido.")
+#             if Ticket.objects.filter(
+#                 raffle=self.raffle,
+#                 number=self.number,
+#                 payment_status="paid"   # 👈 aquí está el cambio
+
+#             ).exclude(pk=self.pk).exists():
+#                 raise ValueError(f"La boleta {self.number} ya está ocupada en esta rifa.")
+
+#         super().save(*args, **kwargs)
+
+#     def delete(self, *args, **kwargs):
+#         if self.payment_status == "paid":
+#             raise ValueError("No se pueden eliminar tickets que ya fueron pagados.")
+#         super().delete(*args, **kwargs)
+
+
+#     def __str__(self):
+#         return f"Boleta {self.number} - {self.user.username} en {self.raffle}"
+
+
+
 class Ticket(models.Model):
     """
     Representa la boleta comprada por un usuario en una rifa de motos.
@@ -292,43 +386,40 @@ class Ticket(models.Model):
         db_index=True
     )
     payment_reference = models.CharField(
-    max_length=100,
-    blank=True,
-    null=True,
-    db_index=True
+        max_length=100,
+        blank=True,
+        null=True,
+        db_index=True
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('raffle', 'number')
-        ordering = ['number']
+        ordering = ['number']  # 👈 se eliminó unique_together
 
-    # def save(self, *args, **kwargs):
-    #     """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
-    #     if self.number is None:
-    #         posibles = set(range(1, self.raffle.max_tickets + 1))
-    #         ocupados = set(
-    #             Ticket.objects.filter(raffle=self.raffle).values_list("number", flat=True)
-    #         )
-    #         libres = list(posibles - ocupados)
-    #         if not libres:
-    #             raise ValueError("No quedan boletas disponibles en esta rifa.")
-    #         self.number = random.choice(libres)
-    #     else:
-    #         if self.number < 1 or self.number > self.raffle.max_tickets:
-    #             raise ValueError("El número elegido está fuera del rango permitido.")
-    #         if Ticket.objects.filter(raffle=self.raffle, number=self.number).exists():
-    #             raise ValueError(f"La boleta {self.number} ya está ocupada en esta rifa.")
-
-    #     super().save(*args, **kwargs)
+    def clean(self):
+        """Validar que solo haya un ticket pagado por número y rifa."""
+        if self.payment_status == "paid":
+            conflict = Ticket.objects.filter(
+                raffle=self.raffle,
+                number=self.number,
+                payment_status="paid"
+            ).exclude(pk=self.pk).exists()
+            if conflict:
+                raise ValidationError(f"El número {self.number} ya fue comprado por otro participante.")
 
     def save(self, *args, **kwargs):
         """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
+        self.full_clean()  # 👈 ejecuta la validación anterior
+
         if self.number is None:
             posibles = set(range(1, self.raffle.max_tickets + 1))
-            ocupados = set(Ticket.objects.filter(raffle=self.raffle,payment_status="paid").values_list("number", flat=True))
-
+            ocupados = set(
+                Ticket.objects.filter(
+                    raffle=self.raffle,
+                    payment_status="paid"
+                ).values_list("number", flat=True)
+            )
             libres = list(posibles - ocupados)
             if not libres:
                 raise ValueError("No quedan boletas disponibles en esta rifa.")
@@ -339,8 +430,7 @@ class Ticket(models.Model):
             if Ticket.objects.filter(
                 raffle=self.raffle,
                 number=self.number,
-                payment_status="paid"   # 👈 aquí está el cambio
-
+                payment_status="paid"
             ).exclude(pk=self.pk).exists():
                 raise ValueError(f"La boleta {self.number} ya está ocupada en esta rifa.")
 
@@ -351,9 +441,9 @@ class Ticket(models.Model):
             raise ValueError("No se pueden eliminar tickets que ya fueron pagados.")
         super().delete(*args, **kwargs)
 
-
     def __str__(self):
         return f"Boleta {self.number} - {self.user.username} en {self.raffle}"
+
 
 
 class CarouselSlide(models.Model):

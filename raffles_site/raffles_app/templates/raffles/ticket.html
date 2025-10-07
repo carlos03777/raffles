@@ -6,6 +6,16 @@
 <section class="ticket-purchase" data-max-tickets="{{ raffle.max_tickets }}">
   <h2 class="ticket-title">Compra tu ticket</h2>
 
+    <!-- Mensajes de error o éxito -->
+    
+  {% if messages %}
+  {% for message in messages %}
+    <div class="django-message {{ message.tags }}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
   <div class="ticket-grid">
     <!-- Columna izquierda: formulario -->
     <div class="ticket-form">

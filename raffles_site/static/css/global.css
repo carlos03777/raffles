@@ -636,8 +636,8 @@
   }
 
   .winners-logo {
-    width: 35px;
-    height: 35px;
+    width: 45px;
+    height: 45px;
     opacity: 0.1;
     justify-self: center;
     align-self: center;
@@ -930,6 +930,19 @@
     margin-bottom: 1.5rem;
     color: var(--color-primary);
   }
+
+
+.success-msg {
+  color: #28a745;
+  font-weight: bold;
+  margin-bottom: 15px;
+  animation: fadeOut 5s ease forwards;
+}
+@keyframes fadeOut {
+  0%, 90% { opacity: 1; }
+  100% { opacity: 0; display: none; }
+}
+
 
   .form-group {
     margin-bottom: 1rem;
@@ -1453,7 +1466,71 @@
     text-align: center;
     color: var(--color-primary);
     font-family: var(--font-heading);
+
+  
   }
+
+
+/* mensajes de django  */
+
+
+/* =============================
+   Django Messages
+============================= */
+.django-message {
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+/* Success */
+.django-message.success {
+  background: #28a745;
+  color: #fff;
+  border: 1px solid #1e7e34;
+}
+
+/* Error */
+.django-message.error {
+  background: #dc3545;
+  color: #fff;
+  border: 1px solid #b02a37;
+}
+
+/* Warning */
+.django-message.warning {
+  background: #ffc107;
+  color: #212529;
+  border: 1px solid #d39e00;
+}
+
+/* Info */
+.django-message.info {
+  background: #17a2b8;
+  color: #fff;
+  border: 1px solid #117a8b;
+}
+
+/* Animación de aparición y desaparición */
+.django-message {
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInOut 6s ease forwards;
+}
+
+@keyframes fadeInOut {
+  0%, 10% { opacity: 0; transform: translateY(-10px); }
+  15%, 85% { opacity: 1; transform: translateY(0); }
+  90%, 100% { opacity: 0; transform: translateY(-10px); }
+}
 
   /* =========================
    Lista

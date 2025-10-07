@@ -17,21 +17,20 @@
     <div class="contact-grid">
 
       <!-- Formulario -->
-      <div class="contact-form">
-        <h2>Escríbenos</h2>
-        <form>
-          <div class="form-group">
-            <input type="text" placeholder="Tu nombre" required>
-          </div>
-          <div class="form-group">
-            <input type="email" placeholder="Tu correo" required>
-          </div>
-          <div class="form-group">
-            <textarea placeholder="Tu mensaje" rows="5" required></textarea>
-          </div>
-          <button type="submit" class="contact-btn-main">Enviar mensaje</button>
-        </form>
-      </div>
+     <div class="contact-form">
+  <h2>Escríbenos</h2>
+
+  {% if sent %}
+    <p class="success-msg">Tu mensaje fue enviado con éxito. Te responderemos pronto.</p>
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="contact-btn-main">Enviar mensaje</button>
+  </form>
+</div>
+
 
       <!-- Info rápida -->
       <div class="contact-info">

@@ -8,6 +8,15 @@
   <section class="cart">
     <h1 class="cart__title">Carrito de Tickets</h1>
 
+
+  {% if messages %}
+  {% for message in messages %}
+    <div class="django-message {{ message.tags }}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
     <!-- Lista de tickets -->
     <div class="cart__list" id="cartList">
       {% if tickets %}

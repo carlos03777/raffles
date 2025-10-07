@@ -215,15 +215,30 @@ def edit_ticket(request, ticket_id):
             try:
                 number = int(number)
                 # 🔍 Verificar duplicados en la misma rifa
+                # if Ticket.objects.filter(
+                #     raffle=raffle, number=number
+                # ).exclude(pk=ticket.pk).exists():
+                #     messages.error(request, f"El número {number} ya está ocupado.")
+                # else:
+                #     ticket.number = number
+                #     ticket.save()
+                #     messages.success(request, f"✅ Ticket #{ticket.number} actualizado.")
+                #     return redirect("cart")
+                
+
                 if Ticket.objects.filter(
-                    raffle=raffle, number=number
+                    raffle=raffle,
+                    number=number,
+                    payment_status="paid"  # 👈 solo bloquean los pagos
                 ).exclude(pk=ticket.pk).exists():
                     messages.error(request, f"El número {number} ya está ocupado.")
                 else:
                     ticket.number = number
                     ticket.save()
                     messages.success(request, f"✅ Ticket #{ticket.number} actualizado.")
-                    return redirect("cart")
+                return redirect("cart")
+
+                
             except Exception as e:
                 messages.error(request, f"Error al actualizar: {e}")
 
@@ -349,7 +364,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Ticket
 
-
 @login_required
 def checkout(request):
     # ✅ Tickets pendientes del usuario
@@ -359,8 +373,34 @@ def checkout(request):
     tickets = [t for t in tickets if t.raffle.status != "closed"]
 
     if not tickets:
-        return HttpResponse("No tienes tickets válidos en el carrito.", status=400)
+        messages.error(request, "No tienes tickets válidos en el carrito.")
+        return redirect("cart")
 
+    # ✅ Verificar si alguno de los tickets pendientes ya fue comprado (pagado) por otro usuario
+    conflict_tickets = []
+    for t in tickets:
+        if Ticket.objects.filter(
+            raffle=t.raffle,
+            number=t.number,
+            payment_status="paid"
+        ).exclude(user=request.user).exists():
+            conflict_tickets.append(str(t.number))
+
+    if conflict_tickets:
+        messages.error(
+            request,
+            f"Los siguientes números ya fueron comprados por otro participante: {', '.join(conflict_tickets)}"
+        )
+        # 👇 Eliminar tickets conflictivos del carrito
+        Ticket.objects.filter(
+            user=request.user,
+            raffle__in=[t.raffle for t in tickets],
+            number__in=conflict_tickets,
+            payment_status="pending"
+        ).delete()
+        return redirect("cart")
+
+    # ✅ Calcular total solo si no hay conflictos
     total = sum([float(t.raffle.ticket_price) for t in tickets])
 
     # ✅ Generar referencia única
@@ -389,6 +429,7 @@ def checkout(request):
     )
 
     return redirect(checkout_url)
+
 
 
 @login_required
@@ -452,3 +493,39 @@ def payment_success(request):
         messages.warning(request, f"⚠️ Estado desconocido: {status}.")
 
     return redirect("user_profile")
+
+
+
+# views.py
+from django.shortcuts import render
+from django.core.mail import send_mail
+from django.conf import settings
+from .forms import ContactForm
+
+def contact(request):
+    """Página de contacto con envío de correo y limpieza del formulario."""
+    sent = False
+    form = ContactForm()
+
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            email = form.cleaned_data["email"]
+            message = form.cleaned_data["message"]
+
+            subject = f"Nuevo mensaje de contacto de {name}"
+            full_message = f"De: {name} <{email}>\n\nMensaje:\n{message}"
+
+            send_mail(
+                subject,
+                full_message,
+                settings.DEFAULT_FROM_EMAIL,   # remitente
+                ["contacto@rifamotos.com"],    # destinatario(s)
+                fail_silently=False,
+            )
+
+            sent = True
+            form = ContactForm()  # <-- limpia los campos después del envío
+
+    return render(request, "raffles/contact.html", {"form": form, "sent": sent})

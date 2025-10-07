@@ -29,17 +29,18 @@
 
     <!-- Info -->
     <div class="raffle-info">
-      <p class="raffle-info-item"><span>💰 Precio boleta:</span> ${{ raffle.ticket_price }}</p>
-      <p class="raffle-info-item"><span>🎫 Disponibles:</span> {{ raffle.available_tickets }}</p>
-      <p class="raffle-info-item"><span>🛞 Kilometraje:</span> {{ raffle.motorcycle.mileage|default:"0 km" }}</p>
-      <p class="raffle-info-item"><span>⚡ Estado:</span> {{ raffle.motorcycle.condition|default:"Nuevo" }}</p>
-      <p class="raffle-info-item"><span>📅 Inicio:</span> {{ raffle.start_date|date:"d M Y" }}</p>
-      <p class="raffle-info-item"><span>🏆 Sorteo:</span> {{ raffle.draw_date|date:"d M Y" }}</p>
+      <p class="raffle-info-item"><span>Precio boleta:</span> ${{ raffle.ticket_price }}</p>
+      <p class="raffle-info-item"><span>Disponibles:</span> {{ raffle.available_tickets }}</p>
+      <p class="raffle-info-item"><span>Kilometraje:</span> {{ raffle.motorcycle.mileage|default:"0 km" }}</p>
+      <p class="raffle-info-item"><span>Estado:</span> {{ raffle.motorcycle.condition|default:"Nuevo" }}</p>
+      <p class="raffle-info-item"><span>Inicio:</span> {{ raffle.created_at|date:"d M Y" }}</p>
+<p class="raffle-info-item"><span>Sorteo:</span> {{ raffle.ends_at|date:"d M Y" }}</p>
+
 
       {% if raffle.description %}
       <p class="raffle-description">{{ raffle.description }}</p>
       {% endif %}
-<a href="{% url 'ticket' raffle.id %}" class="raffle-btn">🎟️ Comprar Ticket</a>
+<a href="{% url 'ticket' raffle.id %}" class="raffle-btn">Comprar Ticket</a>
 
     </div>
   </div>

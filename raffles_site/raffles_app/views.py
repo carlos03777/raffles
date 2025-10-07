@@ -19,15 +19,30 @@ from .tokens import account_activation_token
 
 from .models import Raffle, CarouselSlide
 
+# def home(request):
+#     slides = CarouselSlide.objects.filter(is_active=True).order_by('order')
+#     raffles = Raffle.objects.filter(status="open")
+#     last_winner = Raffle.objects.filter(status="finished", winner_ticket__isnull=False).order_by("-ends_at").first()
+#     return render(request, "raffles/index.html", {
+#         "slides": slides,
+#         "raffles": raffles,
+#         "raffle": last_winner,  # 👈 este lo usa la sección de Ganador
+#     })
+
+
 def home(request):
     slides = CarouselSlide.objects.filter(is_active=True).order_by('order')
     raffles = Raffle.objects.filter(status="open")
-    last_winner = Raffle.objects.filter(status="finished", winner_ticket__isnull=False).order_by("-ends_at").first()
+    last_winners = Raffle.objects.filter(
+        status="finished", winner_ticket__isnull=False
+    ).order_by("-ends_at")[:3]  # 👈 los tres más recientes
+
     return render(request, "raffles/index.html", {
         "slides": slides,
         "raffles": raffles,
-        "raffle": last_winner,  # 👈 este lo usa la sección de Ganador
+        "last_winners": last_winners,  # 👈 nota el nombre cambiado
     })
+
 
 
 
@@ -105,10 +120,17 @@ def activate(request, uidb64, token):
     else:
         return render(request, "raffles/account_activation_invalid.html")
 
+# def winners_view(request):
+#     # Suponiendo que quieres mostrar el último ganador
+#     raffle = Raffle.objects.filter(winner_ticket__isnull=False).order_by('-created_at').first()
+#     return render(request, "raffles/winners.html", {"raffle": raffle})
+
+
 def winners_view(request):
-    # Suponiendo que quieres mostrar el último ganador
-    raffle = Raffle.objects.filter(winner_ticket__isnull=False).order_by('-created_at').first()
-    return render(request, "raffles/winners.html", {"raffle": raffle})
+    # Mostrar todas las rifas que tienen ganador, ordenadas de la más reciente a la más antigua
+    raffles = Raffle.objects.filter(winner_ticket__isnull=False).order_by('-created_at')
+    return render(request, "raffles/winners.html", {"raffles": raffles})
+
 
 
 
@@ -145,6 +167,39 @@ def cart(request):
     })
 
 
+# @login_required
+# def edit_ticket(request, ticket_id):
+#     ticket = get_object_or_404(
+#         Ticket, id=ticket_id, user=request.user, payment_status="pending"
+#     )
+#     raffle = ticket.raffle
+
+#     if request.method == "POST":
+#         number = request.POST.get("number")
+#         if number and number.isdigit() and len(number) == 4:
+#             try:
+#                 ticket.number = int(number)  # 👈 aseguramos que sea int
+#                 ticket.save()  # validación: rango y duplicados
+#                 messages.success(request, f"Ticket #{ticket.number} actualizado.")
+#                 return redirect("cart")
+#             except ValueError as e:
+#                 messages.error(request, str(e))
+#         else:
+#             messages.error(request, "Número inválido. Debe ser de 4 dígitos.")
+
+#     return render(
+#         request,
+#         "raffles/ticket.html",
+#         {
+#             "raffle": raffle,
+#             "ticket": ticket,
+#             "is_edit": True,  # 👈 indicador para el template
+#         },
+#     )
+
+
+
+
 @login_required
 def edit_ticket(request, ticket_id):
     ticket = get_object_or_404(
@@ -154,27 +209,29 @@ def edit_ticket(request, ticket_id):
 
     if request.method == "POST":
         number = request.POST.get("number")
-        if number and number.isdigit() and len(number) == 4:
-            try:
-                ticket.number = int(number)  # 👈 aseguramos que sea int
-                ticket.save()  # validación: rango y duplicados
-                messages.success(request, f"Ticket #{ticket.number} actualizado.")
-                return redirect("cart")
-            except ValueError as e:
-                messages.error(request, str(e))
+        if not number or not number.isdigit():
+            messages.error(request, "Número inválido. Debe ser numérico de 4 dígitos.")
         else:
-            messages.error(request, "Número inválido. Debe ser de 4 dígitos.")
+            try:
+                number = int(number)
+                # 🔍 Verificar duplicados en la misma rifa
+                if Ticket.objects.filter(
+                    raffle=raffle, number=number
+                ).exclude(pk=ticket.pk).exists():
+                    messages.error(request, f"El número {number} ya está ocupado.")
+                else:
+                    ticket.number = number
+                    ticket.save()
+                    messages.success(request, f"✅ Ticket #{ticket.number} actualizado.")
+                    return redirect("cart")
+            except Exception as e:
+                messages.error(request, f"Error al actualizar: {e}")
 
     return render(
         request,
         "raffles/ticket.html",
-        {
-            "raffle": raffle,
-            "ticket": ticket,
-            "is_edit": True,  # 👈 indicador para el template
-        },
+        {"raffle": raffle, "ticket": ticket, "is_edit": True},
     )
-
 
 
 

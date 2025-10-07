@@ -454,12 +454,15 @@
 ============================ */
   /* Winners */
 
+  
 
-  .winners-container {
+  .winners-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     justify-items: center;
     padding: 4rem 2rem;
+      gap: 2rem;
+
   }
 
 
@@ -502,6 +505,7 @@
     height: 480px;
     border-radius: 20px;
     position: relative;
+    background: white;
     overflow: hidden;
     cursor: pointer;
     border: 1px solid var(--card-border);
@@ -914,16 +918,17 @@
 
   /* Formulario */
   .contact-form {
-    background: #111;
-    color: #fff;
+    background: #fff;
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
   }
 
+
+
   .contact-form h2 {
     margin-bottom: 1.5rem;
-    color: #e55050;
+    color: var(--color-primary);
   }
 
   .form-group {
@@ -936,28 +941,35 @@
     padding: 0.9rem;
     border: none;
     border-radius: 8px;
-    background: #222;
+    background: grey;
     color: #fff;
   }
 
   .contact-form input::placeholder,
   .contact-form textarea::placeholder {
-    color: #aaa;
+    color: white;
   }
 
-  .btn-main {
-    background: #e55050;
+  .contact-btn-main {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff6600, #ff3300);
     color: #fff;
+    padding: 0.6rem 1rem;
+    /* más pequeño */
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
     border: none;
-    padding: 0.9rem 1.5rem;
-    border-radius: 8px;
-    font-weight: bold;
+    width: 100%;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: transform 0.2s, background 0.3s;
+    margin-top: 0.3rem;
   }
 
-  .btn-main:hover {
-    background: #c73838;
+  .contact-btn-main:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, var(--color-primary), #cc0000);
   }
 
   /* Info */
@@ -970,7 +982,7 @@
 
   .contact-info h2 {
     margin-bottom: 1rem;
-    color: #e55050;
+    color: var(--color-primary);
   }
 
   .contact-info ul {
@@ -980,6 +992,7 @@
 
   .contact-info li {
     margin-bottom: 0.8rem;
+    color: grey;
     font-size: 1rem;
   }
 
@@ -988,7 +1001,7 @@
   }
 
 
-  /* raffle */
+  /* raffles */
 
   /* ====== Raffle List ====== */
   .raffle-list {
@@ -1002,12 +1015,13 @@
     font-size: 2rem;
     margin-bottom: 2.5rem;
     font-weight: 700;
-    color: #222;
+    color: var(--color-text);
   }
 
   .raffle-list-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 360px));
+    justify-content: center;
     gap: 2rem;
   }
 
@@ -1040,7 +1054,7 @@
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
-    color: #111;
+    color: #000 ;
   }
 
   .raffle-list-card-info {
@@ -1049,10 +1063,11 @@
     color: #444;
   }
 
+
   .raffle-list-btn {
     display: inline-block;
     margin-top: 1rem;
-    background: #007bff;
+    background: linear-gradient(135deg, #ff6600, #ff3300);
     color: #fff;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
@@ -1061,7 +1076,7 @@
   }
 
   .raffle-list-btn:hover {
-    background: #0056b3;
+    background: linear-gradient(135deg, var(--color-primary), #cc0000);
   }
 
   .raffle-list-empty {
@@ -1076,7 +1091,7 @@
    RAFFLE DETAIL PAGE
    ========================= */
   .raffle-detail {
-    margin: 3rem auto;
+    margin: 6rem auto;
     padding: 0 1rem;
     max-width: 1200px;
     font-family: 'Inter', sans-serif;
@@ -1108,8 +1123,8 @@
     position: relative;
     overflow: hidden;
     border-radius: 1rem;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
-    background: #000;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0);
+    background: rgba(255, 255, 255, 0.06);
   }
 
   .raffle-carousel-track {
@@ -1120,15 +1135,18 @@
 
   .raffle-carousel-slide {
     min-width: 100%;
+   
     user-select: none;
   }
 
+    
+
   .raffle-carousel-slide img {
     width: 100%;
-    display: block;
     border-radius: 1rem;
-    object-fit: cover;
     max-height: 480px;
+    min-height: 480px;
+    object-fit: contain;
   }
 
   /* --- Botones --- */
@@ -1171,11 +1189,12 @@
     border-radius: 1rem;
     backdrop-filter: blur(12px);
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    min-height: 480px;
   }
 
   .raffle-info-item {
-    margin-bottom: 1.2rem;
-    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
     color: #e0e0e0;
   }
 
@@ -1186,8 +1205,8 @@
 
   /* --- Descripción --- */
   .raffle-description {
-    margin: 1.8rem 0;
-    color: #ccc;
+    margin: 2rem 0;
+    color: white;
     line-height: 1.7;
     font-size: 1rem;
   }
@@ -1416,6 +1435,7 @@
 ============================= */
   .cart {
     max-width: 800px;
+    min-height: 300px;
     margin: 6rem auto 2rem;
     /* margen superior por navbar */
     padding: 2rem;
@@ -1546,6 +1566,7 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 0.6rem;
+      padding: 1rem;
     }
 
     .cart__summary {

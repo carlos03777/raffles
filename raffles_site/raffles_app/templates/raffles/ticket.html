@@ -32,8 +32,12 @@
 
         <div class="ticket-actions">
           {% if is_edit %}
-            <button type="submit" class="ticket-btn ticket-btn-main">Guardar cambios</button>
+            <button type="button" id="randomBtn" class="ticket-btn ticket-btn-alt">Aleatorio</button>
+
             <a href="{% url 'cart' %}" class="ticket-btn ticket-btn-secondary">Cancelar</a>
+            <button type="submit" class="ticket-btn ticket-btn-main">Guardar cambios</button>
+
+
           {% else %}
             <button type="button" id="randomBtn" class="ticket-btn ticket-btn-alt">Aleatorio</button>
             <button type="button" id="clearBtn" class="ticket-btn ticket-btn-secondary">Vaciar</button>
@@ -46,7 +50,7 @@
     <!-- Columna derecha: card resumen -->
     <div class="ticket-summary-card">
       {% if user.is_authenticated %}
-        <img src="{% static 'img/avatar.png' %}" alt="{{ user.username }}" class="ticket-summary-avatar">
+        <img src="{{ user.profile.photo.url }} "  alt="{{ user.username }}" class="ticket-summary-avatar">
         <h3 class="ticket-summary-name">{{ user.username }}</h3>
         <p class="ticket-summary-info">Tickets: {{ user.tickets.count }}</p>
       {% else %}

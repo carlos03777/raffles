@@ -3,7 +3,7 @@
 
 {% block content %}
 <section class="raffle-list container">
-    <h1 class="raffle-list-title">🎟️ Rifas de Motos</h1>
+    <h1 class="raffle-list-title"> Rifas de Motos</h1>
 
     <div class="raffle-list-grid">
         {% for raffle in raffles %}
@@ -18,10 +18,10 @@
                         {{ raffle.motorcycle.brand }} {{ raffle.motorcycle.model }}
                     </h5>
                     <p class="raffle-list-card-info">
-                        💰 <strong>${{ raffle.ticket_price }}</strong>
+                        <strong>${{ raffle.ticket_price }}</strong>
                     </p>
                     <p class="raffle-list-card-info">
-                        🎫 {{ raffle.available_tickets }} disponibles
+                         {{ raffle.available_tickets }} disponibles
                     </p>
                     <a href="{% url 'raffle_detail' raffle.id %}" class="raffle-list-btn">
                         Ver rifa

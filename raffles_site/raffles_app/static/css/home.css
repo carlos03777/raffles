@@ -124,6 +124,11 @@
 /* =========================
    SECCIÓN: GANADORES
 ========================= */
+
+.winners-section{
+  background: var(--color-bg);
+}
+
 .winners-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -138,6 +143,7 @@
 }
 
 .winners-title h2 {
+  margin-bottom: 1rem;
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
@@ -422,16 +428,30 @@
    SECCIÓN: CÓMO FUNCIONA
 ========================= */
 #how-it-works {
+  margin-top: 3rem;
   padding: 20px 20px;
   text-align: center;
-  background: var(--bg-light);
+  min-height: 500px;
+}
+
+
+#how-it-works h2{
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+
+}
+
+.how-it-works-subtitle {
+  color: var(--color-primary);
+
 }
 
 #how-it-works .steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 30px;
-  margin-top: 40px;
+  margin-top: 4rem;
 }
 
 .steps {
@@ -441,17 +461,19 @@
 
 .step i {
   font-size: 3rem;
-  color: crimson;
+  color: var(--color-primary);
 }
 
 .step h3 {
   font-size: 1.2rem;
   margin-bottom: 10px;
+  color: var(--color-text-dark);
+
 }
 
 .step p {
   font-size: 0.95rem;
-  color: var(--text-light);
+  color: var(--color-text-dark);
 }
 
 
@@ -460,13 +482,19 @@
 ========================= */
 #winners {
   padding: 70px 20px;
-  background: var(--bg-light);
+  background: var(--color-bg);
   color: var(--text-light);
 }
 
 #winners .section-title {
   text-align: center;
   margin-bottom: 50px;
+}
+
+
+#winners .section-title h2{
+  margin-bottom: 1rem;
+  font-size: 2rem;
 }
 
 .winners-content {
@@ -498,10 +526,23 @@
   color: gray;
 }
 
-.ig-embed iframe {
+.ig-embed {
   width: 100%;
-  border-radius: 12px;
-  min-height: 500px;
+  max-width: 400px; /* ajusta según tu layout */
+  max-height: 600px; /* menos alto que antes */
+
+  margin: 0 auto;
+  border-radius: 16px; /* bordes más redondeados */
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.05); /* un toque de fondo */
+}
+
+.ig-embed blockquote{
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  display: block;
 }
 
 /* --- Responsive Testimonios --- */

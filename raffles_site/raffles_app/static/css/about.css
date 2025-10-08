@@ -49,11 +49,12 @@
 .about-history .text h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
-  color: #e55050;
+  color: var(--color-primary);
 }
 
 .about-history p {
   line-height: 1.6;
+  color: var(--color-text);
 }
 
 .about-history img {
@@ -74,7 +75,7 @@
 .about-mission .card {
   flex: 1;
   min-width: 280px;
-  background: #111;
+  background: var(--color-primary);
   color: #fff;
   border-radius: 12px;
   padding: 2rem;
@@ -85,7 +86,7 @@
 
 .about-mission .card:hover {
   transform: translateY(-8px);
-  background: #e55050;
+  background:  var(--color-accent);
 }
 
 .about-mission h3 {
@@ -102,7 +103,7 @@
 .about-team h2 {
   font-size: 2rem;
   margin-bottom: 2rem;
-  color: #e55050;
+  color: var(--color-primary);
 }
 
 .team-grid {
@@ -116,11 +117,16 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s ease;
+  color: var(--color-text-dark);
 }
 
 .member:hover {
   transform: translateY(-6px);
+  background: var(--color-primary);
+  color: var(--color-text);
+
+  
 }
 
 .member img {
@@ -129,16 +135,7 @@
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1rem;
-  border: 3px solid #e55050;
+  border: 3px solid var(--color-primary);
 }
 
-.member h4 {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #111;
-}
 
-.member p {
-  color: #666;
-  font-size: 0.95rem;
-}

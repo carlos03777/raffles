@@ -1,19 +1,23 @@
-/* =======================
-    VARIABLES
-======================= */
 :root {
-  --color-primary: #ff6600;          /* color principal / botones / enlaces */
-  --color-secondary: #0d0d0d;        /* fondos oscuros secundarios */
-  --color-bg: #111;                   /* fondo general */
-  --color-lg: #fff;
+  /* =======================
+     COLORES PRINCIPALES
+  ======================= */
+  --color-primary: #ff4500;          /* naranja fuerte para botones y headings */
+  --color-secondary: #1a1a1a;        /* fondos oscuros secundarios */
+  --color-bg: #0c0c0c;               /* fondo general */
+  --color-lg: #ffffff;                /* blanco general */
   --color-text: #f5f5f5;              /* texto principal */
-  --color-text-dk: #666666;
-  --color-muted: #aaa;                /* texto secundario / footer / labels */
+  --color-text-dark: #000;
+  --color-text-dk: #888888;           /* texto secundario */
+  --color-muted: #999999;             /* labels, hints, footer */
 
-  --color-accent: #e55050;            /* mensajes de error / highlights */
-  --color-accent-alt: #ffcc00;        /* hover brand */
-  --color-accent-hover: #e63946;      /* hover links navbar */
-  
+  /* =======================
+     ACCENTS / ESTADOS
+  ======================= */
+  --color-accent: #e53935;            /* errores / alertas */
+  --color-accent-alt: #ffb700;        /* highlights, hover */
+  --color-accent-hover: #ff2200;      /* hover botones y navbar, rojo brillante */
+
   --color-success-bg: #28a745;
   --color-success-border: #1e7e34;
 
@@ -27,41 +31,50 @@
   --color-info-bg: #17a2b8;
   --color-info-border: #117a8b;
 
-  --font-heading: 'Oswald', sans-serif;
-  --font-body: 'Roboto', sans-serif;
+  /* =======================
+     FONDOS / GRADIENTES
+  ======================= */
+  --color-bg-gradient-start: #121212;
+  --color-bg-gradient-end: #1f1f1f;
+  --color-box-bg: rgba(255, 255, 255, 0.08); /* cajas y cards */
+  --color-input-bg: rgba(255, 255, 255, 0.12);
+  --color-input-focus-bg: rgba(255, 255, 255, 0.25);
 
-  --radius: 0.5rem;
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --transition: all 0.3s ease;
+  /* =======================
+     BOTONES / GRADIENTES
+  ======================= */
+  --btn-gradient-start: #ff4500;
+  --btn-gradient-end: #ff2200;
+  --btn-gradient-hover-start: #ff6500;
+  --btn-gradient-hover-end: #ff3300;
 
-
-    /* Fondos gradientes */
-  --color-bg-gradient-start: #1a1a1a;
-  --color-bg-gradient-end: #2b2b2b;
-
-  /* Caja del login */
-  --color-box-bg: rgba(255, 255, 255, 0.06);
-
-  /* Inputs */
-  --color-input-bg: rgba(255, 255, 255, 0.1);
-  --color-input-focus-bg: rgba(255, 255, 255, 0.2);
-
-  /* Botones */
-  --btn-gradient-start: #ff6600;
-  --btn-gradient-end: #ff3300;
-  --btn-gradient-hover-start: #ff3300;
-  --btn-gradient-hover-end: #cc0000;
-
-
-   --color-table-header-bg: var(--color-primary);
-  --color-table-header-text: var(--color-text);
+  /* =======================
+     TABLAS / STATUS
+  ======================= */
+  --color-table-header-bg: var(--color-primary);
+  --color-table-header-text: var(--color-lg);
   --color-table-row-bg: var(--color-bg);
   --color-table-row-hover: var(--color-accent-alt);
 
   --color-status-paid: var(--color-success-bg);
   --color-status-pending: var(--color-warning-bg);
   --color-status-canceled: var(--color-error-bg);
+
+  /* =======================
+     TIPOGRAFÍA
+  ======================= */
+  --font-heading: 'Bebas Neue', cursive; /* llamativa y deportiva */
+  --font-body: 'Montserrat', sans-serif; /* moderna y legible */
+
+  /* =======================
+     BORDES / SOMBRAS / TRANSICIONES
+  ======================= */
+  --radius: 0.6rem;
+  --shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+  --transition: all 0.3s ease;
 }
+
+
 
 /* =======================
     RESET
@@ -73,10 +86,10 @@
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
+  color: var(--color-lg);
   font-family: var(--font-body);
   min-height: 300px;
+  background: var(--color-bg);
 }
 
 /* =======================
@@ -371,7 +384,7 @@ body {
 }
 
 /* =======================
-   🦶 FOOTER
+   FOOTER
 ======================= */
 .site-footer {
   background-color: var(--color-secondary);
@@ -396,7 +409,7 @@ body {
 
 /* Marca */
 .footer-brand {
-  flex: 1 1 200px;
+  flex: 1 1 70px;
 }
 
 .brand-link {

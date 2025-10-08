@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
-{% block extra_head %} 
-  <link rel="stylesheet" href="{% static 'css/raffle_detail.css' %}">
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/raffle_detail.css' %}">
 {% endblock %}
 
 {% block content %}
+<!-- =============================
+      DETALLE DE RIFA
+============================== -->
+
 <section class="raffle-detail container">
   <h1 class="raffle-detail-title">
     {{ raffle.motorcycle.brand }} {{ raffle.motorcycle.model }} ({{ raffle.motorcycle.year }})
@@ -12,22 +16,22 @@
 
   <div class="raffle-detail-layout">
     <!-- Carousel -->
-   <div class="raffle-carousel" aria-roledescription="carousel">
-  <div class="raffle-carousel-track">
-    {% for img in images %}
-      <div class="raffle-carousel-slide">
-        <img src="{{ img.image.url }}" alt="Imagen {{ forloop.counter }}">
+    <div class="raffle-carousel" aria-roledescription="carousel">
+      <div class="raffle-carousel-track">
+        {% for img in images %}
+        <div class="raffle-carousel-slide">
+          <img src="{{ img.image.url }}" alt="Imagen {{ forloop.counter }}">
+        </div>
+        {% endfor %}
       </div>
-    {% endfor %}
-  </div>
 
-  {# sólo mostramos controles si hay más de 1 imagen #}
-  {% if images|length > 1 %}
-   <button type="button" class="raffle-carousel-prev raffle-carousel-btn prev" aria-label="Anterior">‹</button>
-<button type="button" class="raffle-carousel-next raffle-carousel-btn next" aria-label="Siguiente">›</button>
+      {# sólo mostramos controles si hay más de 1 imagen #}
+      {% if images|length > 1 %}
+      <button type="button" class="raffle-carousel-prev raffle-carousel-btn prev" aria-label="Anterior">‹</button>
+      <button type="button" class="raffle-carousel-next raffle-carousel-btn next" aria-label="Siguiente">›</button>
 
-  {% endif %}
-</div>
+      {% endif %}
+    </div>
 
 
     <!-- Info -->
@@ -37,13 +41,13 @@
       <p class="raffle-info-item"><span>Kilometraje:</span> {{ raffle.motorcycle.mileage|default:"0 km" }}</p>
       <p class="raffle-info-item"><span>Estado:</span> {{ raffle.motorcycle.condition|default:"Nuevo" }}</p>
       <p class="raffle-info-item"><span>Inicio:</span> {{ raffle.created_at|date:"d M Y" }}</p>
-<p class="raffle-info-item"><span>Sorteo:</span> {{ raffle.ends_at|date:"d M Y" }}</p>
+      <p class="raffle-info-item"><span>Sorteo:</span> {{ raffle.ends_at|date:"d M Y" }}</p>
 
 
       {% if raffle.description %}
       <p class="raffle-description">{{ raffle.description }}</p>
       {% endif %}
-<a href="{% url 'ticket' raffle.id %}" class="raffle-btn">Comprar Ticket</a>
+      <a href="{% url 'ticket' raffle.id %}" class="raffle-btn">Comprar Ticket</a>
 
     </div>
   </div>

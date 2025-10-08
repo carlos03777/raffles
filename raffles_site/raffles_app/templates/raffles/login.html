@@ -1,26 +1,23 @@
-{% extends "base.html" %}
-{% load static %}
-{% block extra_head %} 
-  <link rel="stylesheet" href="{% static 'css/login.css' %}">
-{% endblock %}
-{% block content %}
+{% extends "base.html" %} {% load static %} {% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}" />
+{% endblock %} {% block content %}
+
+<!-- =============================
+      LOGIN
+============================== -->
 <section class="auth-container">
   <div class="auth-box">
     <h2 class="auth-title">Iniciar Sesión</h2>
-    
+
     <form method="post" class="auth-form">
-      {% csrf_token %}
-      {{ form.as_p }}
+      {% csrf_token %} {{ form.as_p }}
       <button type="submit" class="btn-main">Entrar</button>
     </form>
-    
     <p class="auth-footer">
-      ¿No tienes cuenta? 
+      ¿No tienes cuenta?
       <a href="{% url 'signup' %}">Regístrate aquí</a>
-
     </p>
     <p><a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a></p>
-
   </div>
 </section>
 {% endblock %}

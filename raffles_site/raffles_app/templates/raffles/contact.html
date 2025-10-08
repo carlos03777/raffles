@@ -1,57 +1,60 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_head %} 
-  <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/contact.css' %}">
 {% endblock %}
-{%  block content %}
+{% block content %}
+<!-- =============================
+        CONTACTO
+============================== -->
 
- <!-- Header -->
-  <header class="contact-hero">
-    <div class="overlay"></div>
-    <div class="hero-content">
-      <h1>Contacto</h1>
-      <p>¿Tienes dudas? Escríbenos, estamos para ayudarte.</p>
+<!-- Header -->
+<header class="contact-hero">
+  <div class="overlay"></div>
+  <div class="hero-content">
+    <h1>Contacto</h1>
+    <p>¿Tienes dudas? Escríbenos, estamos para ayudarte.</p>
+  </div>
+</header>
+
+<!-- Sección contacto -->
+<section class="contact-section">
+  <div class="contact-grid">
+
+    <!-- Formulario -->
+    <div class="contact-form">
+      <h2>Escríbenos</h2>
+
+      {% if sent %}
+      <p class="success-msg">Tu mensaje fue enviado con éxito. Te responderemos pronto.</p>
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="contact-btn-main">Enviar mensaje</button>
+      </form>
     </div>
-  </header>
-
-  <!-- Sección contacto -->
-  <section class="contact-section">
-    <div class="contact-grid">
-
-      <!-- Formulario -->
-     <div class="contact-form">
-  <h2>Escríbenos</h2>
-
-  {% if sent %}
-    <p class="success-msg">Tu mensaje fue enviado con éxito. Te responderemos pronto.</p>
-  {% endif %}
-
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="contact-btn-main">Enviar mensaje</button>
-  </form>
-</div>
 
 
-      <!-- Info rápida -->
-      <div class="contact-info">
-        <h2>Info de Contacto</h2>
-        <ul>
-          <li><strong> Dirección:</strong> Calle 123, Medellín - Colombia</li>
-          <li><strong> Correo:</strong> contacto@rifamotos.com</li>
-          <li><strong> WhatsApp:</strong> +57 300 123 4567</li>
-        </ul>
-        <div class="map">
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.76566519713!2d-75.56359068468085!3d6.244203995479978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e4428f5d9f9e08d%3A0xe2a9f6cda6f3c9a0!2sMedell%C3%ADn!5e0!3m2!1ses!2sco!4v1670953981911!5m2!1ses!2sco" 
-            width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy">
-          </iframe>
-        </div>
+    <!-- Info rápida -->
+    <div class="contact-info">
+      <h2>Info de Contacto</h2>
+      <ul>
+        <li><strong> Dirección:</strong> Calle 123, Medellín - Colombia</li>
+        <li><strong> Correo:</strong> contacto@rifamotos.com</li>
+        <li><strong> WhatsApp:</strong> +57 300 123 4567</li>
+      </ul>
+      <div class="map">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.76566519713!2d-75.56359068468085!3d6.244203995479978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e4428f5d9f9e08d%3A0xe2a9f6cda6f3c9a0!2sMedell%C3%ADn!5e0!3m2!1ses!2sco!4v1670953981911!5m2!1ses!2sco"
+          width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy">
+        </iframe>
       </div>
-
     </div>
-  </section>
+
+  </div>
+</section>
 
 
 {% endblock %}

@@ -1,541 +1,516 @@
 
-  /* --- Hero Carousel --- */
-  .hero-carousel {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    font-family: Arial, Helvetica, sans-serif;
-  }
+/* =========================
+   HERO + CARRUSEL
+========================= */
+.hero-carousel {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-  /* Slides */
-  .carousel-slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 1s ease;
-  }
+/* --- Slides --- */
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
 
-  .carousel-slide.active {
-    opacity: 1;
-    z-index: 1;
-  }
+.carousel-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
 
-  .carousel-slide img,
-  .carousel-slide video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+.carousel-slide img,
+.carousel-slide video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-  /* --- Overlay de texto --- */
+/* --- Overlay de texto --- */
+.overlay {
+  position: absolute;
+  bottom: 20%;
+  left: 10%;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  max-width: 80%;
+}
+
+.overlay h1 {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.overlay p {
+  font-size: 1.2rem;
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.7rem 1.5rem;
+  background: crimson;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: darkred;
+}
+
+/* --- Controles del carrusel --- */
+.carousel-controls {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  padding: 0 6rem;
+  z-index: 10;
+}
+
+.carousel-controls span {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.carousel-controls span:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+/* --- Responsivo Hero --- */
+@media (max-width: 768px) {
   .overlay {
-    position: absolute;
-    bottom: 20%;
-    left: 10%;
-    color: #fff;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
-    max-width: 80%;
+    bottom: 15%;
+    left: 5%;
+    max-width: 90%;
   }
 
   .overlay h1 {
-    font-size: 2.8rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
   }
 
   .overlay p {
-    font-size: 1.2rem;
-  }
-
-  .btn {
-    display: inline-block;
-    margin-top: 1rem;
-    padding: 0.7rem 1.5rem;
-    background: crimson;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background 0.3s;
-  }
-
-  .btn:hover {
-    background: darkred;
-  }
-
-  /* --- Controles del carrusel --- */
-
-  .carousel-controls {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    transform: translateY(-50%);
-    padding: 0 6rem;
-    z-index: 10;
+    font-size: 1rem;
   }
 
   .carousel-controls span {
-    background: rgba(0, 0, 0, 0.4);
-    /* Fondo suave */
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-    cursor: pointer;
-    user-select: none;
-    transition: all 0.3s ease;
+    font-size: 2.2rem;
+    padding: 0.4rem 0.8rem;
   }
-
-  .carousel-controls span:hover {
-    background: rgba(0, 0, 0, 0.7);
-    /* Un poco más fuerte al pasar el mouse */
-    transform: scale(1.1);
-  }
-
-
-
-  /* --- Responsivo --- */
-  @media (max-width: 768px) {
-    .overlay {
-      bottom: 15%;
-      left: 5%;
-      max-width: 90%;
-    }
-
-    .overlay h1 {
-      font-size: 1.8rem;
-    }
-
-    .overlay p {
-      font-size: 1rem;
-    }
-
-    .carousel-controls span {
-      font-size: 2.2rem;
-      padding: 0.4rem 0.8rem;
-    }
-  }
-
-  /* ============================
-   SECCIÓN GANADORES
-============================ */
-  /* Winners */
-
-  
-
-  .winners-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    justify-items: center;
-    padding: 4rem 2rem;
-      gap: 2rem;
-
-  }
-
-
-
-  .winners-title {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .winners-title h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0;
-  }
-
-  .winners-title .subtitle {
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--text);
-    margin-top: 0.5rem;
-  }
-
-  /* Minimapa */
-  .winners-minimap {
-    position: fixed;
-    top: 3rem;
-    left: 1rem;
-    font-size: 0.9rem;
-    color: var(--text);
-    background: var(--minimap-bg);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    pointer-events: none;
-    z-index: 300;
-  }
-
-  /* Tarjeta */
-  .winners-card {
-    width: 320px;
-    height: 480px;
-    border-radius: 20px;
-    position: relative;
-    background: white;
-    overflow: hidden;
-    cursor: pointer;
-    border: 1px solid var(--card-border);
-    box-shadow: 0 15px 40px var(--card-shadow);
-    perspective: 1000px;
-  }
-
-  .winners-card-inner {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.8s ease;
-  }
-
-  .winners-card[data-active="true"] .winners-card-inner {
-    transform: rotateY(180deg);
-  }
-
-  .winners-card-inner {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.8s ease;
-  }
-
-
-  /* Frente / Reverso */
-  .winners-card-front,
-  .winners-card-back {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    backface-visibility: hidden;
-    overflow: hidden;
-  }
-
-  .winners-card-back {
-    transform: rotateY(180deg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.6);
-  }
-
-  /* Fondo */
-  .winners-card-bg {
-    position: absolute;
-    inset: 0;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    border-radius: inherit;
-    z-index: 1;
-    overflow: hidden;
-    /* recorta bordes */
-    filter: contrast(1.1) brightness(1.1) saturate(1.2);
-    transition: filter 0.5s ease, transform 0.5s ease;
-  }
-
-
-  .winners-card:hover .winners-card-bg {
-    filter: contrast(1.3) brightness(1.3) saturate(1.5);
-    transform: scale(1.02);
-  }
-
-
-  .winners-face-highlight {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translate(-50%, -30%);
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
-    pointer-events: none;
-    z-index: 3;
-    mix-blend-mode: screen;
-  }
-
-  .glare {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
-        rgba(255, 255, 255, 0.3),
-        transparent 60%);
-    mix-blend-mode: overlay;
-    z-index: 2;
-    pointer-events: none;
-    transition: background 0.2s ease;
-  }
-
-
-
-
-  /* Nombre */
-  .winners-card-name {
-    position: absolute;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.8rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    z-index: 4;
-    color: var(--text);
-  }
-
-  /* Logos */
-  .winners-logo-grid {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 10px;
-    padding: 20px;
-    z-index: 0;
-    opacity: 0.2;
-    pointer-events: none;
-  }
-
-  .winners-logo {
-    width: 45px;
-    height: 45px;
-    opacity: 0.1;
-    justify-self: center;
-    align-self: center;
-    position: relative;
-    transition: opacity 0.3s, transform 0.3s, filter 0.3s;
-
-  }
-
-  .winners-logo-icon {
-    width: 100%;
-    height: 100%;
-    background: var(--icon) center/contain no-repeat;
-    filter: brightness(1.8) saturate(2);
-
-  }
-
- .winners-logo.prism {
-    filter: drop-shadow(0 0 18px rgba(255,255,255,0.8));
-    opacity: 0.95;
-  }
-
-  .winners-logo::before {
-    content: "";
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    background: conic-gradient(from var(--angle, 0deg),
-        #ff00cc 0%,
-        #00ffff 20%,
-        #ffcc00 40%,
-        #00ff66 60%,
-        #ff00cc 80%,
-        #ffffff 100%);
-    mix-blend-mode: screen;
-    opacity: 0;
-    filter: blur(3px) brightness(1.5) saturate(1.5);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  .winners-logo.prism::before {
-    opacity: 1;
-  }
-
-  .winners-card:hover .winners-logo {
-    opacity: 0.6;
-  }
-
-  .winners-logo:hover {
-    opacity: 1;
-    transform: scale(1.3);
-    filter: drop-shadow(0 0 10px white);
-  }
-
-
-
-  /* Marca de agua */
-  .winners-card-watermark {
-    position: absolute;
-    bottom: 40px;
-    right: 20px;
-    text-align: right;
-    font-size: 1.2rem;
-    font-weight: 700;
-    z-index: 4;
-  }
-
-  .winners-card-watermark-span {
-    display: block;
-    text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-  }
-
-  /* Botón flip */
-  .winners-flip-btn {
-    position: absolute;
-    backface-visibility: visible;
-    color: var(--color-text);
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--color-primary);
-    border: 1px solid var(--color-primary);
-    padding: 0.46rem 0.9rem;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 6; 
-  }
-
-  /* Reverso */
-  .winners-photo {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid white;
-    margin-bottom: 15px;
-  }
-
-  .winners-photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .winners-info {
-    color: white;
-    z-index: 4;
-  }
-
-  .winners-info .winners-name {
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-  }
-
-  .winners-info .winners-number {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #ffcc00;
-    margin-bottom: 10px;
-  }
-
-  .winners-info .winners-ig {
-    font-size: 1rem;
-    opacity: 0.9;
-  }
-
-  .winners-info i {
-    margin-right: 6px;
-    color: #e1306c;
-  }
-
-
-  /* como funciona */
-
-  #how-it-works {
-    padding: 20px 20px;
-    text-align: center;
-    background: var(--bg-light);
-  }
-
-  #how-it-works .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 30px;
-    margin-top: 40px;
-  }
-
-  .steps {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-
-  }
-
-  .step i {
-    font-size: 3rem;
-    color: crimson;
-
-  }
-
-  .step h3 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-  }
-
-  .step p {
-    font-size: 0.95rem;
-    color: var(--text-light);
-  }
-
-
-
-  /* testimonios */
-  #winners {
-    padding: 70px 20px;
-    background: var(--bg-light);
-    color: var(--text-light);
-  }
-
-  #winners .section-title {
-    text-align: center;
-    margin-bottom: 50px;
-  }
-
+}
+
+
+/* =========================
+   SECCIÓN: GANADORES
+========================= */
+.winners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  justify-items: center;
+  padding: 4rem 2rem;
+  gap: 2rem;
+}
+
+.winners-title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.winners-title h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.winners-title .subtitle {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text);
+  margin-top: 0.5rem;
+}
+
+/* --- Minimapa --- */
+.winners-minimap {
+  position: fixed;
+  top: 3rem;
+  left: 1rem;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--minimap-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 300;
+}
+
+/* --- Tarjeta --- */
+.winners-card {
+  width: 320px;
+  height: 480px;
+  border-radius: 20px;
+  position: relative;
+  background: white;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 15px 40px var(--card-shadow);
+  perspective: 1000px;
+}
+
+.winners-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s ease;
+}
+
+.winners-card[data-active="true"] .winners-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* --- Frente / Reverso --- */
+.winners-card-front,
+.winners-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.winners-card-back {
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* --- Fondo --- */
+.winners-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: inherit;
+  z-index: 1;
+  overflow: hidden;
+  filter: contrast(1.1) brightness(1.1) saturate(1.2);
+  transition: filter 0.5s ease, transform 0.5s ease;
+}
+
+.winners-card:hover .winners-card-bg {
+  filter: contrast(1.3) brightness(1.3) saturate(1.5);
+  transform: scale(1.02);
+}
+
+/* --- Highlight circular --- */
+.winners-face-highlight {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: screen;
+}
+
+/* --- Reflejo dinámico --- */
+.glare {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 255, 255, 0.3),
+      transparent 60%);
+  mix-blend-mode: overlay;
+  z-index: 2;
+  pointer-events: none;
+  transition: background 0.2s ease;
+}
+
+/* --- Nombre --- */
+.winners-card-name {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  z-index: 4;
+  color: var(--text);
+}
+
+/* --- Logos --- */
+.winners-logo-grid {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 10px;
+  padding: 20px;
+  z-index: 0;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.winners-logo {
+  width: 45px;
+  height: 45px;
+  opacity: 0.1;
+  justify-self: center;
+  align-self: center;
+  position: relative;
+  transition: opacity 0.3s, transform 0.3s, filter 0.3s;
+}
+
+.winners-logo-icon {
+  width: 100%;
+  height: 100%;
+  background: var(--icon) center/contain no-repeat;
+  filter: brightness(1.8) saturate(2);
+}
+
+.winners-logo.prism {
+  filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.8));
+  opacity: 0.95;
+}
+
+.winners-logo::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(from var(--angle, 0deg),
+      #ff00cc 0%,
+      #00ffff 20%,
+      #ffcc00 40%,
+      #00ff66 60%,
+      #ff00cc 80%,
+      #ffffff 100%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  filter: blur(3px) brightness(1.5) saturate(1.5);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.winners-logo.prism::before {
+  opacity: 1;
+}
+
+.winners-card:hover .winners-logo {
+  opacity: 0.6;
+}
+
+.winners-logo:hover {
+  opacity: 1;
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 10px white);
+}
+
+/* --- Marca de agua --- */
+.winners-card-watermark {
+  position: absolute;
+  bottom: 40px;
+  right: 20px;
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: 700;
+  z-index: 4;
+}
+
+.winners-card-watermark-span {
+  display: block;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+/* --- Botón Flip --- */
+.winners-flip-btn {
+  position: absolute;
+  backface-visibility: visible;
+  color: var(--color-text);
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  padding: 0.46rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 6;
+}
+
+/* --- Reverso (Ganador) --- */
+.winners-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid white;
+  margin-bottom: 15px;
+}
+
+.winners-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.winners-info {
+  color: white;
+  z-index: 4;
+}
+
+.winners-info .winners-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.winners-info .winners-number {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffcc00;
+  margin-bottom: 10px;
+}
+
+.winners-info .winners-ig {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.winners-info i {
+  margin-right: 6px;
+  color: #e1306c;
+}
+
+
+/* =========================
+   SECCIÓN: CÓMO FUNCIONA
+========================= */
+#how-it-works {
+  padding: 20px 20px;
+  text-align: center;
+  background: var(--bg-light);
+}
+
+#how-it-works .steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.steps {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.step i {
+  font-size: 3rem;
+  color: crimson;
+}
+
+.step h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.step p {
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+
+/* =========================
+   SECCIÓN: TESTIMONIOS
+========================= */
+#winners {
+  padding: 70px 20px;
+  background: var(--bg-light);
+  color: var(--text-light);
+}
+
+#winners .section-title {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.winners-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.testimonials {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.testimonial {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: gray;
+}
+
+.testimonial h4 {
+  margin-top: 10px;
+  font-weight: bold;
+  color: gray;
+}
+
+.ig-embed iframe {
+  width: 100%;
+  border-radius: 12px;
+  min-height: 500px;
+}
+
+/* --- Responsive Testimonios --- */
+@media (max-width: 900px) {
   .winners-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: start;
-  }
-
-  .testimonials {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-  }
-
-  .testimonial {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    font-size: 1rem;
-    line-height: 1.6;
-  }
-
-  .testimonial h4 {
-    margin-top: 10px;
-    font-weight: bold;
-    color: var(--accent);
+    grid-template-columns: 1fr;
   }
 
   .ig-embed iframe {
-    width: 100%;
-    border-radius: 12px;
-    min-height: 500px;
+    min-height: 400px;
   }
-
-  /* Responsive */
-  @media (max-width: 900px) {
-    .winners-content {
-      grid-template-columns: 1fr;
-    }
-
-    .ig-embed iframe {
-      min-height: 400px;
-    }
-  }
+}

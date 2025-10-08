@@ -1,227 +1,210 @@
+/* =========================
+   TICKET (VARIABLES-LINKED)
+========================= */
 
-  /* tiket */
+.ticket-purchase {
+  padding: 2rem;
+  background: var(--color-box-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 1100px;
+  margin: 6rem auto 2rem;
+  color: var(--color-text);
+}
 
-  
-  .ticket-purchase {
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.05);
-    /* semi-transparente sobre fondo oscuro */
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    max-width: 1100px;
-    margin: 6rem auto 2rem;
-    /* margen superior extra por navbar fija */
-    color: var(--color-text);
-  }
+.ticket-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+}
 
-  .ticket-title {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 2rem;
-    color: var(--color-primary);
-    font-family: var(--font-heading);
-  }
+/* GRID: columnas */
+.ticket-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
 
-  /* ====================
-   GRID: columnas
-==================== */
+/* Columna izquierda (Formulario) */
+.ticket-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.ticket-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ticket-form label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* Casillas tipo código */
+.ticket-code {
+  display: flex;
+  justify-content: center;
+  gap: 0.7rem;
+}
+
+.ticket-hint {
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--color-text-dk);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.ticket-hint strong {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.ticket-code input {
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border: 2px solid var(--color-muted);
+  border-radius: var(--radius);
+  background: var(--color-secondary);
+  color: var(--color-text);
+  outline: none;
+  transition: var(--transition);
+}
+
+.ticket-code input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 6px var(--color-primary);
+}
+
+/* Botones del form */
+.ticket-actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.ticket-btn {
+  padding: 0.8rem 1.6rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+/* Botón principal */
+.ticket-btn-main {
+  background: var(--color-primary);
+  color: var(--color-lg);
+}
+
+.ticket-btn-main:hover {
+  background: #e63900;
+}
+
+/* Botón secundario */
+.ticket-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--color-muted);
+  color: var(--color-text);
+}
+
+.ticket-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Botón alterno */
+.ticket-btn-alt {
+  background: var(--color-secondary);
+  color: var(--color-lg);
+}
+
+.ticket-btn-alt:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Columna derecha (Resumen) */
+.ticket-summary-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.ticket-summary-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 2px solid var(--color-muted);
+}
+
+.ticket-summary-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+}
+
+.ticket-summary-info {
+  margin: 0.3rem 0;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+/* Botón "Ir al carrito" */
+.ticket-btn-cart {
+  display: block;
+  width: 100%;
+  margin-top: 1.5rem;
+  background: var(--color-primary);
+  color: var(--color-lg);
+  padding: 0.9rem 1.5rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.ticket-btn-cart:hover {
+  background: #e63900;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .ticket-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: start;
+    grid-template-columns: 1fr;
   }
 
-  /* ====================
-   Columna izquierda (Formulario)
-==================== */
-  .ticket-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  .ticket-summary-card {
+    margin-top: 1.5rem;
   }
-
-  .ticket-form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .ticket-form label {
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--color-text);
-    text-align: center;
-  }
-
-  /* Casillas tipo código */
-  .ticket-code {
-    display: flex;
-    justify-content: center;
-    gap: 0.7rem;
-  }
-
-
-  /* Estilos para la pista (ticket-hint) */
-  .ticket-hint {
-    margin-top: 0.8rem;
-    font-size: 0.9rem;
-    font-weight: 400;
-    color: #bbb;
-    /* gris suave */
-    text-align: center;
-    letter-spacing: 0.5px;
-  }
-
-  .ticket-hint strong {
-    color: #ff6600;
-    /* mismo naranja de tu botón "Agregar" */
-    font-weight: 600;
-  }
-
 
   .ticket-code input {
-    width: 3rem;
-    height: 3rem;
-    text-align: center;
-    font-size: 1.4rem;
-    font-weight: 600;
-    border: 2px solid var(--color-muted);
-    border-radius: var(--radius);
-    background: #000;
-    color: var(--color-text);
-    outline: none;
-    transition: var(--transition);
-  }
-
-  .ticket-code input:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 6px var(--color-primary);
-  }
-
-  /* ====================
-   Botones del form
-==================== */
-  .ticket-actions {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .ticket-btn {
-    padding: 0.8rem 1.6rem;
-    border: none;
-    border-radius: var(--radius);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-  }
-
-  /* Botón principal */
-  .ticket-btn-main {
-    background: var(--color-primary);
-    color: #fff;
-  }
-
-  .ticket-btn-main:hover {
-    background: #e63900;
-  }
-
-  /* Botón secundario */
-  .ticket-btn-secondary {
-    background: transparent;
-    border: 1px solid var(--color-muted);
-    color: var(--color-text);
-  }
-
-  .ticket-btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.08);
-  }
-
-  /* Botón alterno (aleatorio) */
-  .ticket-btn-alt {
-    background: #333;
-    color: #fff;
-  }
-
-  .ticket-btn-alt:hover {
-    background: #555;
-  }
-
-  /* ====================
-   Columna derecha (Card)
-==================== */
-  .ticket-summary-card {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    text-align: center;
-    box-shadow: var(--shadow);
-  }
-
-  .ticket-summary-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 1rem;
-    border: 2px solid var(--color-muted);
-  }
-
-  .ticket-summary-name {
+    width: 2.6rem;
+    height: 2.6rem;
     font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--color-primary);
   }
-
-  .ticket-summary-info {
-    margin: 0.3rem 0;
-    color: var(--color-text);
-    font-size: 0.95rem;
-    opacity: 0.85;
-  }
-
-  /* Botón "Ir al carrito" */
-  .ticket-btn-cart {
-    display: block;
-    width: 100%;
-    margin-top: 1.5rem;
-    background: var(--color-primary);
-    color: #fff;
-    padding: 0.9rem 1.5rem;
-    border: none;
-    border-radius: var(--radius);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-  }
-
-  .ticket-btn-cart:hover {
-    background: #e63900;
-  }
-
-  /* ====================
-   Responsive
-==================== */
-  @media (max-width: 768px) {
-    .ticket-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .ticket-summary-card {
-      margin-top: 1.5rem;
-    }
-
-    .ticket-code input {
-      width: 2.6rem;
-      height: 2.6rem;
-      font-size: 1.2rem;
-    }
-  }
+}

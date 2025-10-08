@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_head %} 
-  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
 {% block content %}
+<!-- =============================
+      GANADORES
+============================== -->
 <section id="winners" class="winners-section">
   <div class="winners-title">
     <h2>Ganadores Recientes</h2>
@@ -33,24 +36,60 @@
 
           <!-- Logos estáticos -->
           <section class="winners-logo-grid" aria-label="Marcas">
-            <div class="winners-logo" style="--icon: url('/static/img/bmw.svg')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/honda.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/ktm.svg')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/suzuki.svg')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/yamaha.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/mt-09.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/harley.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/ducatii.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/kawasaki.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/bmw.svg')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/honda.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/ktm.svg')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/suzuki.svg')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/yamaha.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/mt-09.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/harley.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/pulsar.png')"><div class="winners-logo-icon"></div></div>
-            <div class="winners-logo" style="--icon: url('/static/img/kawasaki.png')"><div class="winners-logo-icon"></div></div>
+            <div class="winners-logo" style="--icon: url('/static/img/bmw.svg')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/honda.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/ktm.svg')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/suzuki.svg')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/yamaha.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/mt-09.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/harley.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/ducatii.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/kawasaki.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/bmw.svg')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/honda.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/ktm.svg')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/suzuki.svg')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/yamaha.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/mt-09.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/harley.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/pulsar.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
+            <div class="winners-logo" style="--icon: url('/static/img/kawasaki.png')">
+              <div class="winners-logo-icon"></div>
+            </div>
           </section>
 
           <!-- Marca de agua -->
@@ -73,15 +112,16 @@
 
         <!-- Reverso -->
         <div class="winners-card-back">
-          <div class="winners-card-bg" style="background: url('{% static "img/back-pattern.png" %}') center/cover no-repeat;"></div>
+          <div class="winners-card-bg" style="background: url('{% static " img/back-pattern.png" %}') center/cover
+            no-repeat;"></div>
           <div class="winners-glare"></div>
 
           <!-- Foto del ganador -->
           <div class="winners-photo">
             {% if raffle.winner_ticket.user.profile.photo %}
-              <img src="{{ raffle.winner_ticket.user.profile.photo.url }}" alt="Foto del ganador">
+            <img src="{{ raffle.winner_ticket.user.profile.photo.url }}" alt="Foto del ganador">
             {% else %}
-              <img src="{% static 'img/persona.jpg' %}" alt="Foto por defecto">
+            <img src="{% static 'img/persona.jpg' %}" alt="Foto por defecto">
             {% endif %}
           </div>
 

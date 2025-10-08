@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
-{% block extra_head %} 
-  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}" />
 {% endblock %}
 {% block content %}
+ <!-- ===============================
+      CORREO DE ACTIVACION
+  =============================== -->
 <div class="auth-container">
   <div class="auth-box">
     <h1 class="auth-title">Revisa tu correo 📩</h1>
-    <p style="color:#ddd; font-size:0.9rem;">
-      Te hemos enviado un enlace de confirmación a tu correo electrónico.  
-      Por favor, revisa tu bandeja de entrada (y la carpeta de spam).
+    <p style="color: #ddd; font-size: 0.9rem">
+      Te hemos enviado un enlace de confirmación a tu correo electrónico. Por
+      favor, revisa tu bandeja de entrada (y la carpeta de spam).
     </p>
     <div class="auth-footer">
       <a href="{% url 'login' %}">Volver al inicio de sesión</a>

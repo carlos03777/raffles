@@ -1,5 +1,7 @@
 
-  /* tiket */
+/* =========================
+  TICKET
+========================= */
 
   
   .ticket-purchase {
@@ -23,9 +25,8 @@
     font-family: var(--font-heading);
   }
 
-  /* ====================
-   GRID: columnas
-==================== */
+   /* GRID: columnas */
+
   .ticket-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -33,9 +34,8 @@
     align-items: start;
   }
 
-  /* ====================
-   Columna izquierda (Formulario)
-==================== */
+   /* Columna izquierda (Formulario) */
+
   .ticket-form {
     display: flex;
     flex-direction: column;
@@ -100,9 +100,8 @@
     box-shadow: 0 0 6px var(--color-primary);
   }
 
-  /* ====================
-   Botones del form
-==================== */
+   /* Botones del form */
+
   .ticket-actions {
     margin-top: 1rem;
     display: flex;
@@ -152,9 +151,8 @@
     background: #555;
   }
 
-  /* ====================
-   Columna derecha (Card)
-==================== */
+   /* Columna derecha (Card) */
+
   .ticket-summary-card {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -207,9 +205,8 @@
     background: #e63900;
   }
 
-  /* ====================
-   Responsive
-==================== */
+   /* Responsive */
+
   @media (max-width: 768px) {
     .ticket-grid {
       grid-template-columns: 1fr;

@@ -1,31 +1,34 @@
 {% extends "base.html" %}
 {% load static %}
-{% block extra_head %} 
-  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock %}
 {% block content %}
+<!-- =============================
+      SIGNUP
+============================== -->
 <section class="auth-container">
   <div class="auth-box">
     <h2 class="auth-title">Crear cuenta</h2>
 
     <form method="post" class="auth-form">
-  {% csrf_token %}
-  {{ form.non_field_errors }}
-  {% for field in form %}
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
       <p>
         {{ field.label_tag }}<br>
         {{ field }}
         {% if field.errors %}
-            <span class="error">{{ field.errors|striptags }}</span>
+        <span class="error">{{ field.errors|striptags }}</span>
         {% endif %}
       </p>
-  {% endfor %}
-  <button type="submit" class="btn-main">Registrarme</button>
-</form>
+      {% endfor %}
+      <button type="submit" class="btn-main">Registrarme</button>
+    </form>
 
 
     <p class="auth-footer">
-      ¿Ya tienes cuenta? 
+      ¿Ya tienes cuenta?
       <a href="{% url 'login' %}">Inicia sesión aquí</a>
     </p>
   </div>

@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block extra_head %} 
+  <link rel="stylesheet" href="{% static 'css/raffle_list.css' %}">
+{% endblock %}
 {% block content %}
 <section class="raffle-list container">
     <h1 class="raffle-list-title"> Rifas de Motos</h1>

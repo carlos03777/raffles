@@ -2,63 +2,71 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-import secrets, hashlib, random, uuid
 from django.core.exceptions import ValidationError
+import secrets, hashlib, random, uuid
 
 
+# ==========================================================
+#  PERFIL DE USUARIO
+# ==========================================================
 class Profile(models.Model):
     """
-    Perfil extendido para cada usuario.
+    Perfil extendido asociado a cada usuario del sistema.
+    Permite almacenar información adicional como teléfono, ciudad, etc.
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     photo = models.ImageField(upload_to="profiles/", blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
-    document_id = models.CharField(max_length=50, unique=True, blank=True, null=True)  # ✅ único
-    
-
+    document_id = models.CharField(max_length=50, unique=True, blank=True, null=True)  # Documento único del usuario
 
     def __str__(self):
         return self.user.username
 
     def raffles_participated(self):
+        """Devuelve las rifas en las que el usuario ha participado."""
         return Raffle.objects.filter(tickets__user=self.user).distinct()
 
 
+# --- Señales relacionadas con el modelo User ---
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
+    """Crea automáticamente el perfil cuando se registra un nuevo usuario."""
     if created:
         Profile.objects.create(user=instance)
 
+
 @receiver(pre_save, sender=User)
 def validate_email_constraints(sender, instance, **kwargs):
-    # Unicidad
+    """
+    Valida restricciones sobre el campo email del usuario:
+    - Debe ser único.
+    - No puede modificarse una vez registrado.
+    """
     if User.objects.filter(email=instance.email).exclude(pk=instance.pk).exists():
         raise ValidationError(f"El email {instance.email} ya está en uso.")
 
-    # Inmutabilidad
-    if instance.pk:  # usuario ya existe
+    if instance.pk:
         old_email = User.objects.filter(pk=instance.pk).values_list("email", flat=True).first()
         if old_email and old_email != instance.email:
             raise ValidationError("El email no puede modificarse una vez registrado.")
-        
-
-from django.db import models
-from django.core.exceptions import ValidationError
 
 
+# ==========================================================
+#  MOTOS Y SUS IMÁGENES
+# ==========================================================
 class Motorcycle(models.Model):
     """
     Representa la moto que será rifada.
     Puede ser nueva o usada.
     """
-    brand = models.CharField(max_length=100, db_index=True)   # Ej: Yamaha
-    model = models.CharField(max_length=100, db_index=True)   # Ej: MT-09
-    year = models.PositiveIntegerField(db_index=True)         # Ej: 2024
+    brand = models.CharField(max_length=100, db_index=True)   # Ejemplo: Yamaha
+    model = models.CharField(max_length=100, db_index=True)   # Ejemplo: MT-09
+    year = models.PositiveIntegerField(db_index=True)         # Ejemplo: 2024
     description = models.TextField(blank=True)
 
-    # Estado de la moto
-    is_new = models.BooleanField(default=True)     # True = nueva, False = usada
+    # Estado general
+    is_new = models.BooleanField(default=True)  # True = nueva, False = usada
     mileage = models.PositiveIntegerField(
         blank=True, null=True,
         help_text="Kilometraje en kilómetros (solo si es usada)."
@@ -81,23 +89,16 @@ class Motorcycle(models.Model):
 
     @property
     def hologram_image(self):
-        """
-        Devuelve la primera imagen marcada como holograma.
-        Si no existe, retorna None.
-        """
+        """Devuelve la imagen marcada como holograma, si existe."""
         return self.images.filter(is_hologram=True).first()
 
 
 class MotorcycleImage(models.Model):
     """
-    Permite asociar múltiples imágenes a una misma moto.
-    Una de ellas puede marcarse como holograma.
+    Permite asociar múltiples imágenes a una moto.
+    Una de ellas puede marcarse como 'holograma'.
     """
-    motorcycle = models.ForeignKey(
-        Motorcycle,
-        on_delete=models.CASCADE,
-        related_name="images"
-    )
+    motorcycle = models.ForeignKey(Motorcycle, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to="motos/")
     is_hologram = models.BooleanField(
         default=False,
@@ -105,53 +106,42 @@ class MotorcycleImage(models.Model):
     )
 
     def clean(self):
-        """
-        Valida que solo exista una imagen holograma por moto.
-        """
+        """Valida que solo exista una imagen holograma por moto."""
         if self.is_hologram:
-            qs = MotorcycleImage.objects.filter(
-                motorcycle=self.motorcycle,
-                is_hologram=True
-            )
+            qs = MotorcycleImage.objects.filter(motorcycle=self.motorcycle, is_hologram=True)
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
             if qs.exists():
                 raise ValidationError("Ya existe una imagen holográfica para esta moto.")
 
     def save(self, *args, **kwargs):
-        self.full_clean()  # Llama a clean() antes de guardar
+        """Valida la imagen antes de guardarla."""
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
         tipo = " (Holograma)" if self.is_hologram else ""
         return f"Imagen de {self.motorcycle.brand} {self.motorcycle.model}{tipo}"
-    
 
 
+# ==========================================================
+#  RIFAS
+# ==========================================================
 class Raffle(models.Model):
     """
     Representa una rifa de una moto específica.
-    Maneja la lógica de transparencia con commit-reveal.
+    Maneja la lógica de transparencia mediante el esquema commit-reveal.
     """
     STATUS_CHOICES = [
-        ("upcoming", "Proxima"),
+        ("upcoming", "Próxima"),
         ("open", "Abierta"),
         ("closed", "Cerrada"),
     ]
 
-    motorcycle = models.ForeignKey(
-        Motorcycle,
-        on_delete=models.CASCADE,
-        related_name="raffles"
-    )
+    motorcycle = models.ForeignKey(Motorcycle, on_delete=models.CASCADE, related_name="raffles")
     ticket_price = models.DecimalField(max_digits=10, decimal_places=2)
     max_tickets = models.PositiveIntegerField()
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="open",
-        db_index=True
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="open", db_index=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -169,9 +159,9 @@ class Raffle(models.Model):
     )
 
     def __str__(self):
-        return f"Rifa: {self.motorcycle}"
+        return f"Rifa: {self.motorcycle}"   
 
-    # -------- Métodos de negocio -------- #
+    # --- Lógica de negocio principal ---
     def create_commit(self):
         """Genera el compromiso inicial (commit) con un seed seguro."""
         seed = secrets.token_hex(32)
@@ -182,35 +172,15 @@ class Raffle(models.Model):
         return h
 
     def verify_commit(self):
-        """Verifica que el seed_reveal coincide con el seed_commitment."""
+        """Verifica que el seed_reveal coincida con el seed_commitment."""
         if not self.seed_reveal or not self.seed_commitment:
             return False
         return hashlib.sha256(self.seed_reveal.encode()).hexdigest() == self.seed_commitment
 
-    # def pick_winner_commit_reveal(self):
-    #     """Selecciona un ganador de manera transparente."""
-    #     tickets = list(self.tickets.all())
-    #     if not tickets:
-    #         return None
-
-    #     if not self.verify_commit():
-    #         raise ValueError("Seed reveal no coincide con el commitment.")
-
-    #     digest = hashlib.sha256((self.seed_reveal + str(len(tickets))).encode()).hexdigest()
-    #     idx = int(digest, 16) % len(tickets)
-    #     winner = tickets[idx]
-    #     self.winner_ticket = winner
-    #     self.status = "finished"
-    #     self.save()
-    #     return winner
-
-
-
     def pick_winner_commit_reveal(self):
-        """Selecciona un ganador de manera transparente."""
-        tickets = list(self.tickets.filter(payment_status="paid"))  # 👈 solo pagados
+        """Selecciona un ganador de forma transparente usando commit-reveal."""
+        tickets = list(self.tickets.filter(payment_status="paid"))
         if not tickets:
-            # No hay participantes -> cerramos sin ganador
             self.status = "closed"
             self.save()
             return None
@@ -221,144 +191,50 @@ class Raffle(models.Model):
         digest = hashlib.sha256((self.seed_reveal + str(len(tickets))).encode()).hexdigest()
         idx = int(digest, 16) % len(tickets)
         winner = tickets[idx]
+
         self.winner_ticket = winner
         self.status = "finished"
         self.save()
         return winner
 
-    
-
     def available_tickets(self):
-        """Cuántos tickets quedan disponibles."""
+        """Retorna la cantidad de boletas aún disponibles."""
         ocupados = self.tickets.filter(payment_status="paid").count()
         return self.max_tickets - ocupados
 
     def is_active(self):
-        """Devuelve True si la rifa está abierta y con tickets disponibles."""
+        """True si la rifa está abierta y con boletas disponibles."""
         return self.status == "open" and self.available_tickets() > 0
 
     @property
     def winner_user(self):
-        """Devuelve el usuario ganador si ya existe uno."""
+        """Devuelve el usuario ganador, si ya existe uno."""
         return self.winner_ticket.user if self.winner_ticket else None
 
     def user_has_ticket(self, user):
-        """Retorna True si un usuario ya tiene un ticket en esta rifa."""
+        """True si el usuario ya tiene una boleta en esta rifa."""
         return self.tickets.filter(user=user).exists()
-    
+
     def close_if_expired(self):
-        """Cierra la rifa si ya pasó la fecha de finalización."""
+        """Cierra la rifa automáticamente si ya expiró."""
         from django.utils import timezone
         now = timezone.now()
+
         if self.status == "open" and self.ends_at <= now:
-        # Si no hay participantes, se cierra sin ganador
             if not self.tickets.exists():
                 self.status = "closed"
                 self.save()
                 return None
-            # Si hay participantes, se asigna ganador
             return self.pick_winner_commit_reveal()
         return None
 
 
-
-# class Ticket(models.Model):
-#     """
-#     Representa la boleta comprada por un usuario en una rifa de motos.
-#     Puede elegirse manualmente o asignarse de forma aleatoria.
-#     """
-#     PAYMENT_STATUS = [
-#         ("pending", "Pendiente"),
-#         ("paid", "Pagado"),
-#         ("failed", "Fallido"),
-#     ]
-
-#     raffle = models.ForeignKey(
-#         Raffle,
-#         on_delete=models.CASCADE,
-#         related_name="tickets"
-#     )
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name="tickets"
-#     )
-#     number = models.PositiveIntegerField(blank=True, null=True, db_index=True)
-#     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)  # Código único
-#     payment_status = models.CharField(
-#         max_length=20,
-#         choices=PAYMENT_STATUS,
-#         default="pending",
-#         db_index=True
-#     )
-#     payment_reference = models.CharField(
-#     max_length=100,
-#     blank=True,
-#     null=True,
-#     db_index=True
-#     )
-
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     class Meta:
-#         ordering = ['number']
-
-#     # def save(self, *args, **kwargs):
-#     #     """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
-#     #     if self.number is None:
-#     #         posibles = set(range(1, self.raffle.max_tickets + 1))
-#     #         ocupados = set(
-#     #             Ticket.objects.filter(raffle=self.raffle).values_list("number", flat=True)
-#     #         )
-#     #         libres = list(posibles - ocupados)
-#     #         if not libres:
-#     #             raise ValueError("No quedan boletas disponibles en esta rifa.")
-#     #         self.number = random.choice(libres)
-#     #     else:
-#     #         if self.number < 1 or self.number > self.raffle.max_tickets:
-#     #             raise ValueError("El número elegido está fuera del rango permitido.")
-#     #         if Ticket.objects.filter(raffle=self.raffle, number=self.number).exists():
-#     #             raise ValueError(f"La boleta {self.number} ya está ocupada en esta rifa.")
-
-#     #     super().save(*args, **kwargs)
-
-#     def save(self, *args, **kwargs):
-#         """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
-#         if self.number is None:
-#             posibles = set(range(1, self.raffle.max_tickets + 1))
-#             ocupados = set(Ticket.objects.filter(raffle=self.raffle,payment_status="paid").values_list("number", flat=True))
-
-#             libres = list(posibles - ocupados)
-#             if not libres:
-#                 raise ValueError("No quedan boletas disponibles en esta rifa.")
-#             self.number = random.choice(libres)
-#         else:
-#             if self.number < 1 or self.number > self.raffle.max_tickets:
-#                 raise ValueError("El número elegido está fuera del rango permitido.")
-#             if Ticket.objects.filter(
-#                 raffle=self.raffle,
-#                 number=self.number,
-#                 payment_status="paid"   # 👈 aquí está el cambio
-
-#             ).exclude(pk=self.pk).exists():
-#                 raise ValueError(f"La boleta {self.number} ya está ocupada en esta rifa.")
-
-#         super().save(*args, **kwargs)
-
-#     def delete(self, *args, **kwargs):
-#         if self.payment_status == "paid":
-#             raise ValueError("No se pueden eliminar tickets que ya fueron pagados.")
-#         super().delete(*args, **kwargs)
-
-
-#     def __str__(self):
-#         return f"Boleta {self.number} - {self.user.username} en {self.raffle}"
-
-
-
+# ==========================================================
+#  TICKETS
+# ==========================================================
 class Ticket(models.Model):
     """
-    Representa la boleta comprada por un usuario en una rifa de motos.
+    Representa la boleta comprada por un usuario en una rifa.
     Puede elegirse manualmente o asignarse de forma aleatoria.
     """
     PAYMENT_STATUS = [
@@ -367,38 +243,19 @@ class Ticket(models.Model):
         ("failed", "Fallido"),
     ]
 
-    raffle = models.ForeignKey(
-        Raffle,
-        on_delete=models.CASCADE,
-        related_name="tickets"
-    )
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="tickets"
-    )
+    raffle = models.ForeignKey(Raffle, on_delete=models.CASCADE, related_name="tickets")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tickets")
     number = models.PositiveIntegerField(blank=True, null=True, db_index=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)  # Código único
-    payment_status = models.CharField(
-        max_length=20,
-        choices=PAYMENT_STATUS,
-        default="pending",
-        db_index=True
-    )
-    payment_reference = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        db_index=True
-    )
-
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default="pending", db_index=True)
+    payment_reference = models.CharField(max_length=100, blank=True, null=True, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['number']  # 👈 se eliminó unique_together
+        ordering = ['number']
 
     def clean(self):
-        """Validar que solo haya un ticket pagado por número y rifa."""
+        """Valida que no existan dos tickets pagados con el mismo número y rifa."""
         if self.payment_status == "paid":
             conflict = Ticket.objects.filter(
                 raffle=self.raffle,
@@ -409,8 +266,8 @@ class Ticket(models.Model):
                 raise ValidationError(f"El número {self.number} ya fue comprado por otro participante.")
 
     def save(self, *args, **kwargs):
-        """Asignar número aleatorio si no se pasa, validar rango y duplicados."""
-        self.full_clean()  # 👈 ejecuta la validación anterior
+        """Asigna número aleatorio si no se pasa y valida duplicados."""
+        self.full_clean()  # Ejecuta la validación de clean()
 
         if self.number is None:
             posibles = set(range(1, self.raffle.max_tickets + 1))
@@ -437,6 +294,7 @@ class Ticket(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        """Evita eliminar tickets que ya fueron pagados."""
         if self.payment_status == "paid":
             raise ValueError("No se pueden eliminar tickets que ya fueron pagados.")
         super().delete(*args, **kwargs)
@@ -445,13 +303,17 @@ class Ticket(models.Model):
         return f"Boleta {self.number} - {self.user.username} en {self.raffle}"
 
 
-
+# ==========================================================
+#  CARRUSEL (HOME PAGE)
+# ==========================================================
 class CarouselSlide(models.Model):
-    """Slide para el carrusel del home."""
+    """
+    Representa una diapositiva del carrusel en la página principal.
+    """
     title = models.CharField(max_length=100, blank=True, help_text="Título opcional del slide")
     subtitle = models.CharField(max_length=200, blank=True, help_text="Subtítulo o descripción")
     image = models.ImageField(upload_to="carousel/", help_text="Imagen principal del slide")
-    link = models.URLField(blank=True, help_text="Link opcional al que redirige el slide")
+    link = models.URLField(blank=True, help_text="Enlace opcional del slide")
     order = models.PositiveIntegerField(default=0, help_text="Orden de aparición en el carrusel")
     is_active = models.BooleanField(default=True, help_text="Mostrar este slide en el carrusel")
 

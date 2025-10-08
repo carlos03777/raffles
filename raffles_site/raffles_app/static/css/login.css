@@ -1,0 +1,143 @@
+
+  /* login */
+
+
+  /* =========================
+   AUTH PAGES (login / signup) - COMPACTO
+   ========================= */
+
+  .auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    /* cambia a flex-start para que respete el padding */
+    min-height: calc(100vh - 120px);
+    background: linear-gradient(135deg, #1a1a1a, #2b2b2b);
+    padding: 1.5rem;
+    padding-top: 6rem;
+    /* 👈 este empuja hacia abajo el formulario */
+  }
+
+
+  .auth-box {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 1.6rem 1.4rem;
+    border-radius: 0.8rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    width: 100%;
+    max-width: 320px;
+    /* más reducido */
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .auth-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Párrafos que Django mete (as_p) */
+  .auth-form p {
+    margin: 0 0 0.4rem 0;
+    padding: 0;
+    text-align: left;
+    font-size: 0.85rem;
+    color: #e0e0e0;
+  }
+
+
+
+
+  /* Labels */
+  .auth-form label {
+    display: block;
+    margin-bottom: 0.15rem;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #ff6600;
+  }
+
+  /* Inputs */
+  .auth-form input {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    /* más compacto */
+    border-radius: 0.35rem;
+    border: none;
+    outline: none;
+    font-size: 0.8rem;
+    margin-bottom: 0.35rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transition: all 0.25s;
+  }
+
+  .auth-form input:focus {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 2px #ff6600;
+  }
+
+  /* Texto de ayuda */
+  .auth-form .helptext {
+    font-size: 0.65rem;
+    color: #aaa;
+    margin-top: 0.1rem;
+    display: block;
+    line-height: 1.2;
+  }
+
+  /* Listas (validación de password) */
+  .auth-form ul {
+    font-size: 0.65rem;
+    color: #aaa;
+    margin: 0.2rem 0 0.4rem 0;
+    padding-left: 1rem;
+    line-height: 1.2;
+  }
+
+  /* Botón */
+  .btn-main {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff6600, #ff3300);
+    color: #fff;
+    padding: 0.6rem 1rem;
+    /* más pequeño */
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+    margin-top: 0.3rem;
+  }
+
+  .btn-main:hover {
+    transform: scale(1.02);
+    background: linear-gradient(135deg, #ff3300, #cc0000);
+  }
+
+  /* Footer */
+  .auth-footer {
+    margin-top: 1rem;
+    color: #ccc;
+    font-size: 0.8rem;
+  }
+
+  .auth-footer a {
+    color: #ff6600;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .auth-footer a:hover {
+    color: #ff3300;
+  }
+
+
+

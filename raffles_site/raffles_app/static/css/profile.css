@@ -1,0 +1,178 @@
+
+  /* profile */
+
+  .profile-section {
+
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  .profile-container {
+    margin-top: 4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  /* Card de perfil */
+  .profile-card {
+    flex: 1 1 300px;
+    background-color: #2c2c2c;
+    color: #fff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    min-width: 250px;
+
+  }
+
+  .profile-auth-title {
+    text-align: center;
+    color: var(--color-primary);
+  }
+
+  .profile-photo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 1rem;
+  }
+
+
+  /* Contenedor de datos */
+  .profile-data {
+    margin-top: 1rem;
+    background: #1e1e1e;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Cada fila */
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.3s;
+  }
+
+  .profile-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .profile-row:last-child {
+    border-bottom: none;
+  }
+
+  /* Etiqueta */
+  .label {
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+  }
+
+  /* Valor */
+  .value {
+    color: #f2f2f2;
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+    /* por si el email es muy largo */
+  }
+
+  .profile-actions {
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .profile-actions .btn-main {
+    background-color: #ff6600;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+
+  /* Tabla de tickets mejorada */
+  .profile-tickets-container {
+    flex: 3 1 700px;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+  }
+
+  .profile-history-title {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .profile-tickets-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    /* Espaciado entre filas */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .profile-tickets-table th {
+    background-color: #ff6600;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  .profile-tickets-table td {
+    background-color: #fdfdfd;
+    padding: 0.75rem 1rem;
+    border-bottom: none;
+    color: #2c3e50;
+  }
+
+  .profile-tickets-table tr {
+    transition: all 0.3s ease;
+  }
+
+  .profile-tickets-table tr:hover td {
+    background-color: #ffece0;
+    transform: translateY(-2px);
+  }
+
+  .profile-ticket-status {
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    display: inline-block;
+  }
+
+  .profile-ticket-status.paid {
+    color: #27ae60;
+    background-color: #eafaf1;
+  }
+
+  .profile-ticket-status.pending {
+    color: #f39c12;
+    background-color: #fff7e6;
+  }
+
+  .profile-ticket-status.canceled {
+    color: #c0392b;
+    background-color: #fdecea;
+  }
+
+  .profile-no-tickets {
+    text-align: center;
+    color: #888;
+    padding: 1rem 0;
+  }

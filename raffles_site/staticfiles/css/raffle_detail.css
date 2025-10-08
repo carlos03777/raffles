@@ -1,0 +1,180 @@
+/* raffle detail */
+
+  
+  .raffle-detail {
+    margin: 6rem auto;
+    padding: 0 1rem;
+    max-width: 1200px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* --- Título --- */
+  .raffle-detail-title {
+    text-align: center;
+    font-size: 2.4rem;
+    margin-bottom: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  /* --- Layout principal --- */
+  .raffle-detail-layout {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  /* =========================
+   CAROUSEL
+   ========================= */
+  .raffle-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .raffle-carousel-track {
+    display: flex;
+    transition: transform 0.45s ease-in-out;
+    will-change: transform;
+  }
+
+  .raffle-carousel-slide {
+    min-width: 100%;
+   
+    user-select: none;
+  }
+
+    
+
+  .raffle-carousel-slide img {
+    width: 100%;
+    border-radius: 1rem;
+    max-height: 480px;
+    min-height: 480px;
+    object-fit: contain;
+  }
+
+  /* --- Botones --- */
+  .raffle-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    border: none;
+    font-size: 2rem;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.25s, transform 0.2s;
+    z-index: 20;
+    line-height: 1;
+  }
+
+  .raffle-carousel-btn:hover {
+    background: rgba(0, 0, 0, 0.85);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  /* ubicación específica */
+  .raffle-carousel-btn.prev {
+    left: 16px;
+  }
+
+  .raffle-carousel-btn.next {
+    right: 16px;
+  }
+
+  /* =========================
+   INFO BOX
+   ========================= */
+  .raffle-info {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 2rem;
+    border-radius: 1rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    min-height: 480px;
+  }
+
+  .raffle-info-item {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    color: #e0e0e0;
+  }
+
+  .raffle-info-item span {
+    font-weight: 700;
+    color: #ff6600;
+  }
+
+  /* --- Descripción --- */
+  .raffle-description {
+    margin: 2rem 0;
+    color: white;
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+
+  /* --- Botón Comprar --- */
+  .raffle-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff6600, #ff3300);
+    color: #fff;
+    padding: 1rem 2.2rem;
+    border-radius: 0.85rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s, background 0.35s;
+  }
+
+  .raffle-btn:hover {
+    transform: scale(1.06);
+    background: linear-gradient(135deg, #ff3300, #cc0000);
+  }
+
+  /* =========================
+   RESPONSIVE
+   ========================= */
+  @media (max-width: 1024px) {
+    .raffle-detail-layout {
+      gap: 1.5rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .raffle-detail-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .raffle-carousel-slide img {
+      max-height: 380px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .raffle-detail {
+      padding: 0 0.5rem;
+    }
+
+    .raffle-detail-title {
+      font-size: 1.9rem;
+    }
+
+    .raffle-info {
+      padding: 1.5rem;
+    }
+
+    .raffle-btn {
+      width: 100%;
+      text-align: center;
+    }
+  }

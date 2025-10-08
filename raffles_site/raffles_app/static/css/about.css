@@ -1,0 +1,140 @@
+
+  /* about */
+  /* Hero */
+  .about-hero {
+    position: relative;
+    height: 60vh;
+    background: url("https://picsum.photos/1600/800?random=19") center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+  }
+
+  .about-hero .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    min-width: 100%;
+    ;
+  }
+
+  .about-hero .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .about-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .about-hero p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Historia */
+  .about-history {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 4rem 2rem;
+    align-items: center;
+  }
+
+  .about-history h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #e55050;
+  }
+
+  .about-history img {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Misión y Visión */
+  .about-mission {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 4rem 2rem;
+    flex-wrap: wrap;
+  }
+
+  .about-mission .card {
+    flex: 1;
+    min-width: 280px;
+    background: #111;
+    color: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+
+  .about-mission .card:hover {
+    transform: translateY(-8px);
+    background: #e55050;
+  }
+
+  .about-mission h3 {
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+  }
+
+  /* Equipo */
+  .about-team {
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .about-team h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #e55050;
+  }
+
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+  }
+
+  .member {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+  }
+
+  .member:hover {
+    transform: translateY(-6px);
+  }
+
+  .member img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid #e55050;
+  }
+
+  .member h4 {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #111;
+  }
+
+  .member p {
+    color: #666;
+    font-size: 0.95rem;
+  }
+

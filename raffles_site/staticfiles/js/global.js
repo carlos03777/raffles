@@ -132,84 +132,88 @@ document.addEventListener("DOMContentLoaded", () => {
  /* =========================
    WINNERS CARD: holográfica
    ========================= */
-(function initWinnersCard() {
-  const card = document.querySelector("#winners .winners-card");
-  if (!card) return;
+/* =========================
+   WINNERS CARD HOLOGRÁFICA MULTI-CARD
+========================= */
+(function initWinnersCards() {
+  const cards = document.querySelectorAll(".winners-card");
+  if (!cards.length) return;
 
-  const glare = card.querySelector(".winners-glare");
-  const flipBtn = card.querySelector(".winners-flip-btn");
-  const minimap = document.querySelector("#winners .winners-minimap");
-  const spans = minimap ? minimap.querySelectorAll("span") : [];
-  const logos = card.querySelectorAll(".winners-logo");
+  cards.forEach((card) => {
+    const glare = card.querySelector(".winners-glare");
+    const flipBtns = card.querySelectorAll(".winners-flip-btn");
+    const logos = card.querySelectorAll(".winners-logo");
+    const minimap = document.querySelector(".winners-minimap");
+    const spans = minimap ? minimap.querySelectorAll("span") : [];
 
-  let isFlipped = false;
-  let bounds = card.getBoundingClientRect();
+    let isFlipped = false;
+    let bounds = card.getBoundingClientRect();
 
-  function updateMinimap(x, y) {
-    if (!spans.length) return;
-    spans[0].textContent = `x: ${x}`;
-    spans[1].textContent = `y: ${y}`;
-  }
-
-  function handleMove(e) {
-    const { clientX, clientY } = e;
-    bounds = card.getBoundingClientRect();
-    const x = clientX - bounds.left;
-    const y = clientY - bounds.top;
-    const centerX = bounds.width / 2;
-    const centerY = bounds.height / 2;
-
-    const rotateX = ((y - centerY) / centerY) * 15;
-    const rotateY = ((x - centerX) / centerX) * 15;
-
-    card.style.transform = `rotateY(${rotateY}deg) rotateX(${-rotateX}deg)`;
-    updateMinimap(Math.round(rotateX), Math.round(rotateY));
-
-    if (glare) {
-      glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.4), transparent 60%)`;
+    function updateMinimap(x, y) {
+      if (!spans.length) return;
+      spans[0].textContent = `x: ${x}`;
+      spans[1].textContent = `y: ${y}`;
     }
 
-    logos.forEach((logo) => {
-      const rect = logo.getBoundingClientRect();
-      const logoX = rect.left + rect.width / 2;
-      const logoY = rect.top + rect.height / 2;
-      const dx = clientX - logoX;
-      const dy = clientY - logoY;
-      const hue = ((Math.atan2(dy, dx) + Math.PI) / (2 * Math.PI)) * 360;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      const intensity = Math.max(0.6, 1.2 - distance / 250);
-      const rotation = (Date.now() / 10) % 360;
+    function handleMove(e) {
+      const { clientX, clientY } = e;
+      bounds = card.getBoundingClientRect();
+      const x = clientX - bounds.left;
+      const y = clientY - bounds.top;
+      const centerX = bounds.width / 2;
+      const centerY = bounds.height / 2;
 
-      logo.style.setProperty("--hue", `${hue}deg`);
-      logo.style.setProperty("--angle", `${rotation}deg`);
-      logo.style.opacity = intensity;
-      logo.classList.add("prism");
+      const rotateX = ((y - centerY) / centerY) * 15;
+      const rotateY = ((x - centerX) / centerX) * 15;
+
+      card.style.transform = `rotateY(${rotateY}deg) rotateX(${-rotateX}deg)`;
+      updateMinimap(Math.round(rotateX), Math.round(rotateY));
+
+      if (glare) {
+        glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.4), transparent 60%)`;
+      }
+
+      logos.forEach((logo) => {
+        const rect = logo.getBoundingClientRect();
+        const logoX = rect.left + rect.width / 2;
+        const logoY = rect.top + rect.height / 2;
+        const dx = clientX - logoX;
+        const dy = clientY - logoY;
+        const hue = ((Math.atan2(dy, dx) + Math.PI) / (2 * Math.PI)) * 360;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const intensity = Math.max(0.6, 1.2 - distance / 250);
+        const rotation = (Date.now() / 10) % 360;
+
+        logo.style.setProperty("--hue", `${hue}deg`);
+        logo.style.setProperty("--angle", `${rotation}deg`);
+        logo.style.opacity = intensity;
+        logo.classList.add("prism");
+      });
+    }
+
+    function handleLeave() {
+      card.style.transform = "rotateY(0deg) rotateX(0deg)";
+      if (glare)
+        glare.style.background = `radial-gradient(circle, rgba(255,255,255,0.2), transparent 60%)`;
+
+      logos.forEach((logo) => {
+        logo.style.opacity = 0.15;
+        logo.classList.remove("prism");
+      });
+    }
+
+    flipBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        isFlipped = !isFlipped;
+        card.setAttribute("data-active", isFlipped);
+        btn.setAttribute("aria-pressed", isFlipped);
+      });
     });
-  }
 
-  function handleLeave() {
-    card.style.transform = "rotateY(0deg) rotateX(0deg)";
-    if (glare)
-      glare.style.background = `radial-gradient(circle, rgba(255,255,255,0.2), transparent 60%)`;
-
-    logos.forEach((logo) => {
-      logo.style.opacity = 0.15;
-      logo.classList.remove("prism");
-    });
-  }
-
-  if (flipBtn) {
-    flipBtn.addEventListener("click", () => {
-      isFlipped = !isFlipped;
-      card.setAttribute("data-active", isFlipped);
-      flipBtn.setAttribute("aria-pressed", isFlipped);
-      card.style.transform = isFlipped ? "rotateY(180deg)" : "rotateY(0deg)";
-    });
-  }
-
-  card.addEventListener("mousemove", handleMove);
-  card.addEventListener("mouseleave", handleLeave);
-  window.addEventListener("resize", () => (bounds = card.getBoundingClientRect()));
+    card.addEventListener("mousemove", handleMove);
+    card.addEventListener("mouseleave", handleLeave);
+    window.addEventListener("resize", () => (bounds = card.getBoundingClientRect()));
+  });
 })();
 
 

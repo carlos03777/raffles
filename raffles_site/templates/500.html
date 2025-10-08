@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Error del servidor - Rifas de Motos{% endblock %}
+
+{% block content %}
+<section class="error-page">
+  <div class="container text-center py-5">
+    <h1 class="display-1 fw-bold text-danger">500</h1>
+    <h2 class="mb-3">Ups... Algo salió mal</h2>
+    <p class="text-muted mb-4">
+      Estamos experimentando un problema temporal. Nuestro equipo ya fue notificado.
+    </p>
+    <a href="{% url 'home' %}" class="btn btn-primary">
+      Volver al inicio
+    </a>
+  </div>
+</section>
+{% endblock %}
+  

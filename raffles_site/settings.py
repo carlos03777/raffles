@@ -84,25 +84,21 @@ TEMPLATES = [
 
 # === BASE DE DATOS ===========================================================
 
-# === BASE DE DATOS ===========================================================
 
-import os
-import dj_database_url
-
-# Configuración AUTOMÁTICA - Railway se encarga de todo
+# Configuración AUTOMÁTICA para Railway
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',  # Fallback para desarrollo
         conn_max_age=600,
         conn_health_checks=True,
     )
 }
 
-# Debug opcional
-if 'postgresql' in DATABASES['default']['ENGINE']:
-    print("✅ PostgreSQL CONECTADO AUTOMÁTICAMENTE")
+# Debug simple
+db_engine = DATABASES['default']['ENGINE']
+if 'postgresql' in db_engine:
+    print("🎉 ¡POSTGRESQL CONECTADO CORRECTAMENTE!")
 else:
-    print("🔧 Usando SQLite (desarrollo)")
+    print("⚠️  Usando SQLite - Verifica DATABASE_URL en Railway")
 
 # === VALIDACIÓN DE CONTRASEÑAS ==============================================
 

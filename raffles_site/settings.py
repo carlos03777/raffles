@@ -84,27 +84,25 @@ TEMPLATES = [
 
 # === BASE DE DATOS ===========================================================
 
+# === BASE DE DATOS ===========================================================
+
 import os
 import dj_database_url
 
-# Obtener DATABASE_URL directamente de os.environ (no de python-decouple)
-DATABASE_URL = os.environ.get('DATABASE_URL')
+# Configuración AUTOMÁTICA - Railway se encarga de todo
+DATABASES = {
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',  # Fallback para desarrollo
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
 
-if DATABASE_URL:
-    # PRODUCCIÓN (Railway) - FORZAR configuración PostgreSQL
-    DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-    }
-    print("✅ Usando PostgreSQL de Railway")  # Para debug
+# Debug opcional
+if 'postgresql' in DATABASES['default']['ENGINE']:
+    print("✅ PostgreSQL CONECTADO AUTOMÁTICAMENTE")
 else:
-    # DESARROLLO
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-    print(" Usando SQLite local")  # Para debug
+    print("🔧 Usando SQLite (desarrollo)")
 
 # === VALIDACIÓN DE CONTRASEÑAS ==============================================
 

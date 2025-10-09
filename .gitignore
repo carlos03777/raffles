@@ -1,0 +1,27 @@
+# Environment secrets
+.env
+
+# Database
+*.sqlite3
+*.db
+
+# Django generated
+staticfiles/
+media/
+__pycache__/
+
+# Virtual environment
+env/
+
+# Python cache
+*.pyc
+*.pyo
+*.pyd
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

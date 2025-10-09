@@ -96,9 +96,9 @@ DATABASES = {
 # Debug simple
 db_engine = DATABASES['default']['ENGINE']
 if 'postgresql' in db_engine:
-    print("🎉 ¡POSTGRESQL CONECTADO CORRECTAMENTE!")
+    print(" ¡POSTGRESQL CONECTADO CORRECTAMENTE!")
 else:
-    print("⚠️  Usando SQLite - Verifica DATABASE_URL en Railway")
+    print(" Usando SQLite - Verifica DATABASE_URL en Railway")
 
 # === VALIDACIÓN DE CONTRASEÑAS ==============================================
 
@@ -169,9 +169,9 @@ if os.environ.get('DATABASE_URL'):
     db_config = dj_database_url.config(default=os.environ.get('DATABASE_URL'))
     print(f"Database ENGINE: {db_config['ENGINE']}")
     print(f"Database NAME: {db_config['NAME']}")
-    print("✅ CONECTADO A POSTGRESQL DE RAILWAY")
+    print("CONECTADO A POSTGRESQL DE RAILWAY")
 else:
-    print("❌ PostgreSQL NO DETECTADO - Usando SQLite")
+    print("PostgreSQL NO DETECTADO - Usando SQLite")
 
 
 

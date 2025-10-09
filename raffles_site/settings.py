@@ -84,33 +84,27 @@ TEMPLATES = [
 
 # === BASE DE DATOS ===========================================================
 
-# Configuración por defecto (desarrollo)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+import os
+import dj_database_url
 
-# Sobrescribir con PostgreSQL si existe DATABASE_URL (para producción)
-DATABASE_URL = config('DATABASE_URL', default=None)
+# Obtener DATABASE_URL directamente de os.environ (no de python-decouple)
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
 if DATABASE_URL:
-    DATABASES['default'] = dj_database_url.config(
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
+    # PRODUCCIÓN (Railway) - FORZAR configuración PostgreSQL
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
+    print("✅ Usando PostgreSQL de Railway")  # Para debug
 else:
-    # Usar PostgreSQL local si hay variables de entorno
-    DB_NAME = config('DB_NAME', default=None)
-    if DB_NAME:
-        DATABASES['default'] = {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER', default='postgres'),
-            'PASSWORD': config('DB_PASSWORD', default=''),
-            'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432'),
+    # DESARROLLO
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
+    }
+    print(" Usando SQLite local")  # Para debug
 
 # === VALIDACIÓN DE CONTRASEÑAS ==============================================
 

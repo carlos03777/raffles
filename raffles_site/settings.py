@@ -167,3 +167,14 @@ WOMPI_BASE_URL = config('WOMPI_BASE_URL', default='https://sandbox.wompi.co/v1')
 # === CLAVE POR DEFECTO ======================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Al final de settings.py - AGREGA ESTO
+print("🔍 DATABASE CONFIGURATION CHECK:")
+print(f"DATABASE_URL exists: {bool(os.environ.get('DATABASE_URL'))}")
+if os.environ.get('DATABASE_URL'):
+    db_config = dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    print(f"Database ENGINE: {db_config['ENGINE']}")
+    print(f"Database NAME: {db_config['NAME']}")
+    print("✅ CONECTADO A POSTGRESQL DE RAILWAY")
+else:
+    print("❌ PostgreSQL NO DETECTADO - Usando SQLite")

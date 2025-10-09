@@ -172,3 +172,26 @@ if os.environ.get('DATABASE_URL'):
     print("✅ CONECTADO A POSTGRESQL DE RAILWAY")
 else:
     print("❌ PostgreSQL NO DETECTADO - Usando SQLite")
+
+
+
+    # === SEGURIDAD ===============================================================
+
+# Configuración optimizada para Railway
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = False  # Desactiva redirección SSL de Django
+
+# Solo estas seguridad básicas
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-eb2c9.up.railway.app',
+    'https://*.railway.app'
+]
+
+ALLOWED_HOSTS = [
+    'web-production-eb2c9.up.railway.app',
+    '*.railway.app',
+    'localhost',
+    '127.0.0.1'
+]

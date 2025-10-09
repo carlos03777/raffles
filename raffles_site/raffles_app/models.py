@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.core.exceptions import ValidationError
 import secrets, hashlib, random, uuid
@@ -34,6 +34,17 @@ def create_profile(sender, instance, created, **kwargs):
     """Crea automáticamente el perfil cuando se registra un nuevo usuario."""
     if created:
         Profile.objects.create(user=instance)
+
+
+
+@receiver(post_delete, sender=Profile)
+def delete_orphan_user(sender, instance, **kwargs):
+    # Solo eliminar usuario si no tiene otros registros asociados
+    from django.db.models import Count
+    user = instance.user
+    if user and not user.tickets.exists():
+        user.delete()
+
 
 
 @receiver(pre_save, sender=User)

@@ -1,5 +1,7 @@
 import os
 from pathlib import Path
+from decouple import config
+import dj_database_url
 
 # === BASE PATH ===============================================================
 
@@ -7,12 +9,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # === SEGURIDAD ===============================================================
 
-SECRET_KEY = "django-insecure-_d5c+!6=hp)i$nh#ny8+_omvumpe)k20@_ez9vnk4xp0ud1i7v"
+SECRET_KEY = config('SECRET_KEY', default='clave-temporal-cambiar')
 
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-# Hosts permitidos 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+
+# Seguridad adicional para producción
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 año
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost,http://127.0.0.1').split(',')
 
 # === APLICACIONES ============================================================
 
@@ -37,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # ← AGREGAR ESTA LÍNEA
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -50,13 +65,12 @@ MIDDLEWARE = [
 ROOT_URLCONF = "raffles_site.urls"
 WSGI_APPLICATION = "raffles_site.wsgi.application"
 
-
 # === TEMPLATES ==============================================================
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # carpeta global de templates
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -70,12 +84,33 @@ TEMPLATES = [
 
 # === BASE DE DATOS ===========================================================
 
+# Configuración por defecto (desarrollo)
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Sobrescribir con PostgreSQL si existe DATABASE_URL (para producción)
+DATABASE_URL = config('DATABASE_URL', default=None)
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+else:
+    # Usar PostgreSQL local si hay variables de entorno
+    DB_NAME = config('DB_NAME', default=None)
+    if DB_NAME:
+        DATABASES['default'] = {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER', default='postgres'),
+            'PASSWORD': config('DB_PASSWORD', default=''),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
 
 # === VALIDACIÓN DE CONTRASEÑAS ==============================================
 
@@ -88,8 +123,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # === INTERNACIONALIZACIÓN Y ZONA HORARIA ====================================
 
-LANGUAGE_CODE = "es-co"           # Idioma por defecto
-TIME_ZONE = "America/Bogota"      # Zona horaria local
+LANGUAGE_CODE = "es-co"
+TIME_ZONE = "America/Bogota"
 USE_I18N = True
 USE_TZ = True
 
@@ -97,7 +132,10 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"  # destino de collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Servir archivos estáticos con Whitenoise
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -114,11 +152,9 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-# ⚠️ En producción, mover estas variables a variables de entorno (.env)
-EMAIL_HOST_USER = "carlosforero2025777@gmail.com"
-EMAIL_HOST_PASSWORD = "iozo bdoo gugr fff d"  # contraseña de aplicación, nunca la real
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER', default='')
 
 # === CRONJOBS ==============================================================
 
@@ -128,13 +164,11 @@ CRONJOBS = [
 
 # === PAGOS (WOMPI) ==========================================================
 
-# ⚠️ En producción usar llaves seguras y guardarlas en variables de entorno (.env)
-WOMPI_PUBLIC_KEY = "pub_test_KGAaw9rhVA3qwVhmZZNzWPVYjgRYOOUx"
-WOMPI_PRIVATE_KEY = "prv_test_wFisBFHGu1zksKJfxeL4yozBgENpcS5A"
-WOMPI_EVENTS_SECRET = "test_events_3wbcKjBhc3OBqsB19ItbndJGathPDgUY"
-WOMPI_INTEGRITY_SECRET = "test_integrity_oZGoUHob1gD0AFhhDDzuu5EOxXObIVuj"
-WOMPI_BASE_URL = "https://sandbox.wompi.co/v1"
-
+WOMPI_PUBLIC_KEY = config('WOMPI_PUBLIC_KEY', default='pub_test_KGAaw9rhVA3qwVhmZZNzWPVYjgRYOOUx')
+WOMPI_PRIVATE_KEY = config('WOMPI_PRIVATE_KEY', default='prv_test_wFisBFHGu1zksKJfxeL4yozBgENpcS5A')
+WOMPI_EVENTS_SECRET = config('WOMPI_EVENTS_SECRET', default='test_events_3wbcKjBhc3OBqsB19ItbndJGathPDgUY')
+WOMPI_INTEGRITY_SECRET = config('WOMPI_INTEGRITY_SECRET', default='test_integrity_oZGoUHob1gD0AFhhDDzuu5EOxXObIVuj')
+WOMPI_BASE_URL = config('WOMPI_BASE_URL', default='https://sandbox.wompi.co/v1')
 
 # === CLAVE POR DEFECTO ======================================================
 

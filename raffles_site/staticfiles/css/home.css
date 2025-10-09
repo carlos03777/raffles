@@ -49,7 +49,7 @@
   font-size: 1.2rem;
 }
 
-.btn {
+.hero-btn {
   display: inline-block;
   margin-top: 1rem;
   padding: 0.7rem 1.5rem;
@@ -74,7 +74,7 @@
   display: flex;
   justify-content: space-between;
   transform: translateY(-50%);
-  padding: 0 6rem;
+  padding: 0 1rem;
   z-index: 10;
 }
 
@@ -140,6 +140,8 @@
 .winners-title {
   text-align: center;
   margin-bottom: 2rem;
+  font-family: var(--font-heading);
+
 }
 
 .winners-title h2 {
@@ -268,6 +270,7 @@
 
 /* --- Nombre --- */
 .winners-card-name {
+  color: var(--color-primary);
   position: absolute;
   top: 18px;
   left: 50%;
@@ -275,8 +278,8 @@
   font-size: 1.8rem;
   font-weight: 900;
   text-transform: uppercase;
+  font-family: var(--font-heading);
   z-index: 4;
-  color: var(--text);
 }
 
 /* --- Logos --- */
@@ -353,6 +356,8 @@
   bottom: 40px;
   right: 20px;
   text-align: right;
+  font-family: var(--font-heading);
+
   font-size: 1.2rem;
   font-weight: 700;
   z-index: 4;
@@ -360,7 +365,7 @@
 
 .winners-card-watermark-span {
   display: block;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
 }
 
 /* --- Botón Flip --- */

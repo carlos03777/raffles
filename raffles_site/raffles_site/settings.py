@@ -1,0 +1,181 @@
+import os
+from pathlib import Path
+from decouple import config
+import dj_database_url
+
+# === BASE PATH ===============================================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# === SEGURIDAD ===============================================================
+
+SECRET_KEY = os.environ.get('SECRET_KEY', config('SECRET_KEY', default='clave-temporal-cambiar'))
+
+DEBUG = config('DEBUG', default=False, cast=bool)
+
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+
+# Seguridad adicional para producción
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 año
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost,http://127.0.0.1').split(',')
+
+# === APLICACIONES ============================================================
+
+INSTALLED_APPS = [
+    # Terceros
+    "jazzmin",
+    "django_crontab",
+
+    # Django base
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    # Aplicaciones locales
+    "raffles_app",
+]
+
+# === MIDDLEWARE ==============================================================
+
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # ← AGREGAR ESTA LÍNEA
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+# === URLS Y WSGI =============================================================
+
+ROOT_URLCONF = "raffles_site.urls"
+WSGI_APPLICATION = "raffles_site.wsgi.application"
+
+# === TEMPLATES ==============================================================
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+# === BASE DE DATOS ===========================================================
+
+# === BASE DE DATOS ===========================================================
+
+DATABASE_URL = config('DATABASE_URL', default=None)
+
+if DATABASE_URL:
+    # PRODUCCIÓN (Railway)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+elif config('DB_NAME', default=None):
+    # DESARROLLO con PostgreSQL local
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER', default='postgres'),
+            'PASSWORD': config('DB_PASSWORD', default=''),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
+    }
+else:
+    # DESARROLLO con SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+# === VALIDACIÓN DE CONTRASEÑAS ==============================================
+
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+# === INTERNACIONALIZACIÓN Y ZONA HORARIA ====================================
+
+LANGUAGE_CODE = "es-co"
+TIME_ZONE = "America/Bogota"
+USE_I18N = True
+USE_TZ = True
+
+# === ARCHIVOS ESTÁTICOS Y MEDIOS ============================================
+
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Servir archivos estáticos con Whitenoise
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# === AUTENTICACIÓN Y REDIRECCIONES ==========================================
+
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
+
+# === EMAIL ==================================================================
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER', default='')
+
+# === CRONJOBS ==============================================================
+
+CRONJOBS = [
+    ("*/10 * * * *", "django.core.management.call_command", ["close_raffles"]),
+]
+
+# === PAGOS (WOMPI) ==========================================================
+
+WOMPI_PUBLIC_KEY = config('WOMPI_PUBLIC_KEY', default='pub_test_KGAaw9rhVA3qwVhmZZNzWPVYjgRYOOUx')
+WOMPI_PRIVATE_KEY = config('WOMPI_PRIVATE_KEY', default='prv_test_wFisBFHGu1zksKJfxeL4yozBgENpcS5A')
+WOMPI_EVENTS_SECRET = config('WOMPI_EVENTS_SECRET', default='test_events_3wbcKjBhc3OBqsB19ItbndJGathPDgUY')
+WOMPI_INTEGRITY_SECRET = config('WOMPI_INTEGRITY_SECRET', default='test_integrity_oZGoUHob1gD0AFhhDDzuu5EOxXObIVuj')
+WOMPI_BASE_URL = config('WOMPI_BASE_URL', default='https://sandbox.wompi.co/v1')
+
+# === CLAVE POR DEFECTO ======================================================
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

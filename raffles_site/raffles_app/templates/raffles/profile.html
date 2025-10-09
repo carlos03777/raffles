@@ -72,8 +72,8 @@
               <td>{{ ticket.raffle }}</td>
               <td>{{ ticket.created_at|date:"d M Y H:i" }}</td>
               <td>
-                <span class="profile-ticket-status {{ ticket.status|lower }}">
-                  {{ ticket.status }}
+                <span class="profile-ticket-status {{ ticket.payment_status|lower }}">
+                  {{ ticket.payment_status }}
                 </span>
               </td>
             </tr>

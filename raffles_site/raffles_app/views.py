@@ -77,6 +77,13 @@ def about(request):
 # ======================================================
 # AUTENTICACIÓN Y ACTIVACIÓN DE CUENTAS
 # ======================================================
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.sites.shortcuts import get_current_site
+
 def signup(request):
     """
     Registro de usuario con envío de correo de activación.
@@ -91,22 +98,32 @@ def signup(request):
 
             current_site = get_current_site(request)
             mail_subject = "Activa tu cuenta"
-            message = render_to_string(
+            
+            # Renderizamos la plantilla HTML
+            html_message = render_to_string(
                 "raffles/account_activation_email.html",
                 {
                     "user": user,
                     "domain": current_site.domain,
+                    "protocol": "http",  # o "http" según tu entorno
                     "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                     "token": account_activation_token.make_token(user),
                 },
             )
-            email = EmailMessage(mail_subject, message, to=[form.cleaned_data.get("email")])
+            
+            # Creamos versión de texto plano (opcional)
+            text_message = strip_tags(html_message)
+            
+            # Enviamos correo con HTML
+            email = EmailMultiAlternatives(mail_subject, text_message, to=[form.cleaned_data.get("email")])
+            email.attach_alternative(html_message, "text/html")
             email.send()
 
             return render(request, "raffles/account_activation_sent.html")
     else:
         form = SignUpForm()
     return render(request, "raffles/signup.html", {"form": form})
+
 
 
 def activate(request, uidb64, token):

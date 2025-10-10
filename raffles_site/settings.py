@@ -199,7 +199,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = 'mi-django-app-20251010121711'
-AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_REGION_NAME = 'us-east-2'
 AWS_S3_ADDRESSING_STYLE = 'auto'
 
 # Configuración adicional importante
@@ -209,3 +209,10 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_LOCATION = 'media'
 
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
+
+
+# DEBUG EN settings.py
+print("🚀 S3 CONFIGURATION:")
+print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
+print(f"MEDIA_URL: {MEDIA_URL}")
+print(f"AWS_ACCESS_KEY_ID: {'✅ SET' if AWS_ACCESS_KEY_ID else '❌ MISSING'}")

@@ -151,11 +151,11 @@ CRONJOBS = [
 
 # === PAGOS (WOMPI) ==========================================================
 
-WOMPI_PUBLIC_KEY = config('WOMPI_PUBLIC_KEY', default='pub_test_KGAaw9rhVA3qwVhmZZNzWPVYjgRYOOUx')
-WOMPI_PRIVATE_KEY = config('WOMPI_PRIVATE_KEY', default='prv_test_wFisBFHGu1zksKJfxeL4yozBgENpcS5A')
-WOMPI_EVENTS_SECRET = config('WOMPI_EVENTS_SECRET', default='test_events_3wbcKjBhc3OBqsB19ItbndJGathPDgUY')
-WOMPI_INTEGRITY_SECRET = config('WOMPI_INTEGRITY_SECRET', default='test_integrity_oZGoUHob1gD0AFhhDDzuu5EOxXObIVuj')
-WOMPI_BASE_URL = config('WOMPI_BASE_URL', default='https://sandbox.wompi.co/v1')
+WOMPI_PUBLIC_KEY = config('WOMPI_PUBLIC_KEY')
+WOMPI_PRIVATE_KEY = config('WOMPI_PRIVATE_KEY')
+WOMPI_EVENTS_SECRET = config('WOMPI_EVENTS_SECRET')
+WOMPI_INTEGRITY_SECRET = config('WOMPI_INTEGRITY_SECRET')
+WOMPI_BASE_URL = config('WOMPI_BASE_URL')
 
 # === CLAVE POR DEFECTO ======================================================
 

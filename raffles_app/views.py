@@ -346,7 +346,7 @@ def checkout(request):
         f"&reference={reference}"
         f"&redirect-url=http://localhost:8000/payment/return/"
         f"&customer-email={request.user.email}"
-        f"&signature:integrity={signature}"
+        f"&signature-integrity={signature}"
     )
 
     return redirect(checkout_url)

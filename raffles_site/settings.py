@@ -193,14 +193,12 @@ ALLOWED_HOSTS = [
 ]
 
 #========== AWS S3 ====================================
-# === CONFIGURACIÓN AWS S3 ===================================================
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+# === AWS S3 PARA MEDIA =============================================
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY') 
 AWS_STORAGE_BUCKET_NAME = 'mi-django-app-20251010121711'
 AWS_S3_REGION_NAME = 'us-east-1'
 
-# ✅ CONFIGURACIÓN MÍNIMA Y FUNCIONANDO
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# ELIMINA todo lo demás de S3 - solo deja estas 5 líneas
-
+# ✅ ESTA LÍNEA ES CRÍTICA - define explícitamente MEDIA_URL para S3
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'

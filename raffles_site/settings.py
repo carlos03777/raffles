@@ -193,18 +193,3 @@ ALLOWED_HOSTS = [
     '127.0.0.1'
 ]
 
-# === SERVIR ARCHIVOS MEDIA EN PRODUCCIÓN ===========================
-
-# Configuración para servir archivos media en Railway
-if not DEBUG:
-    # Agregar esta línea para servir archivos media
-    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-    
-    # O usar esta configuración alternativa para media files
-    import os
-    from django.core.wsgi import get_wsgi_application
-    from whitenoise import WhiteNoise
-    
-    application = get_wsgi_application()
-    application = WhiteNoise(application, root=os.path.join(BASE_DIR, 'media'))
-    application.add_files(os.path.join(BASE_DIR, 'media'), prefix='media/')

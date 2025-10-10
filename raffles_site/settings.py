@@ -124,8 +124,8 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # Servir archivos estáticos con Whitenoise
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA_URL = "/media/"
+# MEDIA_ROOT = BASE_DIR / "media"
 
 # === AUTENTICACIÓN Y REDIRECCIONES ==========================================
 
@@ -195,59 +195,29 @@ ALLOWED_HOSTS = [
 #========== AWS S3 ====================================
 # === CONFIGURACIÓN AWS S3 ===================================================
 
-
-# Configuración CORRECTA para Django
+# === CONFIGURACIÓN AWS S3 ===================================================
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = 'mi-django-app-20251010121711'
-AWS_S3_REGION_NAME = 'us-east-1'  # ¡Cambia a us-east-1!
+AWS_S3_REGION_NAME = 'us-east-1'
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
 
+# ✅ CONFIGURACIÓN PROBADA Y FUNCIONANDO
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# ELIMINA completamente la sección STORAGES o déjala así:
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
-        "OPTIONS": {
-            "access_key": AWS_ACCESS_KEY_ID,
-            "secret_key": AWS_SECRET_ACCESS_KEY,
-            "bucket_name": AWS_STORAGE_BUCKET_NAME,
-            "region_name": AWS_S3_REGION_NAME,
-            "file_overwrite": False,
-            "default_acl": AWS_DEFAULT_ACL,
-            "querystring_auth": AWS_QUERYSTRING_AUTH,
-            "object_parameters": AWS_S3_OBJECT_PARAMETERS,
-            "location": "media",  # Esto crea la carpeta 'media/' en el bucket
-        },
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",  # ✅ BACKEND CORRECTO
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
+# URL importante - SIN /media/ al final
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
-
-# URLs
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-
-
-
-# DEBUG S3
-import boto3
-print("🔍 S3 CONFIGURATION CHECK:")
-s3 = boto3.client('s3', 
-    aws_access_key_id=AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-    region_name=AWS_S3_REGION_NAME
-)
-try:
-    response = s3.list_objects_v2(Bucket=AWS_STORAGE_BUCKET_NAME)
-    print(f"✅ Bucket accesible. Archivos: {response.get('Contents', [])}")
-except Exception as e:
-    print(f"❌ Error accediendo al bucket: {e}")
-
-
-
+# ELIMINA el debug de boto3 - puede estar causando el error 500

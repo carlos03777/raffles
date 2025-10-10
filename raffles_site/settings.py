@@ -194,30 +194,13 @@ ALLOWED_HOSTS = [
 
 #========== AWS S3 ====================================
 # === CONFIGURACIÓN AWS S3 ===================================================
-
-# === CONFIGURACIÓN AWS S3 ===================================================
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = 'mi-django-app-20251010121711'
 AWS_S3_REGION_NAME = 'us-east-1'
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_DEFAULT_ACL = 'public-read'
-AWS_QUERYSTRING_AUTH = False
 
-# ✅ CONFIGURACIÓN PROBADA Y FUNCIONANDO
+# ✅ CONFIGURACIÓN MÍNIMA Y FUNCIONANDO
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-# ELIMINA completamente la sección STORAGES o déjala así:
-STORAGES = {
-    "default": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",  # ✅ BACKEND CORRECTO
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
-    },
-}
+# ELIMINA todo lo demás de S3 - solo deja estas 5 líneas
 
-# URL importante - SIN /media/ al final
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
-
-# ELIMINA el debug de boto3 - puede estar causando el error 500

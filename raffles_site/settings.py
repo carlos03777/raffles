@@ -193,11 +193,27 @@ ALLOWED_HOSTS = [
 ]
 
 #========== AWS S3 ====================================
+# === AWS S3 CONFIGURATION ===================================================
 
+# Storage backend para media files
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# AWS Credentials
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+
+# Bucket config
 AWS_STORAGE_BUCKET_NAME = 'mi-django-app-20251010121711'
 AWS_S3_REGION_NAME = 'us-east-1'
+
+# Important settings
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False  # Para URLs públicas sin auth
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+# URL para media files
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'

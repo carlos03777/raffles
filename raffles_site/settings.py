@@ -222,3 +222,19 @@ except Exception as e:
 
 
 
+# DEBUG para ver el proceso de upload
+import logging
+logger = logging.getLogger('django')
+
+def debug_file_storage(*args, **kwargs):
+    logger.info(f"FILE STORAGE DEBUG: {args} {kwargs}")
+
+# Conecta señal para ver uploads
+from django.core.files.storage import default_storage
+import types
+default_storage.save = types.MethodType(
+    lambda self, name, content: debug_file_storage(name, content) or 
+    original_save(self, name, content), 
+    default_storage
+)
+original_save = default_storage.save

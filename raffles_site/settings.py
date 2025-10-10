@@ -193,17 +193,12 @@ ALLOWED_HOSTS = [
 ]
 
 #========== AWS S3 ====================================
-
+# CONFIGURACIÓN SIMPLIFICADA
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = 'mi-django-app-20251010121711'
-AWS_S3_REGION_NAME = 'us-east-2'
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.us-east-2.amazonaws.com'
-AWS_S3_ENDPOINT_URL = 'https://s3.amazonaws.com'
-
-# URLs
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-
+AWS_S3_REGION_NAME = 'us-east-1'
 
 
 # DEBUG S3

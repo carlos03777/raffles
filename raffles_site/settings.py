@@ -193,12 +193,45 @@ ALLOWED_HOSTS = [
 ]
 
 #========== AWS S3 ====================================
-# CONFIGURACIÓN SIMPLIFICADA
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# === CONFIGURACIÓN AWS S3 ===================================================
+
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "region_name": AWS_S3_REGION_NAME,
+            "file_overwrite": False,
+            "default_acl": AWS_DEFAULT_ACL,
+            "querystring_auth": AWS_QUERYSTRING_AUTH,
+            "object_parameters": AWS_S3_OBJECT_PARAMETERS,
+            "location": "media",  # Esto crea la carpeta 'media/' en el bucket
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
+
+# Configuración CORRECTA para Django
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = 'mi-django-app-20251010121711'
-AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_REGION_NAME = 'us-east-1'  # ¡Cambia a us-east-1!
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+
+# URLs
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
 
 
 # DEBUG S3
@@ -217,19 +250,3 @@ except Exception as e:
 
 
 
-# DEBUG para ver el proceso de upload
-import logging
-logger = logging.getLogger('django')
-
-def debug_file_storage(*args, **kwargs):
-    logger.info(f"FILE STORAGE DEBUG: {args} {kwargs}")
-
-# Conecta señal para ver uploads
-from django.core.files.storage import default_storage
-import types
-default_storage.save = types.MethodType(
-    lambda self, name, content: debug_file_storage(name, content) or 
-    original_save(self, name, content), 
-    default_storage
-)
-original_save = default_storage.save

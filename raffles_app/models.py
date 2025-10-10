@@ -323,7 +323,7 @@ class CarouselSlide(models.Model):
     """
     title = models.CharField(max_length=100, blank=True, help_text="Título opcional del slide")
     subtitle = models.CharField(max_length=200, blank=True, help_text="Subtítulo o descripción")
-    image = models.FileField(upload_to="carousel/", help_text="Imagen principal del slide")
+    image = models.ImageField(upload_to="carousel/", help_text="Imagen principal del slide")
     link = models.URLField(blank=True, help_text="Enlace opcional del slide")
     order = models.PositiveIntegerField(default=0, help_text="Orden de aparición en el carrusel")
     is_active = models.BooleanField(default=True, help_text="Mostrar este slide en el carrusel")

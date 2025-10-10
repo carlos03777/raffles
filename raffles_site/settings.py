@@ -230,3 +230,19 @@ STORAGES = {
 
 # URLs
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+
+
+# DEBUG S3
+import boto3
+print("🔍 S3 CONFIGURATION CHECK:")
+s3 = boto3.client('s3', 
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    region_name=AWS_S3_REGION_NAME
+)
+try:
+    response = s3.list_objects_v2(Bucket=AWS_STORAGE_BUCKET_NAME)
+    print(f"✅ Bucket accesible. Archivos: {response.get('Contents', [])}")
+except Exception as e:
+    print(f"❌ Error accediendo al bucket: {e}")

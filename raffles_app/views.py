@@ -344,9 +344,9 @@ def checkout(request):
         f"&currency={currency}"
         f"&amount-in-cents={amount_in_cents}"
         f"&reference={reference}"
-        f"&redirect-url=http://localhost:8000/payment/return/"
+        f"&redirect-url=https://web-production-eb2c9.up.railway.app/payment/return/"  
         f"&customer-email={request.user.email}"
-        f"&signature-integrity={signature}"
+        f"&signature:{signature}"
     )
 
     return redirect(checkout_url)

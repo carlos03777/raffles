@@ -197,6 +197,7 @@ ALLOWED_HOSTS = [
 # === CONFIGURACIÓN AWS S3 ===================================================
 
 # Configuración MODERNA (Django 4.2+)
+
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
 AWS_STORAGE_BUCKET_NAME = 'mi-django-app-20251010121711'
@@ -229,6 +230,15 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
+=======
+# Configuración CORRECTA para Django
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+AWS_STORAGE_BUCKET_NAME = 'mi-django-app-20251010121711'
+AWS_S3_REGION_NAME = 'us-east-1'  # ¡Cambia a us-east-1!
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+>>>>>>> dd16accfb3374803d9839433e91596eb4be11813
 
 # URLs
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
@@ -247,8 +257,12 @@ try:
     response = s3.list_objects_v2(Bucket=AWS_STORAGE_BUCKET_NAME)
     print(f"✅ Bucket accesible. Archivos: {response.get('Contents', [])}")
 except Exception as e:
+<<<<<<< HEAD
     print(f"❌ Error accediendo al bucket: {e}")
 
 
 
 
+=======
+    print(f"❌ Error accediendo al bucket: {e}")
+>>>>>>> dd16accfb3374803d9839433e91596eb4be11813

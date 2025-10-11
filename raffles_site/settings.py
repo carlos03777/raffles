@@ -236,3 +236,17 @@ ALLOWED_HOSTS = [
 # from storages.backends.s3boto3 import S3Boto3Storage
 # from django.core.files.storage import default_storage
 # default_storage.__class__ = S3Boto3Storage
+
+
+from django.core.files.storage import storages
+from storages.backends.s3boto3 import S3Boto3Storage
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}

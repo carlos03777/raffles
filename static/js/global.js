@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         autoplayTimer = setInterval(() => {
           current = (current + 1) % slides.length;
           showSlide(current);
-        }, 5000);
+        }, 10000);
       };
       startAutoplay();
 

@@ -23,5 +23,5 @@ if settings.DEBUG:
 
 
 # Manejo de errores personalizados
-handler404 = "raffles_app.views.error_404_view"
-handler500 = "raffles_app.views.error_500_view"
+# handler404 = "raffles_app.views.error_404_view"
+# handler500 = "raffles_app.views.error_500_view"

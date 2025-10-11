@@ -7,6 +7,16 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+
+
+
+
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 # === SEGURIDAD ===============================================================
 
 SECRET_KEY = config('SECRET_KEY', default='clave-temporal-cambiar')
@@ -195,9 +205,6 @@ ALLOWED_HOSTS = [
 
 #========== AWS S3 ====================================
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# ========== AWS S3 ==========
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
@@ -221,3 +228,18 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+
+# DEBUG EN settings.py
+print("🚀 S3 CONFIGURATION:")
+print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
+print(f"MEDIA_URL: {MEDIA_URL}")
+print(f"AWS_ACCESS_KEY_ID: {'✅ SET' if AWS_ACCESS_KEY_ID else '❌ MISSING'}")
+
+
+from django.core.files.storage import default_storage
+print("🧠 STORAGE CLASS EN SETTINGS:", default_storage.__class__)
+
+from storages.backends.s3boto3 import S3Boto3Storage
+from django.core.files.storage import default_storage
+default_storage.__class__ = S3Boto3Storage

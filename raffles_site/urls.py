@@ -16,15 +16,11 @@ urlpatterns = [
     path("", include("raffles_app.urls")),
 ]
 
-# Servir archivos estáticos y de medios en desarrollo
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-else:
-    # Servir archivos media en PRODUCCIÓN
-    urlpatterns += [
-        path('media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),
-    ]
+# En producción (S3) Django no sirve los archivos, el bucket lo hace
+
 
 # Manejo de errores personalizados
 handler404 = "raffles_app.views.error_404_view"

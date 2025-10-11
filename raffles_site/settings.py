@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     # Aplicaciones locales
     "raffles_app",
+    "storages",
 ]
 
 # === MIDDLEWARE ==============================================================
@@ -195,21 +196,23 @@ ALLOWED_HOSTS = [
 #========== AWS S3 ====================================
 # === AWS S3 PARA MEDIA =============================================
 # PRUEBA ESTA CONFIGURACIÓN ESPECÍFICA:
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = 'mi-django-app-1760117976'
+# ========= AWS S3 CONFIG ==========
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("raffles-app-20251110")
+AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "us-east-2")
 
-AWS_S3_REGION_NAME = 'us-east-1'
-AWS_S3_ADDRESSING_STYLE = 'auto'
+# Opciones recomendadas
+AWS_DEFAULT_ACL = None
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+AWS_QUERYSTRING_AUTH = False  # True si quieres URLs privadas
 
-# Configuración adicional importante
-AWS_DEFAULT_ACL = 'public-read'
-AWS_QUERYSTRING_AUTH = False
-AWS_S3_FILE_OVERWRITE = False
-AWS_LOCATION = 'media'
+# Configura el backend de almacenamiento
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
-MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
+# URL base (opcional)
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 
 # DEBUG EN settings.py

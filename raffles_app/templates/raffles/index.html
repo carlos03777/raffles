@@ -13,13 +13,26 @@
 <!-- =====================================================
       HERO + CARRUSEL
 ===================================================== -->
+<!-- =====================================================
+      HERO + CARRUSEL
+===================================================== -->
 <section class="hero-carousel">
   {% if slides %}
     {% for slide in slides %}
       <div class="carousel-slide {% if forloop.first %}active{% endif %}">
         {% if slide.image %}
-          <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Slide' }}">
+          {% with slide.image.url|lower as file_url %}
+            {% if ".mp4" in file_url or ".webm" in file_url or ".ogg" in file_url %}
+              <video autoplay muted loop playsinline>
+                <source src="{{ slide.image.url }}" type="video/mp4">
+                Tu navegador no soporta videos.
+              </video>
+            {% else %}
+              <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Slide' }}">
+            {% endif %}
+          {% endwith %}
         {% endif %}
+
         <div class="overlay">
           {% if slide.title %}
             <h1>{{ slide.title }}</h1>

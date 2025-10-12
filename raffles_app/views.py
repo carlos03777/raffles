@@ -277,6 +277,11 @@ def password_reset_confirm(request):
     return render(request, "raffles/password_reset_confirm.html")
 
 
+def password_reset_done(request):
+    """
+    Paso 4: Confirmación de que la contraseña fue cambiada exitosamente.
+    """
+    return render(request, "raffles/password_reset_done.html")
 
 
 # ======================================================

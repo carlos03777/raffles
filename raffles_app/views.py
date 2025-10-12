@@ -126,20 +126,40 @@ def signup(request):
 
 
 
+# def activate(request, uidb64, token):
+#     """Activa una cuenta tras verificar el token recibido por correo."""
+#     try:
+#         uid = force_str(urlsafe_base64_decode(uidb64))
+#         user = User.objects.get(pk=uid)
+#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#         user = None
+
+#     if user is not None and account_activation_token.check_token(user, token):
+#         user.is_active = True
+#         user.save()
+#         login(request, user)
+#         return render(request, "raffles/account_activation_success.html")
+#     else:
+#         return render(request, "raffles/account_activation_invalid.html")
+
+
 def activate(request, uidb64, token):
     """Activa una cuenta tras verificar el token recibido por correo."""
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+        print(f"Error activating user: {e}")  # Para debugging
         user = None
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
         login(request, user)
+        messages.success(request, "¡Cuenta activada exitosamente!")
         return render(request, "raffles/account_activation_success.html")
     else:
+        messages.error(request, "El enlace de activación es inválido o ha expirado.")
         return render(request, "raffles/account_activation_invalid.html")
 
 

@@ -1,27 +1,75 @@
-<!-- templates/account_activation_email.html -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Activa tu cuenta</title>
-</head>
-<body style="margin:0; padding:0; background:#1a1a1a; font-family: Arial, sans-serif; color:#fff;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px; margin:0 auto; background:#2b2b2b; border-radius:8px; overflow:hidden;">
-    <tr>
-      <td style="padding:2rem; text-align:center;">
-        <h1 style="font-size:1.4rem; margin-bottom:1rem; color:#ff6600;">¡Bienvenido a Raffles!</h1>
-        <p style="font-size:0.9rem; line-height:1.5; color:#e0e0e0; margin-bottom:2rem;">
-          Gracias por registrarte. Por favor confirma tu dirección de correo electrónico haciendo clic en el botón de abajo:
-        </p>
-        <a href="{{ protocol }}://{{ domain }}{% url 'activate' uidb64=uid token=token %}"
-           style="display:inline-block; background:linear-gradient(135deg,#ff6600,#ff3300); color:#fff; text-decoration:none; padding:0.8rem 1.2rem; border-radius:4px; font-weight:700; font-size:0.9rem;">
-          Activar Cuenta
-        </a>
-        <p style="margin-top:2rem; font-size:0.75rem; color:#aaa; line-height:1.4;">
-          Si no te registraste en esta cuenta, puedes ignorar este correo con seguridad.
-        </p>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
+<!-- {% extends "base.html" %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}" />
+{% endblock %}
+{% block content %}
+
+<div class="auth-container">
+  <div class="auth-box">
+    <h1 class="auth-title">Revisa tu correo </h1>
+    <p style="color: #ddd; font-size: 0.9rem">
+      Te hemos enviado un enlace de confirmación a tu correo electrónico. Por
+      favor, revisa tu bandeja de entrada (y la carpeta de spam).
+    </p>
+    <div class="auth-footer">
+      <a href="{% url 'login' %}">Volver al inicio de sesión</a>
+    </div>
+  </div>
+</div>
+{% endblock %} -->
+
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}" />
+{% endblock %}
+
+{% block content %}
+<!-- ===============================
+      ACTIVACIÓN CON GOOGLE AUTHENTICATOR
+  =============================== -->
+<div class="auth-container">
+  <div class="auth-box">
+    <h1 class="auth-title">Activa tu cuenta</h1>
+
+    <p style="color: #ddd; font-size: 0.9rem">
+      Escanea el código QR con <strong>Google Authenticator</strong> o una app similar
+      (Authy, Microsoft Authenticator, etc.) para vincular tu cuenta.
+    </p>
+
+    <div style="text-align: center; margin: 20px 0;">
+      <img
+        src="data:image/png;base64,{{ qr_base64 }}"
+        alt="Código QR"
+        width="180"
+        style="border-radius: 8px; box-shadow: 0 0 15px rgba(255,255,255,0.1);"
+      />
+    </div>
+
+    <p style="color: #ccc; font-size: 0.85rem;">
+      Luego, ingresa el código que aparece en tu app para activar tu cuenta.
+    </p>
+
+    <form method="POST" style="margin-top: 15px;">
+      {% csrf_token %}
+      <input type="hidden" name="username" value="{{ user.username }}">
+      <input
+        type="text"
+        name="code"
+        placeholder="Ingresa el código"
+        class="form-control"
+        style="text-align:center; margin-bottom:10px;"
+        required
+      />
+      <button type="submit" class="btn btn-primary w-100">Verificar y activar</button>
+    </form>
+
+    <div class="auth-footer">
+      <a href="{% url 'login' %}">Volver al inicio de sesión</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

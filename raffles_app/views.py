@@ -112,56 +112,59 @@ from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
 
-# ======================================
-# REGISTRO DE USUARIO (signup)
-# ======================================
+import traceback
+
 def signup(request):
     """
     Registro de usuario con generación de código TOTP (para Google Authenticator).
-    El usuario escanea el QR para activar su cuenta.
     """
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-
-            # Generar secreto TOTP
-            secret = pyotp.random_base32()
-            logger.debug(f"[SIGNUP] Secreto generado para {user.username}: {secret}")
-
-            # Guardar en el perfil
             try:
-                user.profile.otp_secret = secret
-                user.profile.save()
-                logger.debug(f"[SIGNUP] Se guardó otp_secret en el perfil de {user.username}")
+                user = form.save(commit=False)
+                user.is_active = False
+                user.save()
+
+                # Asegurarnos que el perfil existe
+                profile = getattr(user, "profile", None)
+                if not profile:
+                    from .models import Profile  # ajusta según dónde esté tu modelo
+                    profile = Profile.objects.create(user=user)
+
+                # Generar secreto TOTP
+                secret = pyotp.random_base32()
+                profile.otp_secret = secret
+                profile.save()
+
+                # Crear URL para Google Authenticator
+                totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(
+                    name=user.email,
+                    issuer_name="Raffles App"
+                )
+
+                # Generar QR
+                qr = qrcode.make(totp_uri)
+                buffer = io.BytesIO()
+                qr.save(buffer, format="PNG")
+                qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+                return render(request, "raffles/account_activation_qr.html", {
+                    "user": user,
+                    "qr_base64": qr_base64,
+                    "otp_secret": secret,
+                })
+
             except Exception as e:
-                logger.error(f"[SIGNUP] Error guardando otp_secret para {user.username}: {e}")
+                error_msg = traceback.format_exc()
+                print(f"[ERROR SIGNUP] {error_msg}")  # Esto se verá en Railway logs
+                return render(request, "raffles/error_debug.html", {"error": error_msg})
 
-            # Crear URI para Authenticator
-            totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(
-                name=user.email,
-                issuer_name="Raffles App"
-            )
-            logger.debug(f"[SIGNUP] URI generado: {totp_uri}")
-
-            # Generar QR en base64
-            buffer = io.BytesIO()
-            qrcode.make(totp_uri).save(buffer, format="PNG")
-            qr_base64 = base64.b64encode(buffer.getvalue()).decode()
-            logger.debug(f"[SIGNUP] QR generado correctamente")
-
-            return render(request, "raffles/account_activation_qr.html", {
-                "user": user,
-                "qr_base64": qr_base64
-            })
-        else:
-            logger.warning(f"[SIGNUP] Formulario inválido: {form.errors}")
     else:
         form = SignUpForm()
 
     return render(request, "raffles/signup.html", {"form": form})
+
 
 
 # ======================================

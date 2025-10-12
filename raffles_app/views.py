@@ -191,6 +191,93 @@ def activate(request):
     return redirect("signup")
 
 
+import pyotp
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import update_session_auth_hash
+
+# ======================================
+# RECUPERACIÓN DE CONTRASEÑA CON TOTP
+# ======================================
+
+def password_reset_request(request):
+    """
+    Paso 1: Usuario ingresa su username o email
+    """
+    if request.method == "POST":
+        username = request.POST.get("username")
+
+        try:
+            user = User.objects.get(username=username)
+            request.session["reset_user_id"] = user.id
+            return redirect("password_reset_verify")
+        except User.DoesNotExist:
+            messages.error(request, "Usuario no encontrado.")
+    
+    return render(request, "raffles/password_reset_request.html")
+
+
+def password_reset_verify(request):
+    """
+    Paso 2: Verificar el código TOTP del usuario
+    """
+    user_id = request.session.get("reset_user_id")
+    if not user_id:
+        return redirect("password_reset_request")
+
+    user = User.objects.get(id=user_id)
+
+    if request.method == "POST":
+        code = request.POST.get("code")
+        totp = pyotp.TOTP(user.profile.otp_secret)
+
+        if totp.verify(code):
+            # Código válido → permitir cambiar la contraseña
+            request.session["otp_verified"] = True
+            return redirect("password_reset_confirm")
+        else:
+            messages.error(request, "Código incorrecto o expirado.")
+    
+    return render(request, "raffles/password_reset_verify.html", {"user": user})
+
+
+def password_reset_confirm(request):
+    """
+    Paso 3: Usuario ingresa nueva contraseña
+    """
+    user_id = request.session.get("reset_user_id")
+    otp_verified = request.session.get("otp_verified", False)
+
+    if not user_id or not otp_verified:
+        return redirect("password_reset_request")
+
+    user = User.objects.get(id=user_id)
+
+    if request.method == "POST":
+        new_password = request.POST.get("password1")
+        confirm_password = request.POST.get("password2")
+
+        if new_password != confirm_password:
+            messages.error(request, "Las contraseñas no coinciden.")
+            return render(request, "raffles/password_reset_confirm.html")
+
+        user.set_password(new_password)
+        user.save()
+
+        # Mantener la sesión actualizada
+        update_session_auth_hash(request, user)
+
+        # Limpiar sesión temporal
+        request.session.pop("reset_user_id", None)
+        request.session.pop("otp_verified", None)
+
+        return render(request, "raffles/password_reset_done.html")
+
+    return render(request, "raffles/password_reset_confirm.html")
+
+
+
 
 # ======================================================
 # GANADORES

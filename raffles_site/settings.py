@@ -244,8 +244,8 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Bienvenido al panel de administración",
     
     # 🔹 Rutas a tus imágenes
-    "site_logo": "img/logo.png",              # Logo que aparece arriba a la izquierda
-    "login_logo": "img/logo.png",             # Logo en la página de login
+    "site_logo": "img/logoo.png",              # Logo que aparece arriba a la izquierda
+    "login_logo": "img/logoo.png",             # Logo en la página de login
     "login_logo_dark": None,                           # Logo oscuro opcional
     "site_logo_classes": "img-circle",                 # Clases CSS opcionales
     "site_icon": "img/favicon.png",                    # Favicon

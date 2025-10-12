@@ -8,15 +8,6 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-
-
-
-
-import os
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 # === SEGURIDAD ===============================================================
 
 SECRET_KEY = config('SECRET_KEY', default='clave-temporal-cambiar')

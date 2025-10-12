@@ -129,7 +129,7 @@ def signup(request):
             qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
             # Mostrar plantilla para activar con QR
-            return render(request, "raffles/account_activation_sent.html", {
+            return render(request, "raffles/account_activation_qr.html", {
                 "user": user,
                 "qr_base64": qr_base64
             })

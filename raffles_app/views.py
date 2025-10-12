@@ -169,7 +169,7 @@ def signup(request):
 # ======================================
 def activate(request):
     """
-    Activa una cuenta verificando el código TOTP (Google Authenticator).
+        Activa una cuenta verificando el código TOTP (Google Authenticator).
     """
     if request.method == "POST":
         username = request.POST.get("username")

@@ -100,6 +100,19 @@ logger = logging.getLogger(__name__)
 # REGISTRO CON TOTP (Google Authenticator)
 # ======================================
 # ======================================
+import logging
+import pyotp
+import qrcode
+import io
+import base64
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+
+logger = logging.getLogger(__name__)
+
+# ======================================
 # REGISTRO DE USUARIO (signup)
 # ======================================
 def signup(request):
@@ -114,28 +127,37 @@ def signup(request):
             user.is_active = False
             user.save()
 
-            # Generar secreto TOTP y guardarlo en el perfil
+            # Generar secreto TOTP
             secret = pyotp.random_base32()
-            user.profile.otp_secret = secret
-            user.profile.save()
+            logger.debug(f"[SIGNUP] Secreto generado para {user.username}: {secret}")
 
-            # Crear URL para Google Authenticator
+            # Guardar en el perfil
+            try:
+                user.profile.otp_secret = secret
+                user.profile.save()
+                logger.debug(f"[SIGNUP] Se guardó otp_secret en el perfil de {user.username}")
+            except Exception as e:
+                logger.error(f"[SIGNUP] Error guardando otp_secret para {user.username}: {e}")
+
+            # Crear URI para Authenticator
             totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(
                 name=user.email,
                 issuer_name="Raffles App"
             )
+            logger.debug(f"[SIGNUP] URI generado: {totp_uri}")
 
-            # Generar código QR en base64
-            qr = qrcode.make(totp_uri)
+            # Generar QR en base64
             buffer = io.BytesIO()
-            qr.save(buffer, format="PNG")
+            qrcode.make(totp_uri).save(buffer, format="PNG")
             qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+            logger.debug(f"[SIGNUP] QR generado correctamente")
 
-            # Mostrar plantilla para activar con QR
             return render(request, "raffles/account_activation_qr.html", {
                 "user": user,
                 "qr_base64": qr_base64
             })
+        else:
+            logger.warning(f"[SIGNUP] Formulario inválido: {form.errors}")
     else:
         form = SignUpForm()
 
@@ -153,23 +175,44 @@ def activate(request):
         username = request.POST.get("username")
         code = request.POST.get("code")
 
+        logger.debug(f"[ACTIVATE] Usuario recibido: {username}, Código recibido: {code}")
+
         try:
             user = User.objects.get(username=username)
-            totp = pyotp.TOTP(user.profile.otp_secret)
-            if totp.verify(code):
+            logger.debug(f"[ACTIVATE] Usuario encontrado: {user.username}")
+
+            secret = getattr(user.profile, "otp_secret", None)
+            logger.debug(f"[ACTIVATE] Secreto del perfil: {secret}")
+
+            if not secret:
+                messages.error(request, "No se encontró el código TOTP asociado a esta cuenta.")
+                logger.error(f"[ACTIVATE] otp_secret vacío para {username}")
+                return render(request, "raffles/account_activation_invalid.html")
+
+            totp = pyotp.TOTP(secret)
+            is_valid = totp.verify(code)
+            logger.debug(f"[ACTIVATE] Resultado verificación TOTP: {is_valid}")
+
+            if is_valid:
                 user.is_active = True
                 user.save()
                 login(request, user)
+                logger.info(f"[ACTIVATE] Cuenta activada correctamente: {username}")
                 return render(request, "raffles/account_activation_success.html")
             else:
                 messages.error(request, "Código incorrecto o expirado.")
+                logger.warning(f"[ACTIVATE] Código TOTP incorrecto para {username}")
                 return render(request, "raffles/account_activation_invalid.html")
+
         except User.DoesNotExist:
             messages.error(request, "Usuario no encontrado.")
+            logger.error(f"[ACTIVATE] Usuario no encontrado: {username}")
             return render(request, "raffles/account_activation_invalid.html")
 
     # Si entra por GET (por error o acceso directo)
+    logger.debug("[ACTIVATE] Acceso GET redirigido a signup")
     return redirect("signup")
+
 
 
 

@@ -33,7 +33,7 @@
   overflow: hidden;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  background: var(--color-box-bg);
+  background: var(--color-lg);
 }
 
 .raffle-carousel-track {
@@ -87,7 +87,7 @@
 
 /* INFO BOX */
 .raffle-info {
-  background: var(--color-box-bg);
+  background: var(--color-lg);
   padding: 2rem;
   border-radius: var(--radius);
   backdrop-filter: blur(12px);

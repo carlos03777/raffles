@@ -73,70 +73,36 @@ def about(request):
     """Página 'Quiénes Somos'."""
     return render(request, "raffles/about.html")
 
-
-# ======================================================
-# AUTENTICACIÓN Y ACTIVACIÓN DE CUENTAS
-# ======================================================
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.contrib.sites.shortcuts import get_current_site
-
-
-
-
-
-
 import logging
-import smtplib
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.core.mail import EmailMultiAlternatives
-from django.contrib.sites.shortcuts import get_current_site
-
-from .forms import SignUpForm
-from .tokens import account_activation_token
-
-logger = logging.getLogger(__name__)
-
-from django.shortcuts import render
-from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 
 from raffles_app.forms import SignUpForm
-from raffles_app.tokens import account_activation_token
-from raffles_app.utils import send_activation_email  # <-- importamos la nueva función
+from raffles_app.models import Profile
+
+import pyotp
+import qrcode
+import io
+import base64
+
+logger = logging.getLogger(__name__)
+
 
 # ======================================
-# REGISTRO CON ENVÍO DE CORREO (Brevo)
+# REGISTRO CON TOTP (Google Authenticator)
 # ======================================
-
-
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.contrib.auth import login
-from django.contrib.auth.models import User
-from .tokens import account_activation_token
-from .emails import send_activation_email
-
 def signup(request):
     """
-    Registro de usuario con envío de correo de activación usando Brevo API.
-    El usuario queda inactivo hasta confirmar vía email.
+    Registro de usuario con generación de código TOTP (para Google Authenticator).
+    El usuario escanea el QR para activar su cuenta.
     """
     if request.method == "POST":
         form = SignUpForm(request.POST)
@@ -145,29 +111,28 @@ def signup(request):
             user.is_active = False
             user.save()
 
-            current_site = get_current_site(request)
-            mail_subject = "Activa tu cuenta en Raffles"
+            # Generar secreto TOTP y guardarlo en el perfil
+            secret = pyotp.random_base32()
+            user.profile.totp_secret = secret
+            user.profile.save()
 
-            # Renderizamos el HTML desde plantilla
-            html_message = render_to_string(
-                "raffles/account_activation_email.html",
-                {
-                    "user": user,
-                    "domain": current_site.domain,
-                    "protocol": "https",  # o "http" si estás en local
-                    "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                    "token": account_activation_token.make_token(user),
-                },
+            # Crear URL para Google Authenticator
+            totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(
+                name=user.email,
+                issuer_name="Raffles App"
             )
 
-            # Enviamos el correo con la API de Brevo
-            send_activation_email(
-                to_email=form.cleaned_data.get("email"),
-                subject=mail_subject,
-                html_content=html_message
-            )
+            # Generar código QR en base64
+            qr = qrcode.make(totp_uri)
+            buffer = io.BytesIO()
+            qr.save(buffer, format="PNG")
+            qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-            return render(request, "raffles/account_activation_sent.html")
+            # Mostrar plantilla para activar con QR
+            return render(request, "raffles/account_activation_qr.html", {
+                "user": user,
+                "qr_base64": qr_base64
+            })
     else:
         form = SignUpForm()
 
@@ -175,23 +140,30 @@ def signup(request):
 
 
 # ======================================
-# ACTIVACIÓN DE CUENTA
+# ACTIVACIÓN DE CUENTA (validar código TOTP)
 # ======================================
-def activate(request, uidb64, token):
-    """Activa una cuenta tras verificar el token recibido por correo."""
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+def activate(request, uidb64=None, token=None):
+    """
+    Activa una cuenta verificando el código TOTP (Google Authenticator).
+    """
+    if request.method == "POST":
+        username = request.POST.get("username")
+        code = request.POST.get("code")
 
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        return render(request, "raffles/account_activation_success.html")
-    else:
-        return render(request, "raffles/account_activation_invalid.html")
+        try:
+            user = User.objects.get(username=username)
+            totp = pyotp.TOTP(user.profile.totp_secret)
+            if totp.verify(code):
+                user.is_active = True
+                user.save()
+                login(request, user)
+                return render(request, "raffles/account_activation_success.html")
+            else:
+                messages.error(request, "Código incorrecto o expirado.")
+        except User.DoesNotExist:
+            messages.error(request, "Usuario no encontrado.")
+
+    return render(request, "raffles/account_activation_invalid.html")
 
 
 

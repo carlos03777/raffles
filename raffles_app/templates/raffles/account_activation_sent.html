@@ -1,12 +1,10 @@
-{% extends "base.html" %}
+<!-- {% extends "base.html" %}
 {% load static %}
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/login.css' %}" />
 {% endblock %}
 {% block content %}
- <!-- ===============================
-      CORREO DE ACTIVACION
-  =============================== -->
+
 <div class="auth-container">
   <div class="auth-box">
     <h1 class="auth-title">Revisa tu correo </h1>
@@ -14,6 +12,61 @@
       Te hemos enviado un enlace de confirmación a tu correo electrónico. Por
       favor, revisa tu bandeja de entrada (y la carpeta de spam).
     </p>
+    <div class="auth-footer">
+      <a href="{% url 'login' %}">Volver al inicio de sesión</a>
+    </div>
+  </div>
+</div>
+{% endblock %} -->
+
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}" />
+{% endblock %}
+
+{% block content %}
+<!-- ===============================
+      ACTIVACIÓN CON GOOGLE AUTHENTICATOR
+  =============================== -->
+<div class="auth-container">
+  <div class="auth-box">
+    <h1 class="auth-title">Activa tu cuenta</h1>
+
+    <p style="color: #ddd; font-size: 0.9rem">
+      Escanea el código QR con <strong>Google Authenticator</strong> o una app similar
+      (Authy, Microsoft Authenticator, etc.) para vincular tu cuenta.
+    </p>
+
+    <div style="text-align: center; margin: 20px 0;">
+      <img
+        src="data:image/png;base64,{{ qr_base64 }}"
+        alt="Código QR"
+        width="180"
+        style="border-radius: 8px; box-shadow: 0 0 15px rgba(255,255,255,0.1);"
+      />
+    </div>
+
+    <p style="color: #ccc; font-size: 0.85rem;">
+      Luego, ingresa el código que aparece en tu app para activar tu cuenta.
+    </p>
+
+    <form method="POST" style="margin-top: 15px;">
+      {% csrf_token %}
+      <input type="hidden" name="username" value="{{ user.username }}">
+      <input
+        type="text"
+        name="code"
+        placeholder="Ingresa el código"
+        class="form-control"
+        style="text-align:center; margin-bottom:10px;"
+        required
+      />
+      <button type="submit" class="btn btn-primary w-100">Verificar y activar</button>
+    </form>
+
     <div class="auth-footer">
       <a href="{% url 'login' %}">Volver al inicio de sesión</a>
     </div>

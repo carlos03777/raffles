@@ -1,12 +1,10 @@
-{% extends "base.html" %}
+<!-- {% extends "base.html" %}
 {% load static %}
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock %}
 {% block content %}
-<!-- ===============================
-       ACTIVACION INVALIDA
-  =============================== -->
+
 <div class="auth-container">
   <div class="auth-box">
     <h1 class="auth-title">Enlace inválido ❌</h1>
@@ -17,6 +15,46 @@
     <a href="{% url 'signup' %}" class="btn-main">Registrarse de nuevo</a>
     <div class="auth-footer">
       <a href="{% url 'login' %}">Ir al inicio de sesión</a>
+    </div>
+  </div>
+</div>
+{% endblock %} -->
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- ===============================
+      VERIFICACIÓN TOTP (2FA)
+=============================== -->
+<div class="auth-container">
+  <div class="auth-box">
+    <h1 class="auth-title">Verificación en dos pasos 🔐</h1>
+    <p style="color:#ddd; font-size:0.9rem;">
+      Abre tu aplicación autenticadora (como Google Authenticator o Authy) y escribe el código de 6 dígitos.
+    </p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <input 
+        type="text" 
+        name="token" 
+        maxlength="6" 
+        placeholder="Código de 6 dígitos" 
+        class="auth-input" 
+        required 
+        style="text-align:center; letter-spacing:4px; font-size:1.2rem;">
+      <button type="submit" class="btn-main" style="margin-top:1rem;">
+        Verificar
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <a href="{% url 'login' %}">Volver al inicio de sesión</a>
     </div>
   </div>
 </div>

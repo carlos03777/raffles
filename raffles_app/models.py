@@ -9,51 +9,83 @@ import secrets, hashlib, random, uuid
 # ==========================================================
 #  PERFIL DE USUARIO
 # ==========================================================
+# ==========================================================
+#  PERFIL DE USUARIO
+# ==========================================================
+import pyotp
+from django.db import models
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.db.models.signals import post_save, pre_save, post_delete
+from django.dispatch import receiver
+
+
 class Profile(models.Model):
     """
     Perfil extendido asociado a cada usuario del sistema.
     Permite almacenar información adicional como teléfono, ciudad, etc.
+    Incluye autenticación TOTP (Google Authenticator).
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     photo = models.ImageField(upload_to="profiles/", blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
-    document_id = models.CharField(max_length=50, unique=True, blank=True, null=True)  # Documento único del usuario
+    document_id = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    otp_secret = models.CharField(max_length=32, blank=True, null=True)  # 🔐 Secreto TOTP
 
     def __str__(self):
         return self.user.username
+
+    # ==========================================================
+    #   MÉTODOS TOTP
+    # ==========================================================
+    def generate_otp_secret(self):
+        """Genera un secreto único para TOTP si no existe."""
+        if not self.otp_secret:
+            self.otp_secret = pyotp.random_base32()
+            self.save()
+
+    def get_totp_uri(self):
+        """Devuelve el URI que usa Google Authenticator."""
+        if not self.otp_secret:
+            self.generate_otp_secret()
+        return f'otpauth://totp/RafflesSite:{self.user.email}?secret={self.otp_secret}&issuer=RafflesSite'
+
+    def verify_token(self, token):
+        """Verifica si el token de 6 dígitos es válido."""
+        if not self.otp_secret:
+            return False
+        totp = pyotp.TOTP(self.otp_secret)
+        return totp.verify(token)
 
     def raffles_participated(self):
         """Devuelve las rifas en las que el usuario ha participado."""
         return Raffle.objects.filter(tickets__user=self.user).distinct()
 
 
-# --- Señales relacionadas con el modelo User ---
+# ==========================================================
+#  SEÑALES
+# ==========================================================
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     """Crea automáticamente el perfil cuando se registra un nuevo usuario."""
     if created:
-        Profile.objects.create(user=instance)
-
+        profile = Profile.objects.create(user=instance)
+        profile.generate_otp_secret()  #  Genera secreto TOTP al crear el perfil
 
 
 @receiver(post_delete, sender=Profile)
 def delete_orphan_user(sender, instance, **kwargs):
-    # Solo eliminar usuario si no tiene otros registros asociados
+    """Elimina usuarios huérfanos si no tienen rifas asociadas."""
     from django.db.models import Count
     user = instance.user
     if user and not user.tickets.exists():
         user.delete()
 
 
-
 @receiver(pre_save, sender=User)
 def validate_email_constraints(sender, instance, **kwargs):
-    """
-    Valida restricciones sobre el campo email del usuario:
-    - Debe ser único.
-    - No puede modificarse una vez registrado.
-    """
+    """Valida restricciones sobre el campo email del usuario."""
     if User.objects.filter(email=instance.email).exclude(pk=instance.pk).exists():
         raise ValidationError(f"El email {instance.email} ya está en uso.")
 

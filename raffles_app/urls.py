@@ -41,7 +41,7 @@ urlpatterns = [
     # ----------------------------
     path("signup/", views.signup, name="signup"),  # Registro con QR
     path("activate/", views.activate, name="activate"),  # Activación con código TOTP
-     path("accounts/login/", auth_views.LoginView.as_view(
+    path("accounts/login/", auth_views.LoginView.as_view(
         template_name="raffles/login.html"
     ), name="login"),  # Inicio de sesión
     

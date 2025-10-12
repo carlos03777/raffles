@@ -23,7 +23,7 @@ from .forms import (
     ProfileEditForm,
     ContactForm,
 )
-from .tokens import account_activation_token
+
 
 import hashlib
 import requests

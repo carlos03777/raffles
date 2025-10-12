@@ -64,24 +64,14 @@ urlpatterns = [
     path("profile/", views.user_profile, name="user_profile"),  # Ver perfil
     path("profile/edit/", views.profile_edit, name="profile_edit"),  # Editar perfil
 
-    # ----------------------------
-    #  Recuperación de contraseña
-    # ----------------------------
-    path("password_reset/", auth_views.PasswordResetView.as_view(
-        template_name="raffles/password_reset.html"
-    ), name="password_reset"),
+# =============================
+# Recuperación de contraseña vía OTP (sin email)
+# =============================
+    path("password_reset/", views.password_reset_request, name="password_reset_request"),
+    path("password_reset/verify/", views.password_reset_verify, name="password_reset_verify"),
+    path("password_reset/confirm/", views.password_reset_confirm, name="password_reset_confirm"),
+    path("password_reset/done/", views.password_reset_done, name="password_reset_done"),
 
-    path("password_reset/done/", auth_views.PasswordResetDoneView.as_view(
-        template_name="raffles/password_reset_done.html"
-    ), name="password_reset_done"),
-
-    path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(
-        template_name="raffles/password_reset_confirm.html"
-    ), name="password_reset_confirm"),
-
-    path("reset/done/", auth_views.PasswordResetCompleteView.as_view(
-        template_name="raffles/password_reset_complete.html"
-    ), name="password_reset_complete"),
 ]
 
 

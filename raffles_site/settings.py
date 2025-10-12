@@ -233,3 +233,24 @@ print(" STORAGE CLASS EN SETTINGS:", default_storage.__class__)
 from storages.backends.s3boto3 import S3Boto3Storage
 from django.core.files.storage import default_storage
 default_storage.__class__ = S3Boto3Storage
+
+
+# === JAZZMIN ======================================================
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Panel de administración",
+    "site_header": "Mi Panel",
+    "site_brand": "Mi Sitio",
+    "welcome_sign": "Bienvenido al panel de administración",
+    
+    # 🔹 Rutas a tus imágenes
+    "site_logo": "img/logo.png",              # Logo que aparece arriba a la izquierda
+    "login_logo": "img/logo.png",             # Logo en la página de login
+    "login_logo_dark": None,                           # Logo oscuro opcional
+    "site_logo_classes": "img-circle",                 # Clases CSS opcionales
+    "site_icon": "img/favicon.png",                    # Favicon
+
+    # Opcional: colores y temas
+    "theme": "cosmo",  # o "darkly", "flatly", etc.
+    "show_ui_builder": False,
+}

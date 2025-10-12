@@ -84,64 +84,141 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.sites.shortcuts import get_current_site
 
-def signup(request):
-    """
-    Registro de usuario con envío de correo de activación.
-    El usuario queda inactivo hasta confirmar vía email.
-    """
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.is_active = False
-            user.save()
 
+
+
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+from django.conf import settings
+from .tokens import account_activation_token
+import smtplib
+
+def signup(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        email = request.POST["email"]
+        password = request.POST["password"]
+
+        # 1️⃣ Validación básica
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "El nombre de usuario ya existe.")
+            return redirect("signup")
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "El correo ya está registrado.")
+            return redirect("signup")
+
+        # 2️⃣ Crear usuario
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.is_active = False
+        user.save()
+
+        # 3️⃣ Envío de correo con manejo de errores
+        try:
             current_site = get_current_site(request)
             mail_subject = "Activa tu cuenta"
-            
-            # Renderizamos la plantilla HTML
-            html_message = render_to_string(
-                "raffles/account_activation_email.html",
+            message = render_to_string(
+                "account/activation_email.html",
                 {
                     "user": user,
                     "domain": current_site.domain,
-                    "protocol": "https",  # o "http" según tu entorno
                     "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                     "token": account_activation_token.make_token(user),
+                    "protocol": "https",  # Railway usa HTTPS
                 },
             )
+            email_message = EmailMessage(mail_subject, message, to=[email])
+            email_message.content_subtype = "html"
+            email_message.send(fail_silently=False)
+
+            messages.success(request, "Te enviamos un correo de activación. Revisa tu bandeja.")
+            return redirect("login")
+
+        except smtplib.SMTPAuthenticationError as e:
+            messages.error(request, "Error de autenticación SMTP. Usa una contraseña de aplicación de Google.")
+            print("🔴 SMTPAuthenticationError:", e)
+        except smtplib.SMTPConnectError as e:
+            messages.error(request, "Error al conectar con el servidor SMTP.")
+            print("🔴 SMTPConnectError:", e)
+        except smtplib.SMTPException as e:
+            messages.error(request, "Error general de correo: " + str(e))
+            print("🔴 SMTPException:", e)
+        except Exception as e:
+            messages.error(request, "Error desconocido al enviar el correo.")
+            print("🔴 Error desconocido:", e)
+
+        return redirect("signup")
+
+    return render(request, "account/signup.html")
+
+# def signup(request):
+#     """
+#     Registro de usuario con envío de correo de activación.
+#     El usuario queda inactivo hasta confirmar vía email.
+#     """
+#     if request.method == "POST":
+#         form = SignUpForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             user.is_active = False
+#             user.save()
+
+#             current_site = get_current_site(request)
+#             mail_subject = "Activa tu cuenta"
             
-            # Creamos versión de texto plano (opcional)
-            text_message = strip_tags(html_message)
+#             # Renderizamos la plantilla HTML
+#             html_message = render_to_string(
+#                 "raffles/account_activation_email.html",
+#                 {
+#                     "user": user,
+#                     "domain": current_site.domain,
+#                     "protocol": "https",  # o "http" según tu entorno
+#                     "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+#                     "token": account_activation_token.make_token(user),
+#                 },
+#             )
             
-            # Enviamos correo con HTML
-            email = EmailMultiAlternatives(mail_subject, text_message, to=[form.cleaned_data.get("email")])
-            email.attach_alternative(html_message, "text/html")
-            email.send(fail_silently=False)
+#             # Creamos versión de texto plano (opcional)
+#             text_message = strip_tags(html_message)
+            
+#             # Enviamos correo con HTML
+#             email = EmailMultiAlternatives(mail_subject, text_message, to=[form.cleaned_data.get("email")])
+#             email.attach_alternative(html_message, "text/html")
+#             email.send(fail_silently=False)
 
 
-            return render(request, "raffles/account_activation_sent.html")
-    else:
-        form = SignUpForm()
-    return render(request, "raffles/signup.html", {"form": form})
+#             return render(request, "raffles/account_activation_sent.html")
+#     else:
+#         form = SignUpForm()
+#     return render(request, "raffles/signup.html", {"form": form})
 
 
 
-def activate(request, uidb64, token):
-    """Activa una cuenta tras verificar el token recibido por correo."""
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+# def activate(request, uidb64, token):
+#     """Activa una cuenta tras verificar el token recibido por correo."""
+#     try:
+#         uid = force_str(urlsafe_base64_decode(uidb64))
+#         user = User.objects.get(pk=uid)
+#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#         user = None
 
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        return render(request, "raffles/account_activation_success.html")
-    else:
-        return render(request, "raffles/account_activation_invalid.html")
+#     if user is not None and account_activation_token.check_token(user, token):
+#         user.is_active = True
+#         user.save()
+#         login(request, user)
+#         return render(request, "raffles/account_activation_success.html")
+#     else:
+#         return render(request, "raffles/account_activation_invalid.html")
 
 
 

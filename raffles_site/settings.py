@@ -222,14 +222,14 @@ STORAGES = {
 
 
 # DEBUG EN settings.py
-print("🚀 S3 CONFIGURATION:")
+print(" S3 CONFIGURATION:")
 print(f"DEFAULT_FILE_STORAGE: {DEFAULT_FILE_STORAGE}")
 print(f"MEDIA_URL: {MEDIA_URL}")
-print(f"AWS_ACCESS_KEY_ID: {'✅ SET' if AWS_ACCESS_KEY_ID else '❌ MISSING'}")
+print(f"AWS_ACCESS_KEY_ID: {' SET' if AWS_ACCESS_KEY_ID else ' MISSING'}")
 
 
 from django.core.files.storage import default_storage
-print("🧠 STORAGE CLASS EN SETTINGS:", default_storage.__class__)
+print(" STORAGE CLASS EN SETTINGS:", default_storage.__class__)
 
 from storages.backends.s3boto3 import S3Boto3Storage
 from django.core.files.storage import default_storage

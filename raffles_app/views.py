@@ -129,7 +129,7 @@ def signup(request):
             qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
             # Mostrar plantilla para activar con QR
-            return render(request, "raffles/account_activation_qr.html", {
+            return render(request, "raffles/account_activation_sent.html", {
                 "user": user,
                 "qr_base64": qr_base64
             })
@@ -142,7 +142,10 @@ def signup(request):
 # ======================================
 # ACTIVACIÓN DE CUENTA (validar código TOTP)
 # ======================================
-def activate(request, uidb64=None, token=None):
+# ======================================
+# ACTIVACIÓN DE CUENTA (validar código TOTP)
+# ======================================
+def activate(request):
     """
     Activa una cuenta verificando el código TOTP (Google Authenticator).
     """
@@ -160,10 +163,13 @@ def activate(request, uidb64=None, token=None):
                 return render(request, "raffles/account_activation_success.html")
             else:
                 messages.error(request, "Código incorrecto o expirado.")
+                return render(request, "raffles/account_activation_invalid.html")
         except User.DoesNotExist:
             messages.error(request, "Usuario no encontrado.")
+            return render(request, "raffles/account_activation_invalid.html")
 
-    return render(request, "raffles/account_activation_invalid.html")
+    # Si entra por GET (por error o acceso directo)
+    return redirect("signup")
 
 
 

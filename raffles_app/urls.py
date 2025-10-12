@@ -39,8 +39,13 @@ urlpatterns = [
     # ----------------------------
     #  Autenticación de usuarios
     # ----------------------------
-    path("signup/", views.signup, name="signup"),  # Registro
-    path("activate/<uidb64>/<token>/", views.activate, name="activate"),  # Activación por correo
+    # ----------------------------
+    #  Autenticación de usuarios
+    # ----------------------------
+    path("signup/", views.signup, name="signup"),  # Registro con QR
+    path("activate/", views.activate, name="activate"),  # Activación con código TOTP
+
+
 
     path("accounts/login/", auth_views.LoginView.as_view(
         template_name="raffles/login.html"

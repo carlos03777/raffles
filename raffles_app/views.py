@@ -122,6 +122,17 @@ from raffles_app.utils import send_activation_email  # <-- importamos la nueva f
 # ======================================
 # REGISTRO CON ENVÍO DE CORREO (Brevo)
 # ======================================
+
+
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from .tokens import account_activation_token
+from .emails import send_activation_email
+
 def signup(request):
     """
     Registro de usuario con envío de correo de activación usando Brevo API.

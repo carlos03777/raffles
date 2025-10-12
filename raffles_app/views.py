@@ -84,45 +84,45 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.sites.shortcuts import get_current_site
 
-def signup(request):
-    """
-    Registro de usuario con envío de correo de activación.
-    El usuario queda inactivo hasta confirmar vía email.
-    """
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.is_active = False
-            user.save()
+# def signup(request):
+#     """
+#     Registro de usuario con envío de correo de activación.
+#     El usuario queda inactivo hasta confirmar vía email.
+#     """
+#     if request.method == "POST":
+#         form = SignUpForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             user.is_active = False
+#             user.save()
 
-            current_site = get_current_site(request)
-            mail_subject = "Activa tu cuenta"
+#             current_site = get_current_site(request)
+#             mail_subject = "Activa tu cuenta"
             
-            # Renderizamos la plantilla HTML
-            html_message = render_to_string(
-                "raffles/account_activation_email.html",
-                {
-                    "user": user,
-                    "domain": current_site.domain,
-                    "protocol": "http",  # o "http" según tu entorno
-                    "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                    "token": account_activation_token.make_token(user),
-                },
-            )
+#             # Renderizamos la plantilla HTML
+#             html_message = render_to_string(
+#                 "raffles/account_activation_email.html",
+#                 {
+#                     "user": user,
+#                     "domain": current_site.domain,
+#                     "protocol": "http",  # o "http" según tu entorno
+#                     "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+#                     "token": account_activation_token.make_token(user),
+#                 },
+#             )
             
-            # Creamos versión de texto plano (opcional)
-            text_message = strip_tags(html_message)
+#             # Creamos versión de texto plano (opcional)
+#             text_message = strip_tags(html_message)
             
-            # Enviamos correo con HTML
-            email = EmailMultiAlternatives(mail_subject, text_message, to=[form.cleaned_data.get("email")])
-            email.attach_alternative(html_message, "text/html")
-            email.send()
+#             # Enviamos correo con HTML
+#             email = EmailMultiAlternatives(mail_subject, text_message, to=[form.cleaned_data.get("email")])
+#             email.attach_alternative(html_message, "text/html")
+#             email.send()
 
-            return render(request, "raffles/account_activation_sent.html")
-    else:
-        form = SignUpForm()
-    return render(request, "raffles/signup.html", {"form": form})
+#             return render(request, "raffles/account_activation_sent.html")
+#     else:
+#         form = SignUpForm()
+#     return render(request, "raffles/signup.html", {"form": form})
 
 
 
@@ -143,24 +143,94 @@ def signup(request):
 #         return render(request, "raffles/account_activation_invalid.html")
 
 
-def activate(request, uidb64, token):
-    """Activa una cuenta tras verificar el token recibido por correo."""
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
-        print(f"Error activating user: {e}")  # Para debugging
-        user = None
-
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        messages.success(request, "¡Cuenta activada exitosamente!")
-        return render(request, "raffles/account_activation_success.html")
+def signup(request):
+    """
+    Registro de usuario con depuración completa
+    """
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = None
+            try:
+                print("🔍 [DEBUG] Iniciando proceso de registro...")
+                
+                # 1. Crear usuario
+                user = form.save(commit=False)
+                user.is_active = False
+                user.save()
+                print(f"✅ [DEBUG] Usuario creado: {user.username}, Email: {user.email}")
+                
+                # 2. Verificar configuración de email
+                current_site = get_current_site(request)
+                print(f"📧 [DEBUG] Configuración Email:")
+                print(f"   - EMAIL_HOST: {settings.EMAIL_HOST}")
+                print(f"   - EMAIL_PORT: {settings.EMAIL_PORT}")
+                print(f"   - EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}")
+                print(f"   - EMAIL_HOST_PASSWORD: {'✅ SET' if settings.EMAIL_HOST_PASSWORD else '❌ MISSING'}")
+                print(f"   - DEFAULT_FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+                print(f"   - Current Site: {current_site.domain}")
+                
+                # 3. Preparar email
+                mail_subject = "Activa tu cuenta en Rifamotos"
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = account_activation_token.make_token(user)
+                
+                print(f"🔑 [DEBUG] Token generado - UID: {uid}, Token: {token}")
+                
+                html_message = render_to_string(
+                    "raffles/account_activation_email.html",
+                    {
+                        "user": user,
+                        "domain": current_site.domain,
+                        "protocol": "https" if request.is_secure() else "http",
+                        "uid": uid,
+                        "token": token,
+                    },
+                )
+                
+                text_message = strip_tags(html_message)
+                
+                # 4. Intentar enviar email
+                print(f"📤 [DEBUG] Intentando enviar email a: {user.email}")
+                
+                email = EmailMultiAlternatives(
+                    mail_subject, 
+                    text_message, 
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[user.email]
+                )
+                email.attach_alternative(html_message, "text/html")
+                
+                # ESTA ES LA LÍNEA CRÍTICA - vamos a ver si falla aquí
+                email.send(fail_silently=False)
+                
+                print("🎉 [DEBUG] ¡Email enviado exitosamente!")
+                
+                # 5. Si llegamos aquí, todo funcionó
+                return render(request, "raffles/account_activation_sent.html")
+                
+            except Exception as e:
+                print(f"💥 [DEBUG] ERROR CRÍTICO: {str(e)}")
+                print(f"💥 [DEBUG] Tipo de error: {type(e).__name__}")
+                import traceback
+                print(f"💥 [DEBUG] Traceback completo:")
+                traceback.print_exc()
+                
+                # Mensaje de error específico
+                error_message = f"Error al enviar el correo de activación: {str(e)}"
+                messages.error(request, error_message)
+                
+                # Limpiar usuario si se creó pero falló el email
+                if user and user.pk:
+                    print(f"🗑️ [DEBUG] Eliminando usuario {user.username} por fallo en registro")
+                    user.delete()
+                
+                # Volver a mostrar el formulario con errores
+                return render(request, "raffles/signup.html", {"form": form})
     else:
-        messages.error(request, "El enlace de activación es inválido o ha expirado.")
-        return render(request, "raffles/account_activation_invalid.html")
+        form = SignUpForm()
+    
+    return render(request, "raffles/signup.html", {"form": form})
 
 
 # ======================================================

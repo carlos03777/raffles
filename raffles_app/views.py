@@ -105,74 +105,67 @@ from .tokens import account_activation_token
 
 logger = logging.getLogger(__name__)
 
+from django.shortcuts import render
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.urls import reverse
+
+from raffles_app.forms import SignUpForm
+from raffles_app.tokens import account_activation_token
+from raffles_app.utils import send_activation_email  # <-- importamos la nueva función
+
+# ======================================
+# REGISTRO CON ENVÍO DE CORREO (Brevo)
+# ======================================
 def signup(request):
     """
-    Registro de usuario con envío de correo de activación.
+    Registro de usuario con envío de correo de activación usando Brevo API.
     El usuario queda inactivo hasta confirmar vía email.
     """
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()  # tu form.save() crea usuario
+            user = form.save(commit=False)
             user.is_active = False
             user.save()
 
             current_site = get_current_site(request)
-            mail_subject = "Activa tu cuenta"
+            mail_subject = "Activa tu cuenta en Raffles"
 
-            # protocolo dinámico
-            protocol = "https" if request.is_secure() else "http"
-
+            # Renderizamos el HTML desde plantilla
             html_message = render_to_string(
                 "raffles/account_activation_email.html",
                 {
                     "user": user,
                     "domain": current_site.domain,
-                    "protocol": protocol,
+                    "protocol": "https",  # o "http" si estás en local
                     "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                     "token": account_activation_token.make_token(user),
                 },
             )
-            text_message = strip_tags(html_message)
 
-            # Envío con manejo de errores y logging
-            try:
-                from_email = getattr(settings, "DEFAULT_FROM_EMAIL", None) or settings.EMAIL_HOST_USER
-                email = EmailMultiAlternatives(
-                    mail_subject,
-                    text_message,
-                    from_email,
-                    [form.cleaned_data.get("email")],
-                )
-                email.attach_alternative(html_message, "text/html")
-                email.send(fail_silently=False)
+            # Enviamos el correo con la API de Brevo
+            send_activation_email(
+                to_email=form.cleaned_data.get("email"),
+                subject=mail_subject,
+                html_content=html_message
+            )
 
-                return render(request, "raffles/account_activation_sent.html")
-
-            except smtplib.SMTPAuthenticationError as e:
-                logger.error("SMTPAuthenticationError al enviar correo de activación: %s", e, exc_info=True)
-                # Opción 1: eliminar usuario si no quieres usuarios huérfanos
-                # user.delete()
-                messages.error(
-                    request,
-                    "Hubo un problema de autenticación SMTP al intentar enviar el correo. "
-                    "Verifica la contraseña de aplicación de Google y las variables de entorno en Railway."
-                )
-            except Exception as e:
-                logger.exception("Error enviando correo de activación: %s", e)
-                # user.delete()  # <-- descomenta si prefieres eliminar el usuario cuando falla el email
-                messages.error(
-                    request,
-                    "Ocurrió un error al enviar el correo de activación. Revisa los logs en Railway."
-                )
-
-            # En cualquier caso de fallo redirigimos al signup para que el usuario lo intente otra vez
-            return redirect("signup")
+            return render(request, "raffles/account_activation_sent.html")
     else:
         form = SignUpForm()
+
     return render(request, "raffles/signup.html", {"form": form})
 
 
+# ======================================
+# ACTIVACIÓN DE CUENTA
+# ======================================
 def activate(request, uidb64, token):
     """Activa una cuenta tras verificar el token recibido por correo."""
     try:
@@ -188,6 +181,7 @@ def activate(request, uidb64, token):
         return render(request, "raffles/account_activation_success.html")
     else:
         return render(request, "raffles/account_activation_invalid.html")
+
 
 
 

@@ -145,21 +145,13 @@ LOGOUT_REDIRECT_URL = "home"
 # EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 # DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER', default='')
 
-# ==============================
-# CONFIGURACIÓN DE EMAIL - BREVO (SENDINBLUE)
-# ==============================
+
+
+# === BREVO API CONFIG ===
 import os
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp-relay.brevo.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-# Las siguientes deben venir desde las variables de entorno en Railway
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "991a9f001@smtp-brevo.com")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")  # Aquí pondrás la API key en Railway
-
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
+DEFAULT_FROM_EMAIL = "991a9f001@smtp-brevo.com"
 
 
 # === CRONJOBS ==============================================================

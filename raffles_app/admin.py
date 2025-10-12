@@ -8,6 +8,23 @@ from .models import (
     CarouselSlide,
 )
 
+
+from django.contrib import admin
+from django.utils.html import format_html
+
+# Personaliza el encabezado del admin (parte superior del panel)
+admin.site.site_header = format_html(
+    '<img src="/static/img/logo.png" height="40" alt="Logo"> Mi Panel'
+)
+
+# Personaliza el título de la pestaña del navegador
+admin.site.site_title = "Administración"
+
+# Título del dashboard principal
+admin.site.index_title = "Bienvenido al panel de control"
+
+
+
 # ==============================================================
 # ---------------------- Profile Admin -------------------------
 # ==============================================================

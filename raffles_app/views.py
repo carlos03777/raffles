@@ -99,6 +99,9 @@ logger = logging.getLogger(__name__)
 # ======================================
 # REGISTRO CON TOTP (Google Authenticator)
 # ======================================
+# ======================================
+# REGISTRO DE USUARIO (signup)
+# ======================================
 def signup(request):
     """
     Registro de usuario con generación de código TOTP (para Google Authenticator).
@@ -113,7 +116,7 @@ def signup(request):
 
             # Generar secreto TOTP y guardarlo en el perfil
             secret = pyotp.random_base32()
-            user.profile.totp_secret = secret
+            user.profile.otp_secret = secret
             user.profile.save()
 
             # Crear URL para Google Authenticator
@@ -142,9 +145,6 @@ def signup(request):
 # ======================================
 # ACTIVACIÓN DE CUENTA (validar código TOTP)
 # ======================================
-# ======================================
-# ACTIVACIÓN DE CUENTA (validar código TOTP)
-# ======================================
 def activate(request):
     """
     Activa una cuenta verificando el código TOTP (Google Authenticator).
@@ -155,7 +155,7 @@ def activate(request):
 
         try:
             user = User.objects.get(username=username)
-            totp = pyotp.TOTP(user.profile.totp_secret)
+            totp = pyotp.TOTP(user.profile.otp_secret)
             if totp.verify(code):
                 user.is_active = True
                 user.save()
@@ -170,7 +170,6 @@ def activate(request):
 
     # Si entra por GET (por error o acceso directo)
     return redirect("signup")
-
 
 
 

@@ -31,7 +31,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=20, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     document_id = models.CharField(max_length=50, unique=True, blank=True, null=True)
-    totp_secret = models.CharField(max_length=32, blank=True, null=True)  # 🔐 Secreto TOTP
+    otp_secret = models.CharField(max_length=32, blank=True, null=True)  # 🔐 Secreto TOTP
 
     def __str__(self):
         return self.user.username

@@ -41,10 +41,11 @@ urlpatterns = [
     # ----------------------------
     path("signup/", views.signup, name="signup"),  # Registro con QR
     path("activate/", views.activate, name="activate"),  # Activación con código TOTP
-    path("login/", auth_views.LoginView.as_view(
+     path("accounts/login/", auth_views.LoginView.as_view(
         template_name="raffles/login.html"
     ), name="login"),  # Inicio de sesión
-    path("logout/", auth_views.LogoutView.as_view(
+    
+    path("accounts/logout/", auth_views.LogoutView.as_view(
         next_page="home"
     ), name="logout"),  # Cierre de sesión
 
@@ -57,7 +58,6 @@ urlpatterns = [
     # ----------------------------
     #  Recuperación de contraseña
     # ----------------------------
-        # ----------------------------
     #  Recuperación de contraseña (vía OTP, sin email)
     # ----------------------------
     path("password_reset/", views.password_reset_request, name="password_reset_request"),

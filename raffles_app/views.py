@@ -94,13 +94,10 @@ import io
 import base64
 
 logger = logging.getLogger(__name__)
-
-
 # ======================================
 # REGISTRO CON TOTP (Google Authenticator)
 # ======================================
-# ======================================
-import logging
+
 import pyotp
 import qrcode
 import io
@@ -109,10 +106,9 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from .forms import SignUpForm  # asegúrate que esta importación sea correcta
+from .models import Profile     # ajusta si tu modelo está en otro módulo
 
-logger = logging.getLogger(__name__)
-
-import traceback
 
 def signup(request):
     """
@@ -121,44 +117,35 @@ def signup(request):
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
-            try:
-                user = form.save(commit=False)
-                user.is_active = False
-                user.save()
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
 
-                # Asegurarnos que el perfil existe
-                profile = getattr(user, "profile", None)
-                if not profile:
-                    from .models import Profile  # ajusta según dónde esté tu modelo
-                    profile = Profile.objects.create(user=user)
+            # Asegurar que el perfil existe
+            profile, _ = Profile.objects.get_or_create(user=user)
 
-                # Generar secreto TOTP
-                secret = pyotp.random_base32()
-                profile.otp_secret = secret
-                profile.save()
+            # Generar secreto TOTP
+            secret = pyotp.random_base32()
+            profile.otp_secret = secret
+            profile.save()
 
-                # Crear URL para Google Authenticator
-                totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(
-                    name=user.email,
-                    issuer_name="Raffles App"
-                )
+            # Crear URL para Google Authenticator
+            totp_uri = pyotp.totp.TOTP(secret).provisioning_uri(
+                name=user.email,
+                issuer_name="Raffles App"
+            )
 
-                # Generar QR
-                qr = qrcode.make(totp_uri)
-                buffer = io.BytesIO()
-                qr.save(buffer, format="PNG")
-                qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+            # Generar QR como base64
+            qr = qrcode.make(totp_uri)
+            buffer = io.BytesIO()
+            qr.save(buffer, format="PNG")
+            qr_base64 = base64.b64encode(buffer.getvalue()).decode()
 
-                return render(request, "raffles/account_activation_qr.html", {
-                    "user": user,
-                    "qr_base64": qr_base64,
-                    "otp_secret": secret,
-                })
-
-            except Exception as e:
-                error_msg = traceback.format_exc()
-                print(f"[ERROR SIGNUP] {error_msg}")  # Esto se verá en Railway logs
-                return render(request, "raffles/error_debug.html", {"error": error_msg})
+            # Mostrar la pantalla para activar la cuenta
+            return render(request, "raffles/account_activation_qr.html", {
+                "user": user,
+                "qr_base64": qr_base64,
+            })
 
     else:
         form = SignUpForm()
@@ -166,118 +153,42 @@ def signup(request):
     return render(request, "raffles/signup.html", {"form": form})
 
 
-
 # ======================================
 # ACTIVACIÓN DE CUENTA (validar código TOTP)
 # ======================================
+
 def activate(request):
     """
-        Activa una cuenta verificando el código TOTP (Google Authenticator).
+    Activa una cuenta verificando el código TOTP (Google Authenticator).
     """
     if request.method == "POST":
         username = request.POST.get("username")
         code = request.POST.get("code")
 
-        logger.debug(f"[ACTIVATE] Usuario recibido: {username}, Código recibido: {code}")
-
         try:
             user = User.objects.get(username=username)
-            logger.debug(f"[ACTIVATE] Usuario encontrado: {user.username}")
-
             secret = getattr(user.profile, "otp_secret", None)
-            logger.debug(f"[ACTIVATE] Secreto del perfil: {secret}")
 
             if not secret:
-                messages.error(request, "No se encontró el código TOTP asociado a esta cuenta.")
-                logger.error(f"[ACTIVATE] otp_secret vacío para {username}")
+                messages.error(request, "No se encontró un código TOTP asociado a esta cuenta.")
                 return render(request, "raffles/account_activation_invalid.html")
 
             totp = pyotp.TOTP(secret)
-            is_valid = totp.verify(code)
-            logger.debug(f"[ACTIVATE] Resultado verificación TOTP: {is_valid}")
-
-            if is_valid:
+            if totp.verify(code):
                 user.is_active = True
                 user.save()
                 login(request, user)
-                logger.info(f"[ACTIVATE] Cuenta activada correctamente: {username}")
                 return render(request, "raffles/account_activation_success.html")
             else:
                 messages.error(request, "Código incorrecto o expirado.")
-                logger.warning(f"[ACTIVATE] Código TOTP incorrecto para {username}")
                 return render(request, "raffles/account_activation_invalid.html")
 
         except User.DoesNotExist:
             messages.error(request, "Usuario no encontrado.")
-            logger.error(f"[ACTIVATE] Usuario no encontrado: {username}")
             return render(request, "raffles/account_activation_invalid.html")
 
-    # Si entra por GET (por error o acceso directo)
-    logger.debug("[ACTIVATE] Acceso GET redirigido a signup")
+    # Si entra por GET o ruta directa
     return redirect("signup")
-
-
-
-
-# def signup(request):
-#     """
-#     Registro de usuario con envío de correo de activación.
-#     El usuario queda inactivo hasta confirmar vía email.
-#     """
-#     if request.method == "POST":
-#         form = SignUpForm(request.POST)
-#         if form.is_valid():
-#             user = form.save()
-#             user.is_active = False
-#             user.save()
-
-#             current_site = get_current_site(request)
-#             mail_subject = "Activa tu cuenta"
-            
-#             # Renderizamos la plantilla HTML
-#             html_message = render_to_string(
-#                 "raffles/account_activation_email.html",
-#                 {
-#                     "user": user,
-#                     "domain": current_site.domain,
-#                     "protocol": "https",  # o "http" según tu entorno
-#                     "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-#                     "token": account_activation_token.make_token(user),
-#                 },
-#             )
-            
-#             # Creamos versión de texto plano (opcional)
-#             text_message = strip_tags(html_message)
-            
-#             # Enviamos correo con HTML
-#             email = EmailMultiAlternatives(mail_subject, text_message, to=[form.cleaned_data.get("email")])
-#             email.attach_alternative(html_message, "text/html")
-#             email.send(fail_silently=False)
-
-
-#             return render(request, "raffles/account_activation_sent.html")
-#     else:
-#         form = SignUpForm()
-#     return render(request, "raffles/signup.html", {"form": form})
-
-
-
-# def activate(request, uidb64, token):
-#     """Activa una cuenta tras verificar el token recibido por correo."""
-#     try:
-#         uid = force_str(urlsafe_base64_decode(uidb64))
-#         user = User.objects.get(pk=uid)
-#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-#         user = None
-
-#     if user is not None and account_activation_token.check_token(user, token):
-#         user.is_active = True
-#         user.save()
-#         login(request, user)
-#         return render(request, "raffles/account_activation_success.html")
-#     else:
-#         return render(request, "raffles/account_activation_invalid.html")
-
 
 
 

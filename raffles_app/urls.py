@@ -10,6 +10,7 @@ carrito, contacto y sistema de recuperación de contraseñas.
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from . import views
+from .views import wompi_webhook
 
 
 urlpatterns = [
@@ -71,6 +72,12 @@ urlpatterns = [
     path("password_reset/verify/", views.password_reset_verify, name="password_reset_verify"),
     path("password_reset/confirm/", views.password_reset_confirm, name="password_reset_confirm"),
     path("password_reset/done/", views.password_reset_done, name="password_reset_done"),
+
+# =============================
+# Weebhooks 
+# =============================
+    path("payments/webhook/", wompi_webhook, name="wompi_webhook"),
+
 
 ]
 

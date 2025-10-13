@@ -552,6 +552,54 @@ def payment_success(request):
 
     return redirect("user_profile")
 
+# payments/views.py (o donde tengas tus vistas de pago)
+import json
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Ticket
+
+@csrf_exempt
+def wompi_webhook(request):
+    """
+    Recibe notificaciones asíncronas de Wompi sobre el estado de las transacciones.
+    """
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    try:
+        data = json.loads(request.body)
+        event = data.get("event")
+        transaction = data.get("data", {}).get("transaction", {})
+        status = transaction.get("status")
+        reference = transaction.get("reference")
+    except Exception as e:
+        print(f"[WOMPI WEBHOOK ERROR] {e}")
+        return HttpResponse(status=400)
+
+    if not reference:
+        return HttpResponse(status=400)
+
+    # Actualizar los tickets con esa referencia
+    tickets = Ticket.objects.filter(payment_reference=reference)
+
+    if tickets.exists():
+        for ticket in tickets:
+            if status == "APPROVED":
+                ticket.payment_status = "paid"
+            elif status == "DECLINED":
+                ticket.payment_status = "failed"
+            else:
+                ticket.payment_status = "pending"
+            ticket.save()
+
+        print(f"[WOMPI] Webhook procesado correctamente para {reference} con estado {status}")
+        return HttpResponse(status=200)
+
+    print(f"[WOMPI] No se encontraron tickets para referencia {reference}")
+    return HttpResponse(status=404)
+
+
+
 
 # ======================================================
 # CONTACTO

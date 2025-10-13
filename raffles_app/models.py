@@ -2,23 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
-from django.core.exceptions import ValidationError
 import secrets, hashlib, random, uuid
-
-
-# ==========================================================
-#  PERFIL DE USUARIO
-# ==========================================================
-# ==========================================================
-#  PERFIL DE USUARIO
-# ==========================================================
 import pyotp
-from django.db import models
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models.signals import post_save, pre_save, post_delete
-from django.dispatch import receiver
 
+# ==========================================================
+#  PERFIL DE USUARIO
+# ==========================================================
 
 class Profile(models.Model):
     """
@@ -280,6 +270,7 @@ class Raffle(models.Model):
 # ==========================================================
 #  TICKETS
 # ==========================================================
+
 class Ticket(models.Model):
     """
     Representa la boleta comprada por un usuario en una rifa.
@@ -354,6 +345,7 @@ class Ticket(models.Model):
 # ==========================================================
 #  CARRUSEL (HOME PAGE)
 # ==========================================================
+
 class CarouselSlide(models.Model):
     """
     Representa una diapositiva del carrusel en la página principal.

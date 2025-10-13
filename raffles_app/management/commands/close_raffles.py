@@ -49,14 +49,14 @@ class Command(BaseCommand):
 
                 if winner:
                     self.stdout.write(self.style.SUCCESS(
-                        f"✅ Rifa {raffle.id} finalizada. Ganador: {winner.user.username} con ticket #{winner.number}"
+                        f"Rifa {raffle.id} finalizada. Ganador: {winner.user.username} con ticket #{winner.number}"
                     ))
                 else:
                     self.stdout.write(self.style.WARNING(
-                        f"⚠️ Rifa {raffle.id} cerrada sin participantes"
+                        f" Rifa {raffle.id} cerrada sin participantes"
                     ))
 
             except Exception as e:
                 self.stderr.write(self.style.ERROR(
-                    f"❌ Error en rifa {raffle.id}: {str(e)}"
+                    f"Error en rifa {raffle.id}: {str(e)}"
                 ))

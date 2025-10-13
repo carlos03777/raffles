@@ -7,14 +7,14 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Sum
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.template.loader import render_to_string
+# from django.contrib.sites.shortcuts import get_current_site
+# from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+# from django.utils.encoding import force_bytes, force_str
+# from django.template.loader import render_to_string
 from django.core.mail import EmailMessage, send_mail
 from django.conf import settings
 
-from .models import Raffle, Ticket, CarouselSlide
+from .models import Raffle, Ticket, CarouselSlide, Profile
 from .forms import (
     TicketPurchaseForm,
     SignUpForm,
@@ -23,12 +23,18 @@ from .forms import (
     ProfileEditForm,
     ContactForm,
 )
-#from .toksld
+
 
 import hashlib
 import requests
 import uuid
+import logging
 
+
+import pyotp
+import qrcode
+import io
+import base64
 
 # ======================================================
 # HOME Y LISTADOS
@@ -73,25 +79,7 @@ def about(request):
     """Página 'Quiénes Somos'."""
     return render(request, "raffles/about.html")
 
-import logging
-from django.conf import settings
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.contrib.auth import login
-from django.contrib.auth.models import User
-from django.template.loader import render_to_string
-from django.contrib.sites.shortcuts import get_current_site
-from django.urls import reverse
 
-from raffles_app.forms import SignUpForm
-from raffles_app.models import Profile
-
-import pyotp
-import qrcode
-import io
-import base64
 
 logger = logging.getLogger(__name__)
 # ======================================

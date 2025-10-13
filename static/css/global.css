@@ -167,7 +167,7 @@ h1, h2, h3 {
 .navbar__links a {
   color: var(--color-primary);
   font-family: var(--font-heading);
-  font-size: medium;
+  font-size: larger;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s;

@@ -14,6 +14,10 @@ from django.db.models import Sum
 from django.core.mail import EmailMessage, send_mail
 from django.conf import settings
 
+
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from .models import Raffle, Ticket, CarouselSlide, Profile
 from .forms import (
     TicketPurchaseForm,
@@ -24,17 +28,17 @@ from .forms import (
     ContactForm,
 )
 
-
 import hashlib
 import requests
 import uuid
 import logging
-
-
 import pyotp
 import qrcode
 import io
 import base64
+import json
+
+
 
 # ======================================================
 # HOME Y LISTADOS
@@ -85,17 +89,6 @@ logger = logging.getLogger(__name__)
 # ======================================
 # REGISTRO CON TOTP (Google Authenticator)
 # ======================================
-
-import pyotp
-import qrcode
-import io
-import base64
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from django.contrib.auth.models import User
-from .forms import SignUpForm  # asegúrate que esta importación sea correcta
-from .models import Profile     # ajusta si tu modelo está en otro módulo
 
 
 def signup(request):
@@ -540,11 +533,6 @@ def payment_success(request):
 
     return redirect("user_profile")
 
-# payments/views.py (o donde tengas tus vistas de pago)
-import json
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import Ticket
 
 @csrf_exempt
 def wompi_webhook(request):

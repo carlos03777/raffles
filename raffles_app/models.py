@@ -86,6 +86,10 @@ def delete_orphan_user(sender, instance, **kwargs):
 @receiver(pre_save, sender=User)
 def validate_email_constraints(sender, instance, **kwargs):
     """Valida restricciones sobre el campo email del usuario."""
+    # Ignorar si no hay email (por ejemplo, usuario creado desde admin)
+    if not instance.email:
+        return
+
     if User.objects.filter(email=instance.email).exclude(pk=instance.pk).exists():
         raise ValidationError(f"El email {instance.email} ya está en uso.")
 
@@ -93,6 +97,7 @@ def validate_email_constraints(sender, instance, **kwargs):
         old_email = User.objects.filter(pk=instance.pk).values_list("email", flat=True).first()
         if old_email and old_email != instance.email:
             raise ValidationError("El email no puede modificarse una vez registrado.")
+
 
 
 # ==========================================================
